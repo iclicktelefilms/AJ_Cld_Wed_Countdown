@@ -96,7 +96,8 @@ function ai_assistant_module_deactivated(): void
 }
 
 /**
- * Retrieve merged AI assistant settings from DB options
+ * Retrieve merged AI assistant settings from DB options.
+ * Returns general settings + per-provider configs.
  *
  * @return array
  */
@@ -108,17 +109,54 @@ function ai_assistant_get_settings(): array
         return $settings;
     }
 
+    $active_provider = get_option('ai_assistant_active_provider') ?: 'gemini';
+
+    // Derive the active API key (used by the widget to decide if AI is configured)
+    $active_api_key = get_option("ai_assistant_{$active_provider}_api_key");
+
+    // For Ollama, no key needed — check base_url instead
+    if ($active_provider === 'ollama') {
+        $active_api_key = get_option('ai_assistant_ollama_base_url') ?: 'http://localhost:11434';
+    }
+
     $settings = [
-        'api_key'              => get_option('ai_assistant_api_key'),
-        'model'                => get_option('ai_assistant_model') ?: 'gemini-2.5-pro',
-        'temperature'          => (float)(get_option('ai_assistant_temperature') ?: 0.7),
-        'max_tokens'           => (int)(get_option('ai_assistant_max_tokens') ?: 8192),
-        'streaming_enabled'    => get_option('ai_assistant_streaming') !== '0',
-        'voice_enabled'        => get_option('ai_assistant_voice') !== '0',
-        'memory_limit'         => (int)(get_option('ai_assistant_memory_limit') ?: 20),
-        'retention_days'       => (int)(get_option('ai_assistant_retention_days') ?: 30),
-        'allowed_modules'      => json_decode(get_option('ai_assistant_allowed_modules') ?: '[]', true) ?: [],
-        'tool_permissions'     => json_decode(get_option('ai_assistant_tool_permissions') ?: '{}', true) ?: [],
+        // General
+        'api_key'           => $active_api_key,   // compat: used in widget/init check
+        'active_provider'   => $active_provider,
+        'fallback_provider' => get_option('ai_assistant_fallback_provider') ?: 'none',
+        'temperature'       => (float)(get_option('ai_assistant_temperature') ?: 0.7),
+        'max_tokens'        => (int)(get_option('ai_assistant_max_tokens')    ?: 8192),
+        'streaming_enabled' => get_option('ai_assistant_streaming') !== '0',
+        'voice_enabled'     => get_option('ai_assistant_voice') !== '0',
+        'memory_limit'      => (int)(get_option('ai_assistant_memory_limit')  ?: 20),
+        'retention_days'    => (int)(get_option('ai_assistant_retention_days') ?: 30),
+        'allowed_modules'   => json_decode(get_option('ai_assistant_allowed_modules')  ?: '[]', true) ?: [],
+        'tool_permissions'  => json_decode(get_option('ai_assistant_tool_permissions') ?: '{}', true) ?: [],
+
+        // Per-provider API keys (never exposed to frontend)
+        'providers' => [
+            'gemini'     => [
+                'api_key' => get_option('ai_assistant_gemini_api_key'),
+                'model'   => get_option('ai_assistant_gemini_model')   ?: 'gemini-2.5-pro',
+            ],
+            'openai'     => [
+                'api_key' => get_option('ai_assistant_openai_api_key'),
+                'model'   => get_option('ai_assistant_openai_model')   ?: 'gpt-4o',
+            ],
+            'claude'     => [
+                'api_key' => get_option('ai_assistant_claude_api_key'),
+                'model'   => get_option('ai_assistant_claude_model')   ?: 'claude-sonnet-4-5',
+            ],
+            'openrouter' => [
+                'api_key' => get_option('ai_assistant_openrouter_api_key'),
+                'model'   => get_option('ai_assistant_openrouter_model') ?: 'openai/gpt-4o',
+            ],
+            'ollama'     => [
+                'api_key'  => '',
+                'model'    => get_option('ai_assistant_ollama_model')    ?: 'llama3.2',
+                'base_url' => get_option('ai_assistant_ollama_base_url') ?: 'http://localhost:11434',
+            ],
+        ],
     ];
 
     return $settings;

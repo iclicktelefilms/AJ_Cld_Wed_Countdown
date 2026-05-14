@@ -47,7 +47,11 @@ class Ai_chat_model extends CI_Model
 
     /**
      * Get conversation history for a session
-     * Returns messages formatted for Gemini API (role/parts structure)
+     * Returns messages in the provider-agnostic internal format:
+     *   ['role' => 'user',      'content' => '...']
+     *   ['role' => 'assistant', 'content' => '...']
+     *   ['role' => 'assistant', 'content' => '', 'tool_call' => ['name' => '...', 'args' => []]]
+     *   ['role' => 'tool',      'tool_name' => '...', 'result' => [...]]
      *
      * @param  string $session_id
      * @param  int    $limit       Max messages to return (memory window)
@@ -63,32 +67,43 @@ class Ai_chat_model extends CI_Model
             ->get('ai_chat_history')
             ->result_array();
 
-        // Reverse so oldest is first (correct conversation order)
-        $rows = array_reverse($rows);
-
+        // Oldest first
+        $rows    = array_reverse($rows);
         $history = [];
+
         foreach ($rows as $row) {
-            $role = match($row['message_type']) {
-                'user'        => 'user',
-                'assistant'   => 'model',
-                'tool_result' => 'user',   // Tool results sent back as user role in Gemini
-                default       => 'user',
-            };
+            $tool_data = !empty($row['tool_calls'])
+                ? json_decode($row['tool_calls'], true)
+                : null;
 
-            $parts = [['text' => $row['message']]];
+            switch ($row['message_type']) {
+                case 'user':
+                    $history[] = ['role' => 'user', 'content' => $row['message']];
+                    break;
 
-            // Attach tool call data if present
-            if (!empty($row['tool_calls'])) {
-                $tool_calls = json_decode($row['tool_calls'], true);
-                if (is_array($tool_calls)) {
-                    $parts[] = ['functionCall' => $tool_calls];
-                }
+                case 'assistant':
+                    $entry = ['role' => 'assistant', 'content' => $row['message']];
+                    // If this assistant turn contained a tool call, attach it
+                    if ($tool_data && isset($tool_data['name'])) {
+                        $entry['tool_call'] = [
+                            'name' => $tool_data['name'],
+                            'args' => $tool_data['args'] ?? [],
+                        ];
+                    }
+                    $history[] = $entry;
+                    break;
+
+                case 'tool_result':
+                    // Tool result stored with tool_calls containing {name, result}
+                    if ($tool_data && isset($tool_data['name'])) {
+                        $history[] = [
+                            'role'      => 'tool',
+                            'tool_name' => $tool_data['name'],
+                            'result'    => $tool_data['result'] ?? ['output' => $row['message']],
+                        ];
+                    }
+                    break;
             }
-
-            $history[] = [
-                'role'  => $role,
-                'parts' => $parts,
-            ];
         }
 
         return $history;

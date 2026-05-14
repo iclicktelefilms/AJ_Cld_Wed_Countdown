@@ -112,16 +112,30 @@ if (!$CI->db->table_exists('ai_sessions')) {
 
 // ─── Default option values ────────────────────────────────────────────────────
 $default_options = [
-    'ai_assistant_enabled'          => '1',
-    'ai_assistant_model'            => 'gemini-2.5-pro',
-    'ai_assistant_temperature'      => '0.7',
-    'ai_assistant_max_tokens'       => '8192',
-    'ai_assistant_streaming'        => '1',
-    'ai_assistant_voice'            => '1',
-    'ai_assistant_memory_limit'     => '20',
-    'ai_assistant_retention_days'   => '30',
-    'ai_assistant_allowed_modules'  => json_encode(['leads','clients','invoices','estimates','tasks','projects','tickets','contracts','expenses','payments']),
-    'ai_assistant_tool_permissions' => json_encode([
+    // General
+    'ai_assistant_enabled'              => '1',
+    'ai_assistant_active_provider'      => 'gemini',
+    'ai_assistant_fallback_provider'    => 'none',
+    'ai_assistant_temperature'          => '0.7',
+    'ai_assistant_max_tokens'           => '8192',
+    'ai_assistant_streaming'            => '1',
+    'ai_assistant_voice'                => '1',
+    'ai_assistant_memory_limit'         => '20',
+    'ai_assistant_retention_days'       => '30',
+
+    // Per-provider model selection
+    'ai_assistant_gemini_model'         => 'gemini-2.5-pro',
+    'ai_assistant_openai_model'         => 'gpt-4o',
+    'ai_assistant_claude_model'         => 'claude-sonnet-4-5',
+    'ai_assistant_openrouter_model'     => 'openai/gpt-4o',
+    'ai_assistant_ollama_model'         => 'llama3.2',
+
+    // Per-provider base URLs (only custom ones)
+    'ai_assistant_ollama_base_url'      => 'http://localhost:11434',
+
+    // Module and permissions
+    'ai_assistant_allowed_modules'      => json_encode(['leads','clients','invoices','estimates','tasks','projects','tickets','contracts','expenses','payments']),
+    'ai_assistant_tool_permissions'     => json_encode([
         'admin'   => ['read','write','delete','report'],
         'manager' => ['read','write','report'],
         'staff'   => ['read','write'],

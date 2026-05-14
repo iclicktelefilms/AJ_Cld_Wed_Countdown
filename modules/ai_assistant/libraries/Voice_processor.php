@@ -4,7 +4,8 @@ defined('BASEPATH') or exit('No direct script access allowed');
 
 /**
  * Voice Processor
- * Handles audio upload, transcription, and TTS via Gemini.
+ * Handles audio upload, transcription, and TTS.
+ * Uses ProviderFactory to select the best provider for audio operations.
  */
 class Voice_processor
 {
@@ -58,21 +59,18 @@ class Voice_processor
         $mime_type    = $file_data['type'];
         $duration_ms  = 0;
 
+        $provider = $this->load_audio_provider();
+
         // Pre-log the voice event
         $this->CI->load->model('Ai_logs_model', 'ai_logs_model');
         $log_id = $this->CI->ai_logs_model->log_voice($staff_id, '', [
             'language'    => $language,
             'duration_ms' => $duration_ms,
-            'provider'    => 'gemini',
+            'provider'    => $provider->get_name(),
         ]);
 
         try {
-            // Load Gemini client
-            if (!class_exists('Gemini_client')) {
-                require_once module_dir_path(AI_ASSISTANT_MODULE_NAME, 'libraries/Gemini_client.php');
-            }
-            $gemini    = new Gemini_client();
-            $transcript = $gemini->transcribe_audio($audio_base64, $mime_type, $language);
+            $transcript = $provider->transcribe_audio($audio_base64, $mime_type, $language);
 
             if (empty($transcript)) {
                 $this->CI->ai_logs_model->mark_voice_error($log_id);
@@ -121,16 +119,16 @@ class Voice_processor
             $mime_type = 'audio/webm'; // safe default
         }
 
+        $provider = $this->load_audio_provider();
+
         $this->CI->load->model('Ai_logs_model', 'ai_logs_model');
-        $log_id = $this->CI->ai_logs_model->log_voice($staff_id, '', ['language' => $language]);
+        $log_id = $this->CI->ai_logs_model->log_voice($staff_id, '', [
+            'language' => $language,
+            'provider' => $provider->get_name(),
+        ]);
 
         try {
-            if (!class_exists('Gemini_client')) {
-                require_once module_dir_path(AI_ASSISTANT_MODULE_NAME, 'libraries/Gemini_client.php');
-            }
-
-            $gemini    = new Gemini_client();
-            $transcript = $gemini->transcribe_audio($audio_base64, $mime_type, $language);
+            $transcript = $provider->transcribe_audio($audio_base64, $mime_type, $language);
 
             if (empty(trim($transcript))) {
                 $this->CI->ai_logs_model->mark_voice_error($log_id);
@@ -173,12 +171,8 @@ class Voice_processor
         $speak_text = mb_substr(strip_tags($text), 0, 500);
 
         try {
-            if (!class_exists('Gemini_client')) {
-                require_once module_dir_path(AI_ASSISTANT_MODULE_NAME, 'libraries/Gemini_client.php');
-            }
-
-            $gemini = new Gemini_client();
-            $result = $gemini->text_to_speech($speak_text, $language);
+            $provider = $this->load_audio_provider();
+            $result   = $provider->text_to_speech($speak_text, $language);
 
             return array_merge(['success' => true], $result);
 
@@ -211,5 +205,17 @@ class Voice_processor
         }
 
         return ['valid' => true, 'error' => ''];
+    }
+
+    /**
+     * Load the best provider for audio operations using ProviderFactory.
+     * Falls back to Gemini if active provider doesn't support audio.
+     */
+    private function load_audio_provider(): AIProviderInterface
+    {
+        $factory_file = module_dir_path(AI_ASSISTANT_MODULE_NAME, 'libraries/AIProviders/ProviderFactory.php');
+        require_once $factory_file;
+
+        return ProviderFactory::create_for_audio();
     }
 }

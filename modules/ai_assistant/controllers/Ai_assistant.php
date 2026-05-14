@@ -7,11 +7,11 @@ defined('BASEPATH') or exit('No direct script access allowed');
  *
  * Handles the core chat message pipeline:
  *  1. Receive user message
- *  2. Load conversation history
+ *  2. Load conversation history (internal format)
  *  3. Build system prompt (with CRM context)
- *  4. Call Gemini
+ *  4. Create AI provider via ProviderFactory
  *  5. Dispatch tool calls if returned
- *  6. Loop back to Gemini with tool results
+ *  6. Loop back to AI with tool results
  *  7. Return final response to frontend
  */
 class Ai_assistant extends AdminController
@@ -34,14 +34,15 @@ class Ai_assistant extends AdminController
             'Ai_logs_model'      => 'ai_logs_model',
         ]);
 
-        // Load core libraries
-        $this->load->library([
-            'libraries/Gemini_client'   => null,
-            'libraries/Tool_dispatcher' => null,
-            'libraries/Context_manager' => null,
-        ]);
+        // Load provider factory and core libraries
+        require_once module_dir_path(AI_ASSISTANT_MODULE_NAME, 'libraries/AIProviders/ProviderFactory.php');
 
-        // Load response formatter service
+        if (!class_exists('Tool_dispatcher')) {
+            require_once module_dir_path(AI_ASSISTANT_MODULE_NAME, 'libraries/Tool_dispatcher.php');
+        }
+        if (!class_exists('Context_manager')) {
+            require_once module_dir_path(AI_ASSISTANT_MODULE_NAME, 'libraries/Context_manager.php');
+        }
         if (!class_exists('Response_formatter')) {
             require_once module_dir_path(AI_ASSISTANT_MODULE_NAME, 'services/Response_formatter.php');
         }
@@ -125,7 +126,8 @@ class Ai_assistant extends AdminController
     }
 
     /**
-     * Run the multi-turn AI + tool execution pipeline
+     * Run the multi-turn AI + tool execution pipeline using the active provider.
+     * History is in the provider-agnostic internal format.
      */
     private function run_ai_pipeline(
         array  $history,
@@ -134,16 +136,17 @@ class Ai_assistant extends AdminController
         string $session_id,
         int    $staff_id
     ): array {
-        $gemini          = new Gemini_client();
+        $provider        = ProviderFactory::create();
         $tool_dispatcher = new Tool_dispatcher();
         $formatter       = new Response_formatter();
         $current_history = $history;
         $total_tokens    = 0;
         $tools_used      = [];
         $loops           = 0;
+        $provider_name   = $provider->get_name();
 
         do {
-            $response = $gemini->chat($current_history, $system_prompt, $available_tools);
+            $response      = $provider->chat($current_history, $system_prompt, $available_tools);
             $total_tokens += $response['tokens_used'] ?? 0;
 
             // No tool call → final text response
@@ -153,21 +156,22 @@ class Ai_assistant extends AdminController
                     'model'       => $response['model'],
                     'tokens_used' => $total_tokens,
                     'tools_used'  => $tools_used,
+                    'provider'    => $provider_name,
                 ];
             }
 
-            // Process tool call
-            $tool_call  = $response['tool_calls'];
-            $tool_name  = $tool_call['name'] ?? '';
+            // Normalized tool call: ['name' => '...', 'args' => [...]]
+            $tool_call   = $response['tool_calls'];
+            $tool_name   = $tool_call['name'] ?? '';
             $tool_params = $tool_call['args'] ?? [];
 
-            // Save the model's tool call to history
+            // Save model's tool call to history
             $this->ai_chat_model->save_message($session_id, $staff_id, 'assistant', '', [
-                'tool_calls' => $tool_call,
-                'ai_provider' => 'gemini',
+                'tool_calls'  => $tool_call,
+                'ai_provider' => $provider_name,
             ]);
 
-            // Dispatch tool
+            // Dispatch tool through the security/permission layer
             $tool_result = $tool_dispatcher->dispatch($tool_name, $tool_params);
 
             // Handle confirmation-required tools
@@ -178,6 +182,7 @@ class Ai_assistant extends AdminController
                     'model'        => $response['model'],
                     'tokens_used'  => $total_tokens,
                     'tools_used'   => $tools_used,
+                    'provider'     => $provider_name,
                     'needs_confirm'=> true,
                     'confirm_data' => ['tool' => $tool_name, 'params' => $tool_params],
                 ];
@@ -185,47 +190,39 @@ class Ai_assistant extends AdminController
 
             $tools_used[] = $tool_name;
 
-            // Format the tool result for the AI
             $formatted_result = $formatter->format($tool_name, $tool_result);
-
-            // Add to history as tool result
-            $result_payload = $tool_result['success']
+            $result_payload   = $tool_result['success']
                 ? ($tool_result['data'] ?? ['message' => $formatted_result])
                 : ['error' => $tool_result['error'] ?? 'Unknown error'];
 
-            // Save tool result to history
+            // Save tool result
             $this->ai_chat_model->save_message($session_id, $staff_id, 'tool_result', $formatted_result, [
                 'tool_calls' => ['name' => $tool_name, 'result' => $result_payload],
             ]);
 
-            // Update history for next loop
+            // Extend history in internal format (provider converts on next loop)
             $current_history[] = [
-                'role'  => 'model',
-                'parts' => [
-                    ['text' => $response['content'] ?? ''],
-                    ['functionCall' => $tool_call],
-                ],
+                'role'      => 'assistant',
+                'content'   => $response['content'] ?? '',
+                'tool_call' => $tool_call,
             ];
             $current_history[] = [
-                'role'  => 'user',
-                'parts' => [[
-                    'functionResponse' => [
-                        'name'     => $tool_name,
-                        'response' => $result_payload,
-                    ],
-                ]],
+                'role'      => 'tool',
+                'tool_name' => $tool_name,
+                'result'    => $result_payload,
             ];
 
             $loops++;
 
         } while ($loops < self::MAX_TOOL_LOOPS);
 
-        // If we hit the loop limit, return the last text response
+        // Loop limit reached
         return [
             'content'     => $response['content'] ?? 'I completed the requested operations.',
             'model'       => $response['model'] ?? '',
             'tokens_used' => $total_tokens,
             'tools_used'  => $tools_used,
+            'provider'    => $provider_name,
         ];
     }
 

@@ -54,11 +54,13 @@ class Admin extends AdminController
     {
         $all_staff = $this->db->select('staffid, firstname, lastname')->get('staff')->result_array();
 
+        require_once module_dir_path(AI_ASSISTANT_MODULE_NAME, 'libraries/AIProviders/ProviderCapabilities.php');
+
         $data = [
-            'title'     => lang('ai_assistant_settings'),
-            'settings'  => ai_assistant_get_settings(),
-            'all_staff' => $all_staff,
-            'models'    => $this->get_available_models(),
+            'title'         => lang('ai_assistant_settings'),
+            'settings'      => ai_assistant_get_settings(),
+            'all_staff'     => $all_staff,
+            'providers_meta'=> ProviderCapabilities::all(),
         ];
 
         $this->load->view('admin/header_open', ['title' => lang('ai_assistant_settings')]);
@@ -75,56 +77,82 @@ class Admin extends AdminController
             show_404();
         }
 
-        // API key — never expose or log
-        $api_key = $this->input->post('api_key');
-        if (!empty($api_key)) {
-            update_option('ai_assistant_api_key', $api_key);
-        }
+        $valid_providers = ['gemini', 'openai', 'claude', 'openrouter', 'ollama'];
 
-        $option_map = [
-            'ai_assistant_model'            => 'model',
-            'ai_assistant_temperature'      => 'temperature',
-            'ai_assistant_max_tokens'       => 'max_tokens',
-            'ai_assistant_streaming'        => 'streaming',
-            'ai_assistant_voice'            => 'voice',
-            'ai_assistant_memory_limit'     => 'memory_limit',
-            'ai_assistant_retention_days'   => 'retention_days',
-            'ai_assistant_enabled'          => 'enabled',
+        // ── General settings ──────────────────────────────────────────────────
+        $general_map = [
+            'ai_assistant_active_provider'   => ['key' => 'active_provider',   'type' => 'string', 'allowed' => $valid_providers],
+            'ai_assistant_fallback_provider' => ['key' => 'fallback_provider',  'type' => 'string', 'allowed' => array_merge($valid_providers, ['none'])],
+            'ai_assistant_temperature'       => ['key' => 'temperature',        'type' => 'float'],
+            'ai_assistant_max_tokens'        => ['key' => 'max_tokens',         'type' => 'int'],
+            'ai_assistant_streaming'         => ['key' => 'streaming',          'type' => 'bool'],
+            'ai_assistant_voice'             => ['key' => 'voice',              'type' => 'bool'],
+            'ai_assistant_memory_limit'      => ['key' => 'memory_limit',       'type' => 'int'],
+            'ai_assistant_retention_days'    => ['key' => 'retention_days',     'type' => 'int'],
+            'ai_assistant_enabled'           => ['key' => 'enabled',            'type' => 'bool'],
         ];
 
-        foreach ($option_map as $option_key => $post_key) {
-            $value = $this->input->post($post_key);
-            if ($value !== null) {
-                update_option($option_key, sanitize_option_value($option_key, $value));
+        foreach ($general_map as $option_key => $spec) {
+            $value = $this->input->post($spec['key']);
+            if ($value === null) continue;
+
+            if (!empty($spec['allowed']) && !in_array($value, $spec['allowed'], true)) continue;
+
+            $sanitized = match($spec['type']) {
+                'float'  => (string)(float)$value,
+                'int'    => (string)(int)$value,
+                'bool'   => $value ? '1' : '0',
+                default  => htmlspecialchars(strip_tags((string)$value), ENT_QUOTES),
+            };
+
+            update_option($option_key, $sanitized);
+        }
+
+        // ── Per-provider API keys (write-only, never read back to frontend) ───
+        foreach ($valid_providers as $provider) {
+            $api_key = $this->input->post("{$provider}_api_key");
+            if (!empty($api_key) && !str_starts_with($api_key, '***')) {
+                update_option("ai_assistant_{$provider}_api_key", trim($api_key));
+            }
+
+            $model = $this->input->post("{$provider}_model");
+            if (!empty($model)) {
+                update_option("ai_assistant_{$provider}_model", htmlspecialchars(strip_tags(trim($model)), ENT_QUOTES));
             }
         }
 
-        // Allowed modules (array)
-        $allowed_modules = $this->input->post('allowed_modules') ?? [];
-        if (is_array($allowed_modules)) {
-            update_option('ai_assistant_allowed_modules', json_encode(array_map('sanitize_text_field', $allowed_modules)));
+        // ── Ollama-specific base URL ───────────────────────────────────────────
+        $ollama_url = $this->input->post('ollama_base_url');
+        if (!empty($ollama_url)) {
+            $safe_url = filter_var(trim($ollama_url), FILTER_SANITIZE_URL);
+            if ($safe_url) {
+                update_option('ai_assistant_ollama_base_url', $safe_url);
+            }
         }
 
-        // Tool permissions per role
+        // ── Allowed modules ───────────────────────────────────────────────────
+        $allowed_modules = $this->input->post('allowed_modules') ?? [];
+        if (is_array($allowed_modules)) {
+            $valid_modules = ['leads','clients','invoices','estimates','proposals','tasks','projects','tickets','contracts','expenses','payments'];
+            $safe_modules  = array_values(array_intersect($allowed_modules, $valid_modules));
+            update_option('ai_assistant_allowed_modules', json_encode($safe_modules));
+        }
+
+        // ── Tool permissions per role ──────────────────────────────────────────
         $tool_permissions = $this->input->post('tool_permissions');
         if (!empty($tool_permissions) && is_array($tool_permissions)) {
-            $safe_perms = [];
-            $allowed_roles  = ['admin', 'manager', 'staff', 'viewer'];
-            $allowed_perms  = ['read', 'write', 'delete', 'report'];
+            $safe_perms    = [];
+            $valid_roles   = ['admin', 'manager', 'staff', 'viewer'];
+            $valid_perms   = ['read', 'write', 'delete', 'report'];
 
             foreach ($tool_permissions as $role => $perms) {
-                if (!in_array($role, $allowed_roles, true)) continue;
+                if (!in_array($role, $valid_roles, true)) continue;
                 $safe_perms[$role] = array_values(
-                    array_filter($perms, fn($p) => in_array($p, $allowed_perms, true))
+                    array_filter((array)$perms, fn($p) => in_array($p, $valid_perms, true))
                 );
             }
 
             update_option('ai_assistant_tool_permissions', json_encode($safe_perms));
-        }
-
-        // Bust settings cache
-        if (function_exists('clear_options_cache')) {
-            clear_options_cache();
         }
 
         $this->output
@@ -134,7 +162,7 @@ class Admin extends AdminController
 
     /**
      * POST /admin/ai_assistant/test_connection
-     * Test Gemini API connectivity
+     * Test the configured AI provider connectivity
      */
     public function test_connection()
     {
@@ -142,12 +170,15 @@ class Admin extends AdminController
             show_404();
         }
 
-        if (!class_exists('Gemini_client')) {
-            require_once module_dir_path(AI_ASSISTANT_MODULE_NAME, 'libraries/Gemini_client.php');
-        }
+        $provider_slug = trim($this->input->post('provider') ?? '');
 
-        $gemini = new Gemini_client();
-        $result = $gemini->test_connection();
+        require_once module_dir_path(AI_ASSISTANT_MODULE_NAME, 'libraries/AIProviders/ProviderFactory.php');
+
+        $provider = empty($provider_slug)
+            ? ProviderFactory::create()
+            : ProviderFactory::create_for_test($provider_slug);
+
+        $result = $provider->test_connection();
 
         $this->output
             ->set_content_type('application/json')
@@ -212,18 +243,6 @@ class Admin extends AdminController
             ]));
     }
 
-    // ── Internal Helpers ──────────────────────────────────────────────────────
-
-    private function get_available_models(): array
-    {
-        return [
-            'gemini-2.5-pro'          => 'Gemini 2.5 Pro (Most capable)',
-            'gemini-2.5-flash'        => 'Gemini 2.5 Flash (Fast & efficient)',
-            'gemini-2.0-flash-exp'    => 'Gemini 2.0 Flash Experimental',
-            'gemini-1.5-pro'          => 'Gemini 1.5 Pro',
-            'gemini-1.5-flash'        => 'Gemini 1.5 Flash',
-        ];
-    }
 }
 
 /**
