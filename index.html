@@ -610,6 +610,130 @@
     /* ── Animations ── */
     @keyframes fadeUp { from{opacity:0;transform:translateY(24px);} to{opacity:1;transform:translateY(0);} }
 
+    /* ══════════════════════════════════════════
+       SKY TRANSITION OVERLAY
+    ════════════════════════════════════════════ */
+    #skyOverlay {
+      position: fixed; inset: 0; z-index: 9999;
+      display: none; flex-direction: column; overflow: hidden;
+      pointer-events: none;
+    }
+    #skyOverlay.active { display: flex; }
+
+    /* Sky gradient – changes class drives bg transition */
+    #skyGradient {
+      position: absolute; inset: 0;
+      transition: background 1.4s ease;
+    }
+    #skyGradient.phase-day {
+      background: linear-gradient(180deg,#87CEEB 0%,#B0D9F0 35%,#E8D8C8 70%,#8BAA78 100%);
+    }
+    #skyGradient.phase-sunset {
+      background: linear-gradient(180deg,#FF6B35 0%,#F7935C 22%,#FFBE6A 44%,#D4608A 65%,#5A2080 85%,#1A0830 100%);
+    }
+    #skyGradient.phase-night {
+      background: linear-gradient(180deg,#060318 0%,#0D0828 30%,#1A0C38 60%,#100820 100%);
+    }
+    #skyGradient.phase-sunrise {
+      background: linear-gradient(180deg,#FF8C42 0%,#FF6B6B 25%,#FFC3A0 50%,#87CEEB 80%,#A0D8EF 100%);
+    }
+
+    /* Sun */
+    #skySun {
+      position: absolute; left: 50%; transform: translateX(-50%);
+      width: 68px; height: 68px; border-radius: 50%;
+      background: radial-gradient(circle, #FFF176 20%, #FFD740 55%, #FF8F00 85%, transparent 100%);
+      box-shadow: 0 0 60px 28px rgba(255,200,60,0.55), 0 0 120px 60px rgba(255,160,30,0.2);
+      transition: bottom 1.4s cubic-bezier(0.4,0,0.2,1), opacity 0.6s;
+    }
+    /* Sun rays */
+    #skySun::before {
+      content: '';
+      position: absolute; inset: -20px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255,220,80,0.3) 30%, transparent 70%);
+      animation: sunPulse 2s ease-in-out infinite;
+    }
+    @keyframes sunPulse { 0%,100%{transform:scale(1);opacity:0.7;} 50%{transform:scale(1.15);opacity:1;} }
+
+    /* Moon */
+    #skyMoon {
+      position: absolute; left: 60%; transform: translateX(-50%);
+      width: 52px; height: 52px; border-radius: 50%;
+      background: #FDF6E3;
+      box-shadow: -12px -4px 0 4px #0D0828, 0 0 30px 12px rgba(240,220,150,0.3);
+      transition: bottom 1.4s cubic-bezier(0.4,0,0.2,1), opacity 0.6s;
+    }
+
+    /* Stars field */
+    #skyStarField {
+      position: absolute; inset: 0;
+      transition: opacity 0.8s;
+    }
+    .sky-star {
+      position: absolute;
+      background: #fff;
+      border-radius: 50%;
+      animation: starTwinkle var(--st-dur) ease-in-out infinite var(--st-del);
+    }
+    @keyframes starTwinkle {
+      0%,100%{opacity:var(--st-op); transform:scale(1);}
+      50%{opacity:calc(var(--st-op)*0.2); transform:scale(0.5);}
+    }
+
+    /* Clouds */
+    .sky-cloud {
+      position: absolute;
+      border-radius: 50px;
+      background: rgba(255,255,255, var(--cl-op, 0.82));
+      filter: blur(2px);
+      transition: opacity 0.6s;
+    }
+    .sky-cloud::before, .sky-cloud::after {
+      content:''; position:absolute; background:inherit; border-radius:50%;
+    }
+
+    /* Horizon line */
+    #skyHorizon {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      height: 55px;
+      background: linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.18) 100%);
+    }
+
+    /* Overlay fade in/out */
+    #skyOverlay { opacity: 1; transition: opacity 0.45s ease; }
+    #skyOverlay.fade-out { opacity: 0; }
+
+    /* WhatsApp share buttons */
+    .share-btn-group { display:flex; gap:12px; flex-wrap:wrap; justify-content:center; margin-bottom:0; }
+    .share-btn {
+      display: flex; align-items: center; justify-content: center; gap: 9px;
+      padding: 13px 22px; border-radius: 50px; border: none; cursor: pointer;
+      font-size: 0.82rem; font-family: 'DM Sans', sans-serif; font-weight: 600;
+      letter-spacing: 0.08em; transition: transform 0.15s, box-shadow 0.2s, filter 0.2s;
+      white-space: nowrap;
+    }
+    .share-btn:hover { transform: translateY(-2px); filter: brightness(1.07); }
+    .share-btn:active { transform: translateY(0); }
+    .share-btn svg { width: 20px; height: 20px; flex-shrink: 0; }
+
+    .share-btn-wa {
+      background: linear-gradient(135deg, #25D366, #128C7E);
+      color: #fff;
+      box-shadow: 0 5px 20px rgba(37,211,102,0.35);
+    }
+    .share-btn-copy {
+      background: linear-gradient(135deg, var(--rose), #A84858);
+      color: #fff;
+      box-shadow: 0 5px 20px rgba(200,96,106,0.3);
+    }
+    .share-btn-native {
+      background: var(--card-bg);
+      color: var(--text);
+      border: 1.5px solid var(--border);
+      box-shadow: var(--sh-sm);
+    }
+
     /* ── Responsive ── */
     @media (max-width:560px) {
       .card { padding:28px 20px 24px; }
@@ -620,6 +744,27 @@
   </style>
 </head>
 <body>
+
+<!-- Sky transition overlay -->
+<div id="skyOverlay">
+  <div id="skyGradient" class="phase-day"></div>
+  <div id="skySun"></div>
+  <div id="skyMoon"></div>
+  <div id="skyStarField"></div>
+  <div class="sky-cloud" style="width:130px;height:40px;top:16%;left:8%;--cl-op:0.84;">
+    <div style="position:absolute;width:75px;height:58px;background:inherit;border-radius:50%;top:-26px;left:20px;"></div>
+    <div style="position:absolute;width:48px;height:42px;background:inherit;border-radius:50%;top:-18px;left:65px;"></div>
+  </div>
+  <div class="sky-cloud" style="width:95px;height:30px;top:26%;left:62%;--cl-op:0.76;">
+    <div style="position:absolute;width:55px;height:42px;background:inherit;border-radius:50%;top:-19px;left:15px;"></div>
+    <div style="position:absolute;width:38px;height:32px;background:inherit;border-radius:50%;top:-14px;left:52px;"></div>
+  </div>
+  <div class="sky-cloud" style="width:150px;height:46px;top:52%;left:28%;--cl-op:0.66;">
+    <div style="position:absolute;width:85px;height:64px;background:inherit;border-radius:50%;top:-30px;left:24px;"></div>
+    <div style="position:absolute;width:58px;height:48px;background:inherit;border-radius:50%;top:-22px;left:78px;"></div>
+  </div>
+  <div id="skyHorizon"></div>
+</div>
 
 <!-- Dark / Light mode toggle -->
 <button class="theme-toggle" id="themeToggle" title="Toggle dark / light mode" onclick="toggleTheme()">🌙</button>
@@ -695,8 +840,8 @@
 <!-- Top navigation -->
 <nav class="top-nav">
   <div class="nav-pill">
-    <button class="nav-btn active" id="navCalc" onclick="switchTab('calc')">💍 Calculator</button>
-    <button class="nav-btn" id="navWish" onclick="switchTab('wish')">💌 Send a Wish</button>
+    <button class="nav-btn active" id="navCalc" onclick="switchTab('calc')">💍 Wedding Calculator</button>
+    <button class="nav-btn" id="navWish" onclick="switchTab('wish')">💌 Create your own wish</button>
   </div>
 </nav>
 
@@ -861,9 +1006,21 @@
       </div>
 
       <div class="wish-actions">
-        <button class="btn" onclick="shareWish()">
-          <span>🔗</span> Share this Wish
-        </button>
+        <div class="share-btn-group">
+          <button class="share-btn share-btn-wa" onclick="shareWhatsApp()">
+            <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+              <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+            </svg>
+            Share on WhatsApp
+          </button>
+          <button class="share-btn share-btn-copy" onclick="copyWishLink()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg">
+              <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+            </svg>
+            Copy Link
+          </button>
+        </div>
       </div>
     </div>
   </div>
@@ -871,12 +1028,11 @@
   <!-- Wish display page footer -->
   <div class="wish-display-footer">
     <div class="wish-nav-pills">
-      <button class="wish-nav-pill primary" onclick="switchTab('wish')">💌 Create a Wish</button>
-      <button class="wish-nav-pill" onclick="switchTab('calc')">💍 Calculator</button>
+      <button class="wish-nav-pill primary" onclick="switchTab('wish')">💌 Create your own wish</button>
+      <button class="wish-nav-pill" onclick="switchTab('calc')">💍 Wedding Calculator</button>
     </div>
     <div class="wish-brand">
-      Created with ♥ on <a href="#" onclick="switchTab('calc'); return false;">Wish Nest</a>
-      &nbsp;·&nbsp;
+      Designed with <span class="heart">❤️</span> by
       <a href="https://netwinglabs.com" target="_blank" rel="noopener">NetWing Labs</a>
     </div>
   </div>
@@ -907,11 +1063,93 @@
 
   function toggleTheme() {
     const isDark = html.getAttribute('data-theme') === 'dark';
-    document.body.classList.add('theme-transitioning');
-    setTimeout(() => document.body.classList.remove('theme-transitioning'), 500);
     const newDark = !isDark;
-    applyTheme(newDark);
-    try { localStorage.setItem('wishnest-theme', newDark ? 'dark' : 'light'); } catch(e) {}
+    animateSkyTransition(newDark, function () {
+      document.body.classList.add('theme-transitioning');
+      setTimeout(() => document.body.classList.remove('theme-transitioning'), 500);
+      applyTheme(newDark);
+      try { localStorage.setItem('wishnest-theme', newDark ? 'dark' : 'light'); } catch(e) {}
+    });
+  }
+
+  function generateStars(container) {
+    for (let i = 0; i < 65; i++) {
+      const star = document.createElement('div');
+      star.className = 'sky-star';
+      const sz = (1 + Math.random() * 2.5).toFixed(1);
+      const op = (0.4 + Math.random() * 0.6).toFixed(2);
+      const dur = (1.5 + Math.random() * 2.5).toFixed(1);
+      const del = -(Math.random() * 4).toFixed(1);
+      star.style.cssText = `width:${sz}px;height:${sz}px;left:${(Math.random()*95).toFixed(1)}%;top:${(Math.random()*70).toFixed(1)}%;--st-op:${op};--st-dur:${dur}s;--st-del:${del}s;`;
+      container.appendChild(star);
+    }
+  }
+
+  function animateSkyTransition(toNight, onComplete) {
+    const overlay    = document.getElementById('skyOverlay');
+    const gradient   = document.getElementById('skyGradient');
+    const sun        = document.getElementById('skySun');
+    const moon       = document.getElementById('skyMoon');
+    const starField  = document.getElementById('skyStarField');
+    const clouds     = document.querySelectorAll('.sky-cloud');
+
+    if (!starField.hasChildNodes()) generateStars(starField);
+
+    overlay.classList.remove('fade-out');
+    overlay.classList.add('active');
+
+    if (toNight) {
+      // Day → sunset → night
+      gradient.className = 'phase-day';
+      sun.style.cssText  = 'bottom:22%;opacity:1;';
+      moon.style.cssText = 'bottom:-90px;opacity:0;';
+      starField.style.opacity = '0';
+      clouds.forEach(c => { c.style.opacity = '1'; });
+
+      setTimeout(() => {
+        gradient.className = 'phase-sunset';
+        sun.style.bottom = '-90px';
+      }, 120);
+
+      setTimeout(() => {
+        gradient.className = 'phase-night';
+        moon.style.bottom  = '28%';
+        moon.style.opacity = '1';
+        starField.style.opacity = '1';
+        clouds.forEach(c => { c.style.opacity = '0'; });
+      }, 1500);
+
+      setTimeout(() => { overlay.classList.add('fade-out'); }, 3200);
+      setTimeout(() => { overlay.classList.remove('active','fade-out'); onComplete(); }, 3700);
+
+    } else {
+      // Night → sunrise → day
+      gradient.className = 'phase-night';
+      moon.style.cssText = 'bottom:28%;opacity:1;';
+      sun.style.cssText  = 'bottom:-90px;opacity:1;';
+      starField.style.opacity = '1';
+      clouds.forEach(c => { c.style.opacity = '0'; });
+
+      setTimeout(() => {
+        moon.style.bottom  = '-90px';
+        moon.style.opacity = '0';
+        starField.style.opacity = '0';
+      }, 120);
+
+      setTimeout(() => {
+        gradient.className = 'phase-sunrise';
+        clouds.forEach(c => { c.style.opacity = '0.6'; });
+      }, 800);
+
+      setTimeout(() => {
+        gradient.className = 'phase-day';
+        sun.style.bottom = '22%';
+        clouds.forEach(c => { c.style.opacity = '1'; });
+      }, 1700);
+
+      setTimeout(() => { overlay.classList.add('fade-out'); }, 3200);
+      setTimeout(() => { overlay.classList.remove('active','fade-out'); onComplete(); }, 3700);
+    }
   }
 
   // Restore saved theme
@@ -1223,17 +1461,22 @@
     document.getElementById('wdCounterText').textContent = counterText;
   }
 
-  function shareWish() {
-    const url = window.location.href;
-    if (navigator.share) {
-      navigator.share({ title: 'A Wedding Wish for You 💌', url }).catch(() => copyURL(url));
-    } else {
-      copyURL(url);
-    }
+  function shareWhatsApp() {
+    const url    = window.location.href;
+    const couple = document.getElementById('wdCouple').textContent;
+    const wisher = document.getElementById('wdWisher').textContent;
+    const text   = encodeURIComponent('A wedding wish from ' + wisher + ' for ' + couple + ' 💌\n\n' + url);
+    window.open('https://wa.me/?text=' + text, '_blank', 'noopener');
+  }
+
+  function copyWishLink() {
+    copyURL(window.location.href);
   }
 
   function copyURL(url) {
-    navigator.clipboard.writeText(url).then(() => showToast('✓ Link copied to clipboard!')).catch(() => showToast('Copy this URL to share: ' + url));
+    navigator.clipboard.writeText(url)
+      .then(() => showToast('✓ Link copied to clipboard!'))
+      .catch(() => showToast('Copy this URL to share: ' + url));
   }
 
   function showToast(msg) {
