@@ -61,6 +61,7 @@
       background: var(--bg-card);
       backdrop-filter: blur(4px);
       border: 1.5px solid var(--gold);
+      border-radius: 24px;
       padding: 0;
       position: relative;
       box-shadow: 0 8px 60px rgba(44,24,16,0.12), 0 2px 12px rgba(184,150,62,0.1);
@@ -71,6 +72,7 @@
       position: absolute;
       inset: 7px;
       border: 0.8px solid rgba(184,150,62,0.38);
+      border-radius: 18px;
       pointer-events: none;
       z-index: 0;
     }
@@ -147,7 +149,7 @@
     .toggle-group {
       display: flex;
       border: 1px solid rgba(184,150,62,0.4);
-      border-radius: 2px;
+      border-radius: 50px;
       overflow: hidden;
       margin-bottom: 30px;
     }
@@ -200,13 +202,13 @@
       font-weight: 500;
     }
 
-    input[type="datetime-local"],
+    input[type="date"],
     input[type="text"] {
       width: 100%;
       padding: 11px 14px;
       background: rgba(255,255,255,0.6);
       border: 1px solid rgba(184,150,62,0.35);
-      border-radius: 2px;
+      border-radius: 50px;
       color: var(--brown);
       font-size: 0.9rem;
       font-family: 'Inter', sans-serif;
@@ -216,10 +218,11 @@
       appearance: none;
       -webkit-appearance: none;
     }
-    input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+    input[type="date"]::-webkit-calendar-picker-indicator {
       cursor: pointer;
       opacity: 0.55;
       filter: sepia(1) saturate(1.5) hue-rotate(-10deg);
+      margin-right: 4px;
     }
     input::placeholder { color: var(--brown-lt); font-style: italic; }
     input:focus {
@@ -234,7 +237,7 @@
       padding: 11px 28px;
       background: var(--brown);
       border: 1px solid var(--brown);
-      border-radius: 2px;
+      border-radius: 50px;
       color: var(--bg);
       font-size: 0.72rem;
       font-family: 'Inter', sans-serif;
@@ -309,7 +312,7 @@
     .tile {
       background: rgba(255,255,255,0.55);
       border: 1px solid rgba(184,150,62,0.28);
-      border-radius: 2px;
+      border-radius: 16px;
       padding: 22px 8px 18px;
       text-align: center;
       transition: border-color 0.2s, background 0.2s, transform 0.2s;
@@ -599,8 +602,8 @@
       <!-- Inputs -->
       <div class="input-section">
         <div class="field">
-          <label for="weddingDate">Wedding Date &amp; Time</label>
-          <input type="datetime-local" id="weddingDate"/>
+          <label for="weddingDate">Wedding Date</label>
+          <input type="date" id="weddingDate"/>
         </div>
         <div class="field" style="max-width:230px;">
           <label for="coupleName">
@@ -744,14 +747,10 @@
   (function () {
     const d = new Date();
     d.setDate(d.getDate() + 1);
-    d.setHours(12, 0, 0, 0);
-    document.getElementById('weddingDate').value = toLocalISO(d);
-  })();
-
-  function toLocalISO(d) {
     const p = n => String(n).padStart(2, '0');
-    return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())}T${p(d.getHours())}:${p(d.getMinutes())}`;
-  }
+    document.getElementById('weddingDate').value =
+      `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())}`;
+  })();
 
   function calculate() {
     const val  = document.getElementById('weddingDate').value;
@@ -759,7 +758,8 @@
     const wrap = document.getElementById('resultsWrap');
     if (!val) { err.classList.add('visible'); return; }
     err.classList.remove('visible');
-    targetDate = new Date(val);
+    // Use midnight (12:00 AM) as default time
+    targetDate = new Date(val + 'T00:00:00');
     if (isNaN(targetDate)) { err.classList.add('visible'); return; }
     wrap.classList.remove('visible');
     void wrap.offsetWidth;
