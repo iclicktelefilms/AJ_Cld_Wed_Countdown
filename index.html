@@ -3,168 +3,170 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Wedding Date Calculator</title>
+  <title>HiThatDay – Indian Wedding Date Calculator</title>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Lato:wght@300;400;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Poppins:wght@300;400;600;700&display=swap');
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+    :root {
+      --crimson:   #8B0000;
+      --deep-red:  #6B0000;
+      --gold:      #D4A017;
+      --gold-light:#F0C040;
+      --saffron:   #FF6B00;
+      --maroon:    #800000;
+      --cream:     #FFF8E7;
+      --ivory:     #FFFDF5;
+    }
+
     body {
       min-height: 100vh;
-      background: linear-gradient(135deg, #1a0a2e 0%, #2d1b4e 30%, #4a1942 60%, #1a0a2e 100%);
-      font-family: 'Lato', sans-serif;
-      color: #fff;
+      background:
+        radial-gradient(ellipse at 20% 0%, rgba(212,160,23,0.18) 0%, transparent 55%),
+        radial-gradient(ellipse at 80% 100%, rgba(139,0,0,0.25) 0%, transparent 55%),
+        linear-gradient(160deg, #1a0000 0%, #3d0000 35%, #2a0a00 65%, #1a0000 100%);
+      font-family: 'Poppins', sans-serif;
+      color: var(--cream);
       overflow-x: hidden;
     }
 
-    /* Animated sparkles */
-    .sparkles {
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      z-index: 0;
-      overflow: hidden;
-    }
-    .sparkle {
+    /* ── Floating diyas / petals ── */
+    .particles { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
+    .particle {
       position: absolute;
-      width: 4px;
-      height: 4px;
-      border-radius: 50%;
-      background: #fff;
-      animation: twinkle var(--dur) ease-in-out infinite var(--delay);
+      font-size: var(--sz);
+      animation: drift var(--dur) ease-in-out infinite var(--delay);
       opacity: 0;
     }
-    @keyframes twinkle {
-      0%, 100% { opacity: 0; transform: scale(0.5); }
-      50% { opacity: 0.8; transform: scale(1.5); }
+    @keyframes drift {
+      0%   { opacity: 0; transform: translateY(0) rotate(0deg) scale(0.8); }
+      20%  { opacity: 0.75; }
+      80%  { opacity: 0.6; }
+      100% { opacity: 0; transform: translateY(-120px) rotate(30deg) scale(1.1); }
     }
 
+    /* ── Decorative border top ── */
+    .border-strip {
+      width: 100%;
+      height: 6px;
+      background: linear-gradient(90deg, var(--deep-red), var(--gold), var(--saffron), var(--gold), var(--deep-red));
+    }
+
+    /* ── Mandala corner SVGs ── */
+    .mandala-corner {
+      position: fixed;
+      width: 180px;
+      opacity: 0.08;
+      pointer-events: none;
+      z-index: 0;
+    }
+    .mandala-corner.tl { top: -20px; left: -20px; }
+    .mandala-corner.br { bottom: -20px; right: -20px; transform: rotate(180deg); }
+
+    /* ── Container ── */
     .container {
       position: relative;
       z-index: 1;
-      max-width: 860px;
+      max-width: 880px;
       margin: 0 auto;
-      padding: 40px 20px 60px;
+      padding: 36px 20px 60px;
     }
 
-    /* Header */
-    header {
-      text-align: center;
-      margin-bottom: 48px;
+    /* ── Header ── */
+    header { text-align: center; margin-bottom: 44px; }
+
+    .header-motif {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      margin-bottom: 6px;
     }
-    .rings {
-      font-size: 2.8rem;
-      margin-bottom: 12px;
-      display: inline-block;
-      animation: float 3s ease-in-out infinite;
+    .motif-line {
+      flex: 1;
+      max-width: 120px;
+      height: 1.5px;
+      background: linear-gradient(90deg, transparent, var(--gold));
     }
-    @keyframes float {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-8px); }
-    }
-    header h1 {
-      font-family: 'Playfair Display', serif;
-      font-size: clamp(2rem, 5vw, 3.2rem);
-      background: linear-gradient(135deg, #f9d9b0, #f7b7d2, #c9a0e8);
+    .motif-line.right { background: linear-gradient(90deg, var(--gold), transparent); }
+    .motif-emoji { font-size: 2.2rem; animation: float 3.5s ease-in-out infinite; }
+    @keyframes float { 0%,100%{transform:translateY(0);} 50%{transform:translateY(-9px);} }
+
+    .app-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2.8rem, 7vw, 4.4rem);
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--gold-light) 0%, var(--saffron) 40%, var(--gold) 70%, var(--gold-light) 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
-      line-height: 1.2;
-      margin-bottom: 10px;
+      letter-spacing: 0.04em;
+      line-height: 1.1;
+      text-shadow: none;
+      filter: drop-shadow(0 2px 12px rgba(212,160,23,0.35));
     }
-    header p {
-      color: rgba(255,255,255,0.6);
-      font-size: 1rem;
+
+    .app-tagline {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: 1.05rem;
+      color: rgba(240,192,64,0.7);
+      letter-spacing: 0.06em;
+      margin-top: 8px;
+    }
+
+    .sub-tagline {
+      font-size: 0.82rem;
+      color: rgba(255,248,231,0.45);
+      margin-top: 6px;
+      letter-spacing: 0.05em;
       font-weight: 300;
-      letter-spacing: 0.04em;
     }
 
-    /* Card */
+    /* ── Card ── */
     .card {
-      background: rgba(255,255,255,0.06);
-      border: 1px solid rgba(255,255,255,0.12);
-      backdrop-filter: blur(20px);
-      border-radius: 28px;
-      padding: 40px 36px;
-      box-shadow: 0 8px 60px rgba(0,0,0,0.4);
+      background: rgba(26,0,0,0.55);
+      border: 1.5px solid rgba(212,160,23,0.3);
+      backdrop-filter: blur(18px);
+      border-radius: 24px;
+      padding: 38px 34px;
+      box-shadow:
+        0 0 0 1px rgba(212,160,23,0.08),
+        0 12px 60px rgba(0,0,0,0.55),
+        inset 0 1px 0 rgba(212,160,23,0.15);
+      position: relative;
+      overflow: hidden;
+    }
+    /* Card inner glow */
+    .card::before {
+      content: '';
+      position: absolute;
+      top: -60px; left: 50%;
+      transform: translateX(-50%);
+      width: 300px; height: 120px;
+      background: radial-gradient(ellipse, rgba(212,160,23,0.12), transparent 70%);
+      pointer-events: none;
     }
 
-    /* Input section */
-    .input-section {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 16px;
-      align-items: flex-end;
-      margin-bottom: 36px;
+    /* Corner ornaments on card */
+    .card-corner {
+      position: absolute;
+      width: 44px; height: 44px;
+      opacity: 0.55;
+      font-size: 1.4rem;
+      line-height: 1;
     }
-    .field {
-      flex: 1;
-      min-width: 200px;
-    }
-    label {
-      display: block;
-      font-size: 0.78rem;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: rgba(255,255,255,0.55);
-      margin-bottom: 8px;
-      font-weight: 700;
-    }
-    input[type="datetime-local"],
-    input[type="text"] {
-      width: 100%;
-      padding: 14px 18px;
-      background: rgba(255,255,255,0.08);
-      border: 1.5px solid rgba(255,255,255,0.18);
-      border-radius: 14px;
-      color: #fff;
-      font-size: 1rem;
-      font-family: 'Lato', sans-serif;
-      outline: none;
-      transition: border-color 0.2s, background 0.2s;
-      appearance: none;
-      -webkit-appearance: none;
-    }
-    input[type="datetime-local"]::-webkit-calendar-picker-indicator {
-      filter: invert(1);
-      cursor: pointer;
-      opacity: 0.6;
-    }
-    input:focus {
-      border-color: #c9a0e8;
-      background: rgba(255,255,255,0.13);
-    }
-    .field-row {
-      display: flex;
-      gap: 16px;
-      flex: 2;
-      min-width: 260px;
-    }
-    .field-row .field { flex: 1; min-width: 120px; }
+    .card-corner.tl { top: 10px; left: 12px; }
+    .card-corner.tr { top: 10px; right: 12px; text-align: right; }
+    .card-corner.bl { bottom: 10px; left: 12px; }
+    .card-corner.br { bottom: 10px; right: 12px; text-align: right; }
 
-    button {
-      padding: 14px 32px;
-      background: linear-gradient(135deg, #b06ac4, #8a5cf7);
-      border: none;
-      border-radius: 14px;
-      color: #fff;
-      font-size: 1rem;
-      font-family: 'Lato', sans-serif;
-      font-weight: 700;
-      letter-spacing: 0.04em;
-      cursor: pointer;
-      transition: transform 0.15s, box-shadow 0.15s;
-      white-space: nowrap;
-      box-shadow: 0 4px 20px rgba(138,92,247,0.4);
-      align-self: flex-end;
-    }
-    button:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(138,92,247,0.55); }
-    button:active { transform: translateY(0); }
-
-    /* Toggle: past/future */
+    /* ── Toggle ── */
     .toggle-group {
       display: flex;
-      background: rgba(255,255,255,0.07);
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(212,160,23,0.2);
       border-radius: 12px;
       padding: 4px;
       gap: 4px;
@@ -172,70 +174,145 @@
     }
     .toggle-btn {
       flex: 1;
-      padding: 10px;
+      padding: 11px 8px;
       border-radius: 9px;
       border: none;
       background: transparent;
-      color: rgba(255,255,255,0.5);
-      font-size: 0.88rem;
-      font-family: 'Lato', sans-serif;
-      font-weight: 700;
+      color: rgba(240,192,64,0.5);
+      font-size: 0.87rem;
+      font-family: 'Poppins', sans-serif;
+      font-weight: 600;
       cursor: pointer;
-      transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+      transition: background 0.25s, color 0.25s, box-shadow 0.25s;
       letter-spacing: 0.03em;
     }
     .toggle-btn.active {
-      background: linear-gradient(135deg, #b06ac4, #8a5cf7);
-      color: #fff;
-      box-shadow: 0 2px 12px rgba(138,92,247,0.4);
+      background: linear-gradient(135deg, var(--crimson), #b22222);
+      color: var(--gold-light);
+      box-shadow: 0 2px 14px rgba(139,0,0,0.55);
     }
 
-    /* Results */
+    /* ── Inputs ── */
+    .input-section {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      align-items: flex-end;
+      margin-bottom: 32px;
+    }
+    .field { flex: 1; min-width: 200px; }
+
+    label {
+      display: block;
+      font-size: 0.72rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: rgba(212,160,23,0.7);
+      margin-bottom: 8px;
+      font-weight: 600;
+    }
+
+    input[type="datetime-local"],
+    input[type="text"] {
+      width: 100%;
+      padding: 13px 16px;
+      background: rgba(255,255,255,0.05);
+      border: 1.5px solid rgba(212,160,23,0.25);
+      border-radius: 12px;
+      color: var(--cream);
+      font-size: 0.97rem;
+      font-family: 'Poppins', sans-serif;
+      outline: none;
+      transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+      appearance: none;
+      -webkit-appearance: none;
+    }
+    input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+      filter: invert(1) sepia(1) saturate(3) hue-rotate(10deg);
+      cursor: pointer;
+      opacity: 0.7;
+    }
+    input::placeholder { color: rgba(255,248,231,0.25); }
+    input:focus {
+      border-color: var(--gold);
+      background: rgba(212,160,23,0.07);
+      box-shadow: 0 0 0 3px rgba(212,160,23,0.12);
+    }
+
+    .calc-btn {
+      padding: 13px 30px;
+      background: linear-gradient(135deg, var(--crimson) 0%, #b22222 50%, var(--saffron) 100%);
+      border: 1px solid rgba(212,160,23,0.35);
+      border-radius: 12px;
+      color: var(--gold-light);
+      font-size: 0.97rem;
+      font-family: 'Poppins', sans-serif;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      cursor: pointer;
+      transition: transform 0.15s, box-shadow 0.15s;
+      white-space: nowrap;
+      box-shadow: 0 4px 22px rgba(139,0,0,0.45);
+      align-self: flex-end;
+    }
+    .calc-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(139,0,0,0.6); }
+    .calc-btn:active { transform: translateY(0); }
+
+    /* ── Error ── */
+    .error { color: #ff8fa3; font-size: 0.86rem; margin-top: 8px; display: none; }
+    .error.visible { display: block; }
+
+    /* ── Result label ── */
     .result-label {
       text-align: center;
-      font-family: 'Playfair Display', serif;
+      font-family: 'Cormorant Garamond', serif;
       font-style: italic;
-      font-size: 1.05rem;
-      color: rgba(255,255,255,0.55);
-      margin-bottom: 28px;
-      min-height: 1.5em;
-      transition: opacity 0.3s;
+      font-size: 1.1rem;
+      color: rgba(240,192,64,0.6);
+      margin-bottom: 26px;
+      min-height: 1.6em;
     }
-    .result-label span { color: #f9d9b0; font-style: normal; font-weight: 700; }
+    .result-label span { color: var(--gold-light); font-style: normal; font-weight: 700; }
 
+    /* ── Tiles grid ── */
     .grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-      gap: 16px;
-      margin-bottom: 28px;
+      gap: 14px;
+      margin-bottom: 24px;
     }
+
     .tile {
-      background: rgba(255,255,255,0.07);
-      border: 1px solid rgba(255,255,255,0.1);
-      border-radius: 18px;
-      padding: 22px 12px 18px;
+      background: rgba(139,0,0,0.18);
+      border: 1px solid rgba(212,160,23,0.22);
+      border-radius: 16px;
+      padding: 22px 10px 18px;
       text-align: center;
-      transition: transform 0.3s, background 0.3s;
+      transition: transform 0.28s, background 0.28s, box-shadow 0.28s;
       position: relative;
       overflow: hidden;
     }
-    .tile::before {
+    .tile::after {
       content: '';
       position: absolute;
       inset: 0;
-      background: linear-gradient(135deg, rgba(176,106,196,0.18), rgba(138,92,247,0.08));
+      background: linear-gradient(160deg, rgba(212,160,23,0.1), transparent 60%);
       opacity: 0;
-      transition: opacity 0.3s;
+      transition: opacity 0.28s;
     }
-    .tile:hover::before { opacity: 1; }
-    .tile:hover { transform: translateY(-4px); }
+    .tile:hover::after { opacity: 1; }
+    .tile:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 30px rgba(139,0,0,0.35);
+      border-color: rgba(212,160,23,0.5);
+    }
 
-    .tile .icon { font-size: 1.6rem; margin-bottom: 8px; display: block; }
+    .tile .icon { font-size: 1.5rem; margin-bottom: 8px; display: block; }
     .tile .value {
-      font-family: 'Playfair Display', serif;
-      font-size: 2.2rem;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2.4rem;
       font-weight: 700;
-      background: linear-gradient(135deg, #f9d9b0, #c9a0e8);
+      background: linear-gradient(135deg, var(--gold-light), var(--saffron));
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
@@ -243,136 +320,175 @@
       margin-bottom: 6px;
     }
     .tile .unit {
-      font-size: 0.72rem;
-      letter-spacing: 0.12em;
+      font-size: 0.68rem;
+      letter-spacing: 0.14em;
       text-transform: uppercase;
-      color: rgba(255,255,255,0.45);
-      font-weight: 700;
+      color: rgba(212,160,23,0.55);
+      font-weight: 600;
     }
 
-    /* Live clock row */
-    .live-row {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 16px;
+    /* ── Divider ── */
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 22px 0;
+      color: rgba(212,160,23,0.4);
+      font-size: 0.68rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
     }
-    .live-row .tile .value {
-      font-size: 1.8rem;
+    .divider::before, .divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(212,160,23,0.3), transparent);
     }
+
+    /* ── Live badge ── */
     .live-badge {
       display: inline-block;
-      background: linear-gradient(135deg, #ff6b9d, #ff8c42);
-      border-radius: 6px;
-      font-size: 0.6rem;
-      padding: 2px 6px;
+      background: linear-gradient(135deg, var(--crimson), var(--saffron));
+      border-radius: 5px;
+      font-size: 0.58rem;
+      padding: 2px 7px;
       letter-spacing: 0.1em;
       font-weight: 700;
       text-transform: uppercase;
-      color: #fff;
+      color: var(--gold-light);
       vertical-align: middle;
       margin-left: 6px;
       animation: pulse 2s ease-in-out infinite;
     }
-    @keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:0.5;} }
+    @keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:0.45;} }
 
-    /* Divider */
-    .divider {
-      text-align: center;
-      color: rgba(255,255,255,0.2);
-      font-size: 0.7rem;
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
-      margin: 24px 0;
-      position: relative;
+    /* ── Live row ── */
+    .live-row {
+      display: grid;
+      grid-template-columns: repeat(3,1fr);
+      gap: 14px;
     }
-    .divider::before, .divider::after {
-      content: '';
-      position: absolute;
-      top: 50%;
-      width: 40%;
-      height: 1px;
-      background: rgba(255,255,255,0.1);
-    }
-    .divider::before { left: 0; }
-    .divider::after { right: 0; }
+    .live-row .tile .value { font-size: 1.9rem; }
 
-    /* hidden state */
+    /* ── Show/hide results ── */
     .results-wrap { display: none; }
-    .results-wrap.visible { display: block; animation: fadeUp 0.5s ease both; }
+    .results-wrap.visible { display: block; animation: fadeUp 0.45s ease both; }
     @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(16px); }
-      to { opacity: 1; transform: translateY(0); }
+      from { opacity:0; transform:translateY(18px); }
+      to   { opacity:1; transform:translateY(0); }
     }
 
-    /* Error */
-    .error {
-      color: #ff8fa3;
-      font-size: 0.88rem;
-      margin-top: 10px;
-      display: none;
-    }
-    .error.visible { display: block; }
-
-    /* Footer */
+    /* ── Footer ── */
     footer {
       text-align: center;
       margin-top: 40px;
-      color: rgba(255,255,255,0.25);
-      font-size: 0.8rem;
+      font-size: 0.82rem;
+      color: rgba(255,248,231,0.3);
+      line-height: 1.7;
     }
-    footer span { color: #f7b7d2; }
+    footer .heart { color: #e05; }
+    footer a {
+      color: var(--gold);
+      text-decoration: none;
+      font-weight: 600;
+      transition: color 0.2s;
+    }
+    footer a:hover { color: var(--gold-light); text-decoration: underline; }
 
-    @media (max-width: 520px) {
-      .card { padding: 28px 20px; }
-      .grid { grid-template-columns: repeat(2, 1fr); }
-      .live-row { grid-template-columns: repeat(3, 1fr); }
+    /* ── Responsive ── */
+    @media (max-width: 540px) {
+      .card { padding: 26px 18px; }
+      .grid { grid-template-columns: repeat(2,1fr); }
+      .live-row { grid-template-columns: repeat(3,1fr); }
+      .app-name { font-size: 2.6rem; }
     }
   </style>
 </head>
 <body>
 
-<!-- Sparkles background -->
-<div class="sparkles" id="sparkles"></div>
+<!-- Top gold border strip -->
+<div class="border-strip"></div>
+
+<!-- Mandala corners -->
+<svg class="mandala-corner tl" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <circle cx="100" cy="100" r="90" stroke="#D4A017" stroke-width="1.5"/>
+  <circle cx="100" cy="100" r="70" stroke="#D4A017" stroke-width="1"/>
+  <circle cx="100" cy="100" r="50" stroke="#D4A017" stroke-width="1"/>
+  <circle cx="100" cy="100" r="30" stroke="#D4A017" stroke-width="1"/>
+  <line x1="100" y1="10" x2="100" y2="190" stroke="#D4A017" stroke-width="0.8"/>
+  <line x1="10" y1="100" x2="190" y2="100" stroke="#D4A017" stroke-width="0.8"/>
+  <line x1="27" y1="27" x2="173" y2="173" stroke="#D4A017" stroke-width="0.8"/>
+  <line x1="173" y1="27" x2="27" y2="173" stroke="#D4A017" stroke-width="0.8"/>
+  <polygon points="100,20 108,95 100,105 92,95" fill="#D4A017" opacity="0.3"/>
+  <polygon points="100,180 108,105 100,95 92,105" fill="#D4A017" opacity="0.3"/>
+  <polygon points="20,100 95,108 105,100 95,92" fill="#D4A017" opacity="0.3"/>
+  <polygon points="180,100 105,108 95,100 105,92" fill="#D4A017" opacity="0.3"/>
+</svg>
+<svg class="mandala-corner br" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <circle cx="100" cy="100" r="90" stroke="#D4A017" stroke-width="1.5"/>
+  <circle cx="100" cy="100" r="70" stroke="#D4A017" stroke-width="1"/>
+  <circle cx="100" cy="100" r="50" stroke="#D4A017" stroke-width="1"/>
+  <circle cx="100" cy="100" r="30" stroke="#D4A017" stroke-width="1"/>
+  <line x1="100" y1="10" x2="100" y2="190" stroke="#D4A017" stroke-width="0.8"/>
+  <line x1="10" y1="100" x2="190" y2="100" stroke="#D4A017" stroke-width="0.8"/>
+  <line x1="27" y1="27" x2="173" y2="173" stroke="#D4A017" stroke-width="0.8"/>
+  <line x1="173" y1="27" x2="27" y2="173" stroke="#D4A017" stroke-width="0.8"/>
+</svg>
+
+<!-- Floating particles -->
+<div class="particles" id="particles"></div>
 
 <div class="container">
+
+  <!-- Header -->
   <header>
-    <div class="rings">💍</div>
-    <h1>Wedding Date Calculator</h1>
-    <p>Discover how long until — or since — your special day</p>
+    <div class="header-motif">
+      <div class="motif-line"></div>
+      <div class="motif-emoji">🪔</div>
+      <div class="motif-line right"></div>
+    </div>
+    <div class="app-name">HiThatDay</div>
+    <div class="app-tagline">Your Sacred Wedding Date, Beautifully Counted</div>
+    <div class="sub-tagline">Shubh Vivah · शुभ विवाह</div>
   </header>
 
+  <!-- Main card -->
   <div class="card">
+    <!-- Card corner ornaments -->
+    <div class="card-corner tl">🌸</div>
+    <div class="card-corner tr">🌸</div>
+    <div class="card-corner bl">✦</div>
+    <div class="card-corner br">✦</div>
 
     <!-- Mode toggle -->
     <div class="toggle-group">
-      <button class="toggle-btn active" data-mode="future" onclick="setMode('future',this)">Counting Down To</button>
-      <button class="toggle-btn" data-mode="past" onclick="setMode('past',this)">Celebrating Since</button>
+      <button class="toggle-btn active" onclick="setMode('future',this)">🕌 Counting Down To</button>
+      <button class="toggle-btn" onclick="setMode('past',this)">🪷 Celebrating Since</button>
     </div>
 
     <!-- Inputs -->
     <div class="input-section">
       <div class="field">
-        <label for="weddingDate">Wedding Date &amp; Time</label>
+        <label for="weddingDate">🗓 Wedding Date &amp; Time</label>
         <input type="datetime-local" id="weddingDate" />
       </div>
-      <div class="field" style="max-width:220px;">
-        <label for="coupleName">Couple's Names <span style="font-size:.75em;text-transform:none;font-weight:400">(optional)</span></label>
-        <input type="text" id="coupleName" placeholder="e.g. Ava &amp; James" />
+      <div class="field" style="max-width:230px;">
+        <label for="coupleName">🌹 Couple's Names <span style="font-size:.75em;text-transform:none;font-weight:400">(optional)</span></label>
+        <input type="text" id="coupleName" placeholder="e.g. Priya &amp; Arjun" />
       </div>
-      <button onclick="calculate()">Calculate ✨</button>
+      <button class="calc-btn" onclick="calculate()">Calculate ✨</button>
     </div>
 
-    <div class="error" id="errorMsg">Please choose a valid wedding date and time.</div>
+    <div class="error" id="errorMsg">⚠️ Please choose a valid wedding date and time.</div>
 
     <!-- Results -->
     <div class="results-wrap" id="resultsWrap">
 
       <div class="result-label" id="resultLabel"></div>
 
-      <!-- Static breakdown tiles -->
-      <div class="grid" id="staticGrid">
+      <div class="grid">
         <div class="tile">
-          <span class="icon">📅</span>
+          <span class="icon">🌅</span>
           <div class="value" id="valYears">0</div>
           <div class="unit">Years</div>
         </div>
@@ -382,33 +498,34 @@
           <div class="unit">Months</div>
         </div>
         <div class="tile">
-          <span class="icon">🗓️</span>
+          <span class="icon">📿</span>
           <div class="value" id="valWeeks">0</div>
           <div class="unit">Weeks</div>
         </div>
         <div class="tile">
-          <span class="icon">☀️</span>
+          <span class="icon">🪔</span>
           <div class="value" id="valDays">0</div>
           <div class="unit">Days</div>
         </div>
       </div>
 
-      <div class="divider">live countdown <span class="live-badge">live</span></div>
+      <div class="divider">
+        live countdown <span class="live-badge">live</span>
+      </div>
 
-      <!-- Live tiles -->
-      <div class="live-row" id="liveGrid">
+      <div class="live-row">
         <div class="tile">
           <span class="icon">⏰</span>
           <div class="value" id="valHours">00</div>
           <div class="unit">Hours</div>
         </div>
         <div class="tile">
-          <span class="icon">⏱️</span>
+          <span class="icon">⌛</span>
           <div class="value" id="valMinutes">00</div>
           <div class="unit">Minutes</div>
         </div>
         <div class="tile">
-          <span class="icon">⚡</span>
+          <span class="icon">✨</span>
           <div class="value" id="valSeconds">00</div>
           <div class="unit">Seconds</div>
         </div>
@@ -417,31 +534,36 @@
     </div>
   </div>
 
-  <footer>Made with <span>♥</span> for every love story</footer>
+  <!-- Footer -->
+  <footer>
+    <div>Designed with <span class="heart">❤️</span> by <a href="https://netwinglabs.com" target="_blank" rel="noopener">NetWing Labs</a></div>
+    <div style="margin-top:4px; font-size:0.72rem; opacity:0.5;">Every love story deserves to be celebrated</div>
+  </footer>
+
 </div>
 
 <script>
-  // --- Sparkles ---
+  /* ── Floating particles ── */
   (function () {
-    const container = document.getElementById('sparkles');
-    for (let i = 0; i < 80; i++) {
-      const s = document.createElement('div');
-      s.className = 'sparkle';
-      s.style.cssText = `
+    const emojis = ['🌸','🌺','🪷','🌼','✨','🎊','💛','🌹','🎉','🪔'];
+    const c = document.getElementById('particles');
+    for (let i = 0; i < 55; i++) {
+      const p = document.createElement('div');
+      p.className = 'particle';
+      p.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+      p.style.cssText = `
         left:${Math.random()*100}%;
-        top:${Math.random()*100}%;
-        --dur:${2 + Math.random()*4}s;
-        --delay:-${Math.random()*6}s;
-        width:${2+Math.random()*4}px;
-        height:${2+Math.random()*4}px;
-        background:hsl(${270+Math.random()*80},80%,80%);
+        top:${40 + Math.random()*60}%;
+        --sz:${0.8 + Math.random()*1.2}rem;
+        --dur:${5 + Math.random()*7}s;
+        --delay:-${Math.random()*10}s;
       `;
-      container.appendChild(s);
+      c.appendChild(p);
     }
   })();
 
-  // --- State ---
-  let mode = 'future'; // 'future' | 'past'
+  /* ── State ── */
+  let mode = 'future';
   let targetDate = null;
   let ticker = null;
 
@@ -452,7 +574,7 @@
     if (targetDate) calculate(false);
   }
 
-  // Set default datetime to tomorrow noon
+  /* Default: tomorrow noon */
   (function () {
     const d = new Date();
     d.setDate(d.getDate() + 1);
@@ -461,78 +583,56 @@
   })();
 
   function toLocalISO(d) {
-    const pad = n => String(n).padStart(2,'0');
-    return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+    const p = n => String(n).padStart(2,'0');
+    return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())}T${p(d.getHours())}:${p(d.getMinutes())}`;
   }
 
-  function calculate(shake = true) {
+  function calculate() {
     const input = document.getElementById('weddingDate').value;
     const error = document.getElementById('errorMsg');
-    const resultsWrap = document.getElementById('resultsWrap');
+    const wrap  = document.getElementById('resultsWrap');
 
-    if (!input) {
-      error.classList.add('visible');
-      return;
-    }
+    if (!input) { error.classList.add('visible'); return; }
     error.classList.remove('visible');
 
     targetDate = new Date(input);
-    if (isNaN(targetDate)) {
-      error.classList.add('visible');
-      return;
-    }
+    if (isNaN(targetDate)) { error.classList.add('visible'); return; }
 
-    // Show results
-    resultsWrap.classList.remove('visible');
-    void resultsWrap.offsetWidth; // reflow for re-animation
-    resultsWrap.classList.add('visible');
+    wrap.classList.remove('visible');
+    void wrap.offsetWidth;
+    wrap.classList.add('visible');
 
     updateLabel();
     updateStatic();
-
     if (ticker) clearInterval(ticker);
     ticker = setInterval(updateLive, 1000);
     updateLive();
   }
 
   function updateLabel() {
-    const name = document.getElementById('coupleName').value.trim();
-    const lbl = document.getElementById('resultLabel');
-    const dateStr = targetDate.toLocaleDateString('en-US', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
-    let text = '';
-    if (mode === 'future') {
-      text = name
-        ? `<span>${name}</span>'s wedding is on ${dateStr}`
-        : `Your wedding is on <span>${dateStr}</span>`;
-    } else {
-      text = name
-        ? `<span>${name}</span> have been married since ${dateStr}`
-        : `Married since <span>${dateStr}</span>`;
-    }
+    const name    = document.getElementById('coupleName').value.trim();
+    const lbl     = document.getElementById('resultLabel');
+    const dateStr = targetDate.toLocaleDateString('en-IN', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+    let text = mode === 'future'
+      ? (name ? `<span>${name}</span>'s Shubh Vivah is on ${dateStr}` : `Your Shubh Vivah is on <span>${dateStr}</span>`)
+      : (name ? `<span>${name}</span> have been united since ${dateStr}` : `United in love since <span>${dateStr}</span>`);
     lbl.innerHTML = text;
   }
 
   function diffComponents(from, to) {
-    // Years
-    let years = to.getFullYear() - from.getFullYear();
-    let months = to.getMonth() - from.getMonth();
-    let days = to.getDate() - from.getDate();
-    if (days < 0) { months--; const prev = new Date(to.getFullYear(), to.getMonth(), 0); days += prev.getDate(); }
-    if (months < 0) { years--; months += 12; }
+    let years  = to.getFullYear()  - from.getFullYear();
+    let months = to.getMonth()     - from.getMonth();
+    let days   = to.getDate()      - from.getDate();
+    if (days   < 0) { months--; days  += new Date(to.getFullYear(), to.getMonth(), 0).getDate(); }
+    if (months < 0) { years--;  months += 12; }
     return { years, months, days };
   }
 
   function updateStatic() {
-    const now = new Date();
-    const a = mode === 'future' ? now : targetDate;
-    const b = mode === 'future' ? targetDate : now;
-
-    const totalMs = b - a;
-    const absTotalMs = Math.abs(totalMs);
-
-    const totalDays = Math.floor(absTotalMs / 86400000);
-    const weeks = Math.floor(totalDays / 7);
-
+    const now  = new Date();
+    const absMs = Math.abs((mode === 'future' ? targetDate : now) - (mode === 'future' ? now : targetDate));
+    const totalDays = Math.floor(absMs / 86400000);
+    const weeks     = Math.floor(totalDays / 7);
     const comp = mode === 'future'
       ? diffComponents(now, targetDate)
       : diffComponents(targetDate, now);
@@ -544,22 +644,18 @@
   }
 
   function updateLive() {
-    const now = new Date();
-    const diff = mode === 'future' ? targetDate - now : now - targetDate;
-    const absDiff = Math.max(0, diff);
-
+    const now    = new Date();
+    const absDiff = Math.max(0, mode === 'future' ? targetDate - now : now - targetDate);
     const totalSecs = Math.floor(absDiff / 1000);
-    const secs = totalSecs % 60;
-    const totalMins = Math.floor(totalSecs / 60);
-    const mins = totalMins % 60;
-    const hours = Math.floor(totalMins / 60) % 24;
+    const secs   = totalSecs % 60;
+    const mins   = Math.floor(totalSecs / 60) % 60;
+    const hours  = Math.floor(totalSecs / 3600) % 24;
 
     document.getElementById('valHours').textContent   = String(hours).padStart(2,'0');
     document.getElementById('valMinutes').textContent = String(mins).padStart(2,'0');
     document.getElementById('valSeconds').textContent = String(secs).padStart(2,'0');
   }
 
-  // Allow Enter key
   document.addEventListener('keydown', e => { if (e.key === 'Enter') calculate(); });
 </script>
 </body>
