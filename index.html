@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Wedding Date Calculator</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Lato:wght@300;400;700&display=swap');
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      min-height: 100vh;
+      background: linear-gradient(135deg, #1a0a2e 0%, #2d1b4e 30%, #4a1942 60%, #1a0a2e 100%);
+      font-family: 'Lato', sans-serif;
+      color: #fff;
+      overflow-x: hidden;
+    }
+
+    /* Animated sparkles */
+    .sparkles {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+    .sparkle {
+      position: absolute;
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: #fff;
+      animation: twinkle var(--dur) ease-in-out infinite var(--delay);
+      opacity: 0;
+    }
+    @keyframes twinkle {
+      0%, 100% { opacity: 0; transform: scale(0.5); }
+      50% { opacity: 0.8; transform: scale(1.5); }
+    }
+
+    .container {
+      position: relative;
+      z-index: 1;
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 40px 20px 60px;
+    }
+
+    /* Header */
+    header {
+      text-align: center;
+      margin-bottom: 48px;
+    }
+    .rings {
+      font-size: 2.8rem;
+      margin-bottom: 12px;
+      display: inline-block;
+      animation: float 3s ease-in-out infinite;
+    }
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+    header h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2rem, 5vw, 3.2rem);
+      background: linear-gradient(135deg, #f9d9b0, #f7b7d2, #c9a0e8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      line-height: 1.2;
+      margin-bottom: 10px;
+    }
+    header p {
+      color: rgba(255,255,255,0.6);
+      font-size: 1rem;
+      font-weight: 300;
+      letter-spacing: 0.04em;
+    }
+
+    /* Card */
+    .card {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.12);
+      backdrop-filter: blur(20px);
+      border-radius: 28px;
+      padding: 40px 36px;
+      box-shadow: 0 8px 60px rgba(0,0,0,0.4);
+    }
+
+    /* Input section */
+    .input-section {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      align-items: flex-end;
+      margin-bottom: 36px;
+    }
+    .field {
+      flex: 1;
+      min-width: 200px;
+    }
+    label {
+      display: block;
+      font-size: 0.78rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.55);
+      margin-bottom: 8px;
+      font-weight: 700;
+    }
+    input[type="datetime-local"],
+    input[type="text"] {
+      width: 100%;
+      padding: 14px 18px;
+      background: rgba(255,255,255,0.08);
+      border: 1.5px solid rgba(255,255,255,0.18);
+      border-radius: 14px;
+      color: #fff;
+      font-size: 1rem;
+      font-family: 'Lato', sans-serif;
+      outline: none;
+      transition: border-color 0.2s, background 0.2s;
+      appearance: none;
+      -webkit-appearance: none;
+    }
+    input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+      filter: invert(1);
+      cursor: pointer;
+      opacity: 0.6;
+    }
+    input:focus {
+      border-color: #c9a0e8;
+      background: rgba(255,255,255,0.13);
+    }
+    .field-row {
+      display: flex;
+      gap: 16px;
+      flex: 2;
+      min-width: 260px;
+    }
+    .field-row .field { flex: 1; min-width: 120px; }
+
+    button {
+      padding: 14px 32px;
+      background: linear-gradient(135deg, #b06ac4, #8a5cf7);
+      border: none;
+      border-radius: 14px;
+      color: #fff;
+      font-size: 1rem;
+      font-family: 'Lato', sans-serif;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      cursor: pointer;
+      transition: transform 0.15s, box-shadow 0.15s;
+      white-space: nowrap;
+      box-shadow: 0 4px 20px rgba(138,92,247,0.4);
+      align-self: flex-end;
+    }
+    button:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(138,92,247,0.55); }
+    button:active { transform: translateY(0); }
+
+    /* Toggle: past/future */
+    .toggle-group {
+      display: flex;
+      background: rgba(255,255,255,0.07);
+      border-radius: 12px;
+      padding: 4px;
+      gap: 4px;
+      margin-bottom: 28px;
+    }
+    .toggle-btn {
+      flex: 1;
+      padding: 10px;
+      border-radius: 9px;
+      border: none;
+      background: transparent;
+      color: rgba(255,255,255,0.5);
+      font-size: 0.88rem;
+      font-family: 'Lato', sans-serif;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+      letter-spacing: 0.03em;
+    }
+    .toggle-btn.active {
+      background: linear-gradient(135deg, #b06ac4, #8a5cf7);
+      color: #fff;
+      box-shadow: 0 2px 12px rgba(138,92,247,0.4);
+    }
+
+    /* Results */
+    .result-label {
+      text-align: center;
+      font-family: 'Playfair Display', serif;
+      font-style: italic;
+      font-size: 1.05rem;
+      color: rgba(255,255,255,0.55);
+      margin-bottom: 28px;
+      min-height: 1.5em;
+      transition: opacity 0.3s;
+    }
+    .result-label span { color: #f9d9b0; font-style: normal; font-weight: 700; }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+    .tile {
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 18px;
+      padding: 22px 12px 18px;
+      text-align: center;
+      transition: transform 0.3s, background 0.3s;
+      position: relative;
+      overflow: hidden;
+    }
+    .tile::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(176,106,196,0.18), rgba(138,92,247,0.08));
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .tile:hover::before { opacity: 1; }
+    .tile:hover { transform: translateY(-4px); }
+
+    .tile .icon { font-size: 1.6rem; margin-bottom: 8px; display: block; }
+    .tile .value {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.2rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #f9d9b0, #c9a0e8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      line-height: 1;
+      margin-bottom: 6px;
+    }
+    .tile .unit {
+      font-size: 0.72rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.45);
+      font-weight: 700;
+    }
+
+    /* Live clock row */
+    .live-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+    .live-row .tile .value {
+      font-size: 1.8rem;
+    }
+    .live-badge {
+      display: inline-block;
+      background: linear-gradient(135deg, #ff6b9d, #ff8c42);
+      border-radius: 6px;
+      font-size: 0.6rem;
+      padding: 2px 6px;
+      letter-spacing: 0.1em;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: #fff;
+      vertical-align: middle;
+      margin-left: 6px;
+      animation: pulse 2s ease-in-out infinite;
+    }
+    @keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:0.5;} }
+
+    /* Divider */
+    .divider {
+      text-align: center;
+      color: rgba(255,255,255,0.2);
+      font-size: 0.7rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      margin: 24px 0;
+      position: relative;
+    }
+    .divider::before, .divider::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      width: 40%;
+      height: 1px;
+      background: rgba(255,255,255,0.1);
+    }
+    .divider::before { left: 0; }
+    .divider::after { right: 0; }
+
+    /* hidden state */
+    .results-wrap { display: none; }
+    .results-wrap.visible { display: block; animation: fadeUp 0.5s ease both; }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Error */
+    .error {
+      color: #ff8fa3;
+      font-size: 0.88rem;
+      margin-top: 10px;
+      display: none;
+    }
+    .error.visible { display: block; }
+
+    /* Footer */
+    footer {
+      text-align: center;
+      margin-top: 40px;
+      color: rgba(255,255,255,0.25);
+      font-size: 0.8rem;
+    }
+    footer span { color: #f7b7d2; }
+
+    @media (max-width: 520px) {
+      .card { padding: 28px 20px; }
+      .grid { grid-template-columns: repeat(2, 1fr); }
+      .live-row { grid-template-columns: repeat(3, 1fr); }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Sparkles background -->
+<div class="sparkles" id="sparkles"></div>
+
+<div class="container">
+  <header>
+    <div class="rings">💍</div>
+    <h1>Wedding Date Calculator</h1>
+    <p>Discover how long until — or since — your special day</p>
+  </header>
+
+  <div class="card">
+
+    <!-- Mode toggle -->
+    <div class="toggle-group">
+      <button class="toggle-btn active" data-mode="future" onclick="setMode('future',this)">Counting Down To</button>
+      <button class="toggle-btn" data-mode="past" onclick="setMode('past',this)">Celebrating Since</button>
+    </div>
+
+    <!-- Inputs -->
+    <div class="input-section">
+      <div class="field">
+        <label for="weddingDate">Wedding Date &amp; Time</label>
+        <input type="datetime-local" id="weddingDate" />
+      </div>
+      <div class="field" style="max-width:220px;">
+        <label for="coupleName">Couple's Names <span style="font-size:.75em;text-transform:none;font-weight:400">(optional)</span></label>
+        <input type="text" id="coupleName" placeholder="e.g. Ava &amp; James" />
+      </div>
+      <button onclick="calculate()">Calculate ✨</button>
+    </div>
+
+    <div class="error" id="errorMsg">Please choose a valid wedding date and time.</div>
+
+    <!-- Results -->
+    <div class="results-wrap" id="resultsWrap">
+
+      <div class="result-label" id="resultLabel"></div>
+
+      <!-- Static breakdown tiles -->
+      <div class="grid" id="staticGrid">
+        <div class="tile">
+          <span class="icon">📅</span>
+          <div class="value" id="valYears">0</div>
+          <div class="unit">Years</div>
+        </div>
+        <div class="tile">
+          <span class="icon">🌙</span>
+          <div class="value" id="valMonths">0</div>
+          <div class="unit">Months</div>
+        </div>
+        <div class="tile">
+          <span class="icon">🗓️</span>
+          <div class="value" id="valWeeks">0</div>
+          <div class="unit">Weeks</div>
+        </div>
+        <div class="tile">
+          <span class="icon">☀️</span>
+          <div class="value" id="valDays">0</div>
+          <div class="unit">Days</div>
+        </div>
+      </div>
+
+      <div class="divider">live countdown <span class="live-badge">live</span></div>
+
+      <!-- Live tiles -->
+      <div class="live-row" id="liveGrid">
+        <div class="tile">
+          <span class="icon">⏰</span>
+          <div class="value" id="valHours">00</div>
+          <div class="unit">Hours</div>
+        </div>
+        <div class="tile">
+          <span class="icon">⏱️</span>
+          <div class="value" id="valMinutes">00</div>
+          <div class="unit">Minutes</div>
+        </div>
+        <div class="tile">
+          <span class="icon">⚡</span>
+          <div class="value" id="valSeconds">00</div>
+          <div class="unit">Seconds</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <footer>Made with <span>♥</span> for every love story</footer>
+</div>
+
+<script>
+  // --- Sparkles ---
+  (function () {
+    const container = document.getElementById('sparkles');
+    for (let i = 0; i < 80; i++) {
+      const s = document.createElement('div');
+      s.className = 'sparkle';
+      s.style.cssText = `
+        left:${Math.random()*100}%;
+        top:${Math.random()*100}%;
+        --dur:${2 + Math.random()*4}s;
+        --delay:-${Math.random()*6}s;
+        width:${2+Math.random()*4}px;
+        height:${2+Math.random()*4}px;
+        background:hsl(${270+Math.random()*80},80%,80%);
+      `;
+      container.appendChild(s);
+    }
+  })();
+
+  // --- State ---
+  let mode = 'future'; // 'future' | 'past'
+  let targetDate = null;
+  let ticker = null;
+
+  function setMode(m, btn) {
+    mode = m;
+    document.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    if (targetDate) calculate(false);
+  }
+
+  // Set default datetime to tomorrow noon
+  (function () {
+    const d = new Date();
+    d.setDate(d.getDate() + 1);
+    d.setHours(12, 0, 0, 0);
+    document.getElementById('weddingDate').value = toLocalISO(d);
+  })();
+
+  function toLocalISO(d) {
+    const pad = n => String(n).padStart(2,'0');
+    return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+  }
+
+  function calculate(shake = true) {
+    const input = document.getElementById('weddingDate').value;
+    const error = document.getElementById('errorMsg');
+    const resultsWrap = document.getElementById('resultsWrap');
+
+    if (!input) {
+      error.classList.add('visible');
+      return;
+    }
+    error.classList.remove('visible');
+
+    targetDate = new Date(input);
+    if (isNaN(targetDate)) {
+      error.classList.add('visible');
+      return;
+    }
+
+    // Show results
+    resultsWrap.classList.remove('visible');
+    void resultsWrap.offsetWidth; // reflow for re-animation
+    resultsWrap.classList.add('visible');
+
+    updateLabel();
+    updateStatic();
+
+    if (ticker) clearInterval(ticker);
+    ticker = setInterval(updateLive, 1000);
+    updateLive();
+  }
+
+  function updateLabel() {
+    const name = document.getElementById('coupleName').value.trim();
+    const lbl = document.getElementById('resultLabel');
+    const dateStr = targetDate.toLocaleDateString('en-US', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+    let text = '';
+    if (mode === 'future') {
+      text = name
+        ? `<span>${name}</span>'s wedding is on ${dateStr}`
+        : `Your wedding is on <span>${dateStr}</span>`;
+    } else {
+      text = name
+        ? `<span>${name}</span> have been married since ${dateStr}`
+        : `Married since <span>${dateStr}</span>`;
+    }
+    lbl.innerHTML = text;
+  }
+
+  function diffComponents(from, to) {
+    // Years
+    let years = to.getFullYear() - from.getFullYear();
+    let months = to.getMonth() - from.getMonth();
+    let days = to.getDate() - from.getDate();
+    if (days < 0) { months--; const prev = new Date(to.getFullYear(), to.getMonth(), 0); days += prev.getDate(); }
+    if (months < 0) { years--; months += 12; }
+    return { years, months, days };
+  }
+
+  function updateStatic() {
+    const now = new Date();
+    const a = mode === 'future' ? now : targetDate;
+    const b = mode === 'future' ? targetDate : now;
+
+    const totalMs = b - a;
+    const absTotalMs = Math.abs(totalMs);
+
+    const totalDays = Math.floor(absTotalMs / 86400000);
+    const weeks = Math.floor(totalDays / 7);
+
+    const comp = mode === 'future'
+      ? diffComponents(now, targetDate)
+      : diffComponents(targetDate, now);
+
+    document.getElementById('valYears').textContent  = comp.years;
+    document.getElementById('valMonths').textContent = comp.months;
+    document.getElementById('valWeeks').textContent  = weeks;
+    document.getElementById('valDays').textContent   = totalDays;
+  }
+
+  function updateLive() {
+    const now = new Date();
+    const diff = mode === 'future' ? targetDate - now : now - targetDate;
+    const absDiff = Math.max(0, diff);
+
+    const totalSecs = Math.floor(absDiff / 1000);
+    const secs = totalSecs % 60;
+    const totalMins = Math.floor(totalSecs / 60);
+    const mins = totalMins % 60;
+    const hours = Math.floor(totalMins / 60) % 24;
+
+    document.getElementById('valHours').textContent   = String(hours).padStart(2,'0');
+    document.getElementById('valMinutes').textContent = String(mins).padStart(2,'0');
+    document.getElementById('valSeconds').textContent = String(secs).padStart(2,'0');
+  }
+
+  // Allow Enter key
+  document.addEventListener('keydown', e => { if (e.key === 'Enter') calculate(); });
+</script>
+</body>
+</html>
