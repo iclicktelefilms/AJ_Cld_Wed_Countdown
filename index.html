@@ -3,562 +3,639 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>HiThatDay – Indian Wedding Date Calculator</title>
+  <title>HiThatDay – Royal Wedding Calculator</title>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Poppins:wght@300;400;600;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Inter:wght@300;400;500;600&display=swap');
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --crimson:   #8B0000;
-      --deep-red:  #6B0000;
-      --gold:      #D4A017;
-      --gold-light:#F0C040;
-      --saffron:   #FF6B00;
-      --maroon:    #800000;
-      --cream:     #FFF8E7;
-      --ivory:     #FFFDF5;
+      --bg:        #080810;
+      --surface:   #0e0e1a;
+      --gold:      #C9973A;
+      --gold-lt:   #E8C06A;
+      --gold-dim:  rgba(201,151,58,0.18);
+      --ivory:     #F5EDD8;
+      --ivory-dim: rgba(245,237,216,0.55);
+      --muted:     rgba(245,237,216,0.28);
+      --border:    rgba(201,151,58,0.22);
+      --border-hi: rgba(201,151,58,0.55);
     }
+
+    html { scroll-behavior: smooth; }
 
     body {
       min-height: 100vh;
-      background:
-        radial-gradient(ellipse at 20% 0%, rgba(212,160,23,0.18) 0%, transparent 55%),
-        radial-gradient(ellipse at 80% 100%, rgba(139,0,0,0.25) 0%, transparent 55%),
-        linear-gradient(160deg, #1a0000 0%, #3d0000 35%, #2a0a00 65%, #1a0000 100%);
-      font-family: 'Poppins', sans-serif;
-      color: var(--cream);
+      background-color: var(--bg);
+      background-image:
+        radial-gradient(ellipse 80% 50% at 50% -10%, rgba(201,151,58,0.09) 0%, transparent 100%),
+        radial-gradient(ellipse 60% 40% at 15% 100%, rgba(201,151,58,0.05) 0%, transparent 100%);
+      font-family: 'Inter', sans-serif;
+      color: var(--ivory);
       overflow-x: hidden;
     }
 
-    /* ── Floating diyas / petals ── */
-    .particles { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
-    .particle {
-      position: absolute;
-      font-size: var(--sz);
-      animation: drift var(--dur) ease-in-out infinite var(--delay);
-      opacity: 0;
-    }
-    @keyframes drift {
-      0%   { opacity: 0; transform: translateY(0) rotate(0deg) scale(0.8); }
-      20%  { opacity: 0.75; }
-      80%  { opacity: 0.6; }
-      100% { opacity: 0; transform: translateY(-120px) rotate(30deg) scale(1.1); }
-    }
-
-    /* ── Decorative border top ── */
-    .border-strip {
-      width: 100%;
-      height: 6px;
-      background: linear-gradient(90deg, var(--deep-red), var(--gold), var(--saffron), var(--gold), var(--deep-red));
-    }
-
-    /* ── Mandala corner SVGs ── */
-    .mandala-corner {
+    /* ── Subtle noise texture overlay ── */
+    body::before {
+      content: '';
       position: fixed;
-      width: 180px;
-      opacity: 0.08;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
       pointer-events: none;
       z-index: 0;
+      opacity: 0.4;
     }
-    .mandala-corner.tl { top: -20px; left: -20px; }
-    .mandala-corner.br { bottom: -20px; right: -20px; transform: rotate(180deg); }
 
-    /* ── Container ── */
-    .container {
+    /* ── Gold dust particles ── */
+    .dust { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
+    .mote {
+      position: absolute;
+      border-radius: 50%;
+      background: var(--gold);
+      animation: rise var(--dur) ease-in infinite var(--del);
+      opacity: 0;
+    }
+    @keyframes rise {
+      0%   { opacity: 0; transform: translateY(0) scale(1); }
+      15%  { opacity: 0.6; }
+      85%  { opacity: 0.2; }
+      100% { opacity: 0; transform: translateY(-90px) scale(0.4); }
+    }
+
+    /* ── Layout ── */
+    .page {
       position: relative;
       z-index: 1;
-      max-width: 880px;
+      max-width: 820px;
       margin: 0 auto;
-      padding: 36px 20px 60px;
+      padding: 56px 24px 72px;
+    }
+
+    /* ── Top rule ── */
+    .top-rule {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      margin-bottom: 52px;
+    }
+    .rule-line { flex: 1; height: 1px; background: linear-gradient(90deg, transparent, var(--gold), transparent); }
+    .rule-center {
+      padding: 0 22px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+    }
+    .rule-diamond {
+      width: 7px; height: 7px;
+      background: var(--gold);
+      transform: rotate(45deg);
+    }
+    .rule-dots {
+      display: flex; gap: 5px;
+    }
+    .rule-dots span {
+      width: 3px; height: 3px;
+      border-radius: 50%;
+      background: var(--gold-dim);
+      border: 1px solid var(--gold);
     }
 
     /* ── Header ── */
-    header { text-align: center; margin-bottom: 44px; }
+    header { text-align: center; margin-bottom: 52px; }
 
-    .header-motif {
+    .crown {
+      font-size: 2rem;
+      display: inline-block;
+      margin-bottom: 16px;
+      filter: drop-shadow(0 0 16px rgba(201,151,58,0.5));
+      animation: glow 3s ease-in-out infinite;
+    }
+    @keyframes glow {
+      0%,100% { filter: drop-shadow(0 0 14px rgba(201,151,58,0.4)); }
+      50%      { filter: drop-shadow(0 0 28px rgba(201,151,58,0.75)); }
+    }
+
+    .app-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 300;
+      font-size: clamp(3rem, 8vw, 5rem);
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      background: linear-gradient(180deg, var(--gold-lt) 0%, var(--gold) 55%, #9a6e1e 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      line-height: 1;
+      margin-bottom: 14px;
+    }
+
+    .tagline-wrap {
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 14px;
-      margin-bottom: 6px;
+      margin-bottom: 8px;
     }
-    .motif-line {
-      flex: 1;
-      max-width: 120px;
-      height: 1.5px;
-      background: linear-gradient(90deg, transparent, var(--gold));
-    }
-    .motif-line.right { background: linear-gradient(90deg, var(--gold), transparent); }
-    .motif-emoji { font-size: 2.2rem; animation: float 3.5s ease-in-out infinite; }
-    @keyframes float { 0%,100%{transform:translateY(0);} 50%{transform:translateY(-9px);} }
-
-    .app-name {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: clamp(2.8rem, 7vw, 4.4rem);
-      font-weight: 700;
-      background: linear-gradient(135deg, var(--gold-light) 0%, var(--saffron) 40%, var(--gold) 70%, var(--gold-light) 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      letter-spacing: 0.04em;
-      line-height: 1.1;
-      text-shadow: none;
-      filter: drop-shadow(0 2px 12px rgba(212,160,23,0.35));
-    }
-
-    .app-tagline {
+    .t-line { width: 48px; height: 1px; background: var(--border-hi); }
+    .tagline {
       font-family: 'Cormorant Garamond', serif;
       font-style: italic;
-      font-size: 1.05rem;
-      color: rgba(240,192,64,0.7);
-      letter-spacing: 0.06em;
-      margin-top: 8px;
+      font-size: 1rem;
+      color: var(--gold);
+      letter-spacing: 0.12em;
+      font-weight: 300;
     }
 
-    .sub-tagline {
-      font-size: 0.82rem;
-      color: rgba(255,248,231,0.45);
-      margin-top: 6px;
-      letter-spacing: 0.05em;
-      font-weight: 300;
+    .subtitle {
+      font-size: 0.72rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--muted);
+      font-weight: 400;
     }
 
     /* ── Card ── */
     .card {
-      background: rgba(26,0,0,0.55);
-      border: 1.5px solid rgba(212,160,23,0.3);
-      backdrop-filter: blur(18px);
-      border-radius: 24px;
-      padding: 38px 34px;
-      box-shadow:
-        0 0 0 1px rgba(212,160,23,0.08),
-        0 12px 60px rgba(0,0,0,0.55),
-        inset 0 1px 0 rgba(212,160,23,0.15);
+      background: linear-gradient(160deg, rgba(255,255,255,0.033) 0%, rgba(255,255,255,0.012) 100%);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 44px 40px;
       position: relative;
-      overflow: hidden;
-    }
-    /* Card inner glow */
-    .card::before {
-      content: '';
-      position: absolute;
-      top: -60px; left: 50%;
-      transform: translateX(-50%);
-      width: 300px; height: 120px;
-      background: radial-gradient(ellipse, rgba(212,160,23,0.12), transparent 70%);
-      pointer-events: none;
+      box-shadow:
+        0 1px 0 rgba(201,151,58,0.15) inset,
+        0 40px 80px rgba(0,0,0,0.6);
     }
 
-    /* Corner ornaments on card */
-    .card-corner {
+    /* Corner filigree lines */
+    .card::before, .card::after {
+      content: '';
       position: absolute;
-      width: 44px; height: 44px;
-      opacity: 0.55;
-      font-size: 1.4rem;
-      line-height: 1;
+      width: 36px; height: 36px;
+      border-color: var(--gold);
+      border-style: solid;
+      opacity: 0.45;
     }
-    .card-corner.tl { top: 10px; left: 12px; }
-    .card-corner.tr { top: 10px; right: 12px; text-align: right; }
-    .card-corner.bl { bottom: 10px; left: 12px; }
-    .card-corner.br { bottom: 10px; right: 12px; text-align: right; }
+    .card::before { top: 12px; left: 12px; border-width: 1px 0 0 1px; }
+    .card::after  { bottom: 12px; right: 12px; border-width: 0 1px 1px 0; }
+
+    /* Extra corner filigree via inner wrapper */
+    .card-inner::before, .card-inner::after {
+      content: '';
+      position: absolute;
+      width: 36px; height: 36px;
+      border-color: var(--gold);
+      border-style: solid;
+      opacity: 0.45;
+      pointer-events: none;
+    }
+    .card-inner { position: relative; }
+    .card-inner::before { top: -32px; right: -28px; border-width: 1px 1px 0 0; }
+    .card-inner::after  { bottom: -32px; left: -28px; border-width: 0 0 1px 1px; }
+
+    /* ── Section label ── */
+    .section-label {
+      font-size: 0.62rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--gold);
+      font-weight: 500;
+      margin-bottom: 14px;
+    }
 
     /* ── Toggle ── */
     .toggle-group {
       display: flex;
-      background: rgba(255,255,255,0.04);
-      border: 1px solid rgba(212,160,23,0.2);
-      border-radius: 12px;
-      padding: 4px;
-      gap: 4px;
-      margin-bottom: 28px;
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      overflow: hidden;
+      margin-bottom: 34px;
     }
     .toggle-btn {
       flex: 1;
-      padding: 11px 8px;
-      border-radius: 9px;
+      padding: 12px 10px;
       border: none;
       background: transparent;
-      color: rgba(240,192,64,0.5);
-      font-size: 0.87rem;
-      font-family: 'Poppins', sans-serif;
-      font-weight: 600;
+      color: var(--muted);
+      font-size: 0.78rem;
+      font-family: 'Inter', sans-serif;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
       cursor: pointer;
-      transition: background 0.25s, color 0.25s, box-shadow 0.25s;
-      letter-spacing: 0.03em;
+      transition: background 0.25s, color 0.25s;
+      position: relative;
     }
+    .toggle-btn + .toggle-btn { border-left: 1px solid var(--border); }
     .toggle-btn.active {
-      background: linear-gradient(135deg, var(--crimson), #b22222);
-      color: var(--gold-light);
-      box-shadow: 0 2px 14px rgba(139,0,0,0.55);
+      background: var(--gold-dim);
+      color: var(--gold-lt);
+    }
+    .toggle-btn.active::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 1.5px;
+      background: var(--gold);
     }
 
     /* ── Inputs ── */
     .input-section {
       display: flex;
       flex-wrap: wrap;
-      gap: 16px;
+      gap: 18px;
       align-items: flex-end;
-      margin-bottom: 32px;
+      margin-bottom: 36px;
     }
-    .field { flex: 1; min-width: 200px; }
+    .field { flex: 1; min-width: 190px; }
 
     label {
       display: block;
-      font-size: 0.72rem;
-      letter-spacing: 0.12em;
+      font-size: 0.65rem;
+      letter-spacing: 0.18em;
       text-transform: uppercase;
-      color: rgba(212,160,23,0.7);
-      margin-bottom: 8px;
-      font-weight: 600;
+      color: var(--gold);
+      margin-bottom: 9px;
+      font-weight: 500;
     }
 
     input[type="datetime-local"],
     input[type="text"] {
       width: 100%;
       padding: 13px 16px;
-      background: rgba(255,255,255,0.05);
-      border: 1.5px solid rgba(212,160,23,0.25);
-      border-radius: 12px;
-      color: var(--cream);
-      font-size: 0.97rem;
-      font-family: 'Poppins', sans-serif;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      color: var(--ivory);
+      font-size: 0.93rem;
+      font-family: 'Inter', sans-serif;
+      font-weight: 300;
       outline: none;
-      transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+      transition: border-color 0.2s, background 0.2s;
       appearance: none;
       -webkit-appearance: none;
     }
     input[type="datetime-local"]::-webkit-calendar-picker-indicator {
-      filter: invert(1) sepia(1) saturate(3) hue-rotate(10deg);
+      filter: invert(0.85) sepia(0.6) saturate(2) hue-rotate(5deg);
       cursor: pointer;
       opacity: 0.7;
     }
-    input::placeholder { color: rgba(255,248,231,0.25); }
+    input::placeholder { color: var(--muted); font-weight: 300; }
     input:focus {
       border-color: var(--gold);
-      background: rgba(212,160,23,0.07);
-      box-shadow: 0 0 0 3px rgba(212,160,23,0.12);
+      background: rgba(201,151,58,0.05);
+      outline: none;
     }
 
     .calc-btn {
-      padding: 13px 30px;
-      background: linear-gradient(135deg, var(--crimson) 0%, #b22222 50%, var(--saffron) 100%);
-      border: 1px solid rgba(212,160,23,0.35);
-      border-radius: 12px;
-      color: var(--gold-light);
-      font-size: 0.97rem;
-      font-family: 'Poppins', sans-serif;
-      font-weight: 700;
-      letter-spacing: 0.06em;
+      padding: 13px 32px;
+      background: transparent;
+      border: 1px solid var(--gold);
+      border-radius: 3px;
+      color: var(--gold-lt);
+      font-size: 0.75rem;
+      font-family: 'Inter', sans-serif;
+      font-weight: 600;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
       cursor: pointer;
-      transition: transform 0.15s, box-shadow 0.15s;
+      transition: background 0.2s, color 0.2s, box-shadow 0.2s;
       white-space: nowrap;
-      box-shadow: 0 4px 22px rgba(139,0,0,0.45);
       align-self: flex-end;
+      position: relative;
+      overflow: hidden;
     }
-    .calc-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(139,0,0,0.6); }
-    .calc-btn:active { transform: translateY(0); }
+    .calc-btn::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: var(--gold);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.25s ease;
+      z-index: 0;
+    }
+    .calc-btn:hover::before { transform: scaleX(1); }
+    .calc-btn:hover { color: var(--bg); }
+    .calc-btn span { position: relative; z-index: 1; }
 
     /* ── Error ── */
-    .error { color: #ff8fa3; font-size: 0.86rem; margin-top: 8px; display: none; }
+    .error { color: #c97a7a; font-size: 0.8rem; margin-top: 8px; display: none; letter-spacing: 0.04em; }
     .error.visible { display: block; }
+
+    /* ── Divider ── */
+    .section-divider {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin: 30px 0;
+    }
+    .section-divider .sd-line { flex: 1; height: 1px; background: var(--border); }
+    .section-divider .sd-text {
+      font-size: 0.6rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--gold);
+      font-weight: 500;
+      white-space: nowrap;
+    }
+    .section-divider .sd-diamond {
+      width: 5px; height: 5px;
+      background: var(--gold);
+      transform: rotate(45deg);
+      flex-shrink: 0;
+    }
 
     /* ── Result label ── */
     .result-label {
       text-align: center;
       font-family: 'Cormorant Garamond', serif;
       font-style: italic;
-      font-size: 1.1rem;
-      color: rgba(240,192,64,0.6);
-      margin-bottom: 26px;
-      min-height: 1.6em;
+      font-size: 1.08rem;
+      color: var(--muted);
+      margin-bottom: 30px;
+      font-weight: 300;
+      min-height: 1.5em;
+      letter-spacing: 0.02em;
     }
-    .result-label span { color: var(--gold-light); font-style: normal; font-weight: 700; }
+    .result-label strong { color: var(--gold-lt); font-style: normal; font-weight: 600; }
 
-    /* ── Tiles grid ── */
+    /* ── Tiles ── */
     .grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-      gap: 14px;
-      margin-bottom: 24px;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-bottom: 0;
     }
 
     .tile {
-      background: rgba(139,0,0,0.18);
-      border: 1px solid rgba(212,160,23,0.22);
-      border-radius: 16px;
-      padding: 22px 10px 18px;
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      padding: 26px 10px 22px;
       text-align: center;
-      transition: transform 0.28s, background 0.28s, box-shadow 0.28s;
+      background: rgba(255,255,255,0.018);
+      transition: border-color 0.25s, background 0.25s, transform 0.25s;
       position: relative;
       overflow: hidden;
     }
-    .tile::after {
+    .tile::before {
       content: '';
       position: absolute;
-      inset: 0;
-      background: linear-gradient(160deg, rgba(212,160,23,0.1), transparent 60%);
-      opacity: 0;
-      transition: opacity 0.28s;
-    }
-    .tile:hover::after { opacity: 1; }
-    .tile:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 10px 30px rgba(139,0,0,0.35);
-      border-color: rgba(212,160,23,0.5);
-    }
-
-    .tile .icon { font-size: 1.5rem; margin-bottom: 8px; display: block; }
-    .tile .value {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 2.4rem;
-      font-weight: 700;
-      background: linear-gradient(135deg, var(--gold-light), var(--saffron));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      line-height: 1;
-      margin-bottom: 6px;
-    }
-    .tile .unit {
-      font-size: 0.68rem;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      color: rgba(212,160,23,0.55);
-      font-weight: 600;
-    }
-
-    /* ── Divider ── */
-    .divider {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin: 22px 0;
-      color: rgba(212,160,23,0.4);
-      font-size: 0.68rem;
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
-    }
-    .divider::before, .divider::after {
-      content: '';
-      flex: 1;
+      top: 0; left: 0; right: 0;
       height: 1px;
-      background: linear-gradient(90deg, transparent, rgba(212,160,23,0.3), transparent);
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+      opacity: 0;
+      transition: opacity 0.25s;
     }
+    .tile:hover { border-color: var(--border-hi); background: var(--gold-dim); transform: translateY(-3px); }
+    .tile:hover::before { opacity: 1; }
 
-    /* ── Live badge ── */
-    .live-badge {
-      display: inline-block;
-      background: linear-gradient(135deg, var(--crimson), var(--saffron));
-      border-radius: 5px;
-      font-size: 0.58rem;
-      padding: 2px 7px;
-      letter-spacing: 0.1em;
-      font-weight: 700;
-      text-transform: uppercase;
-      color: var(--gold-light);
-      vertical-align: middle;
-      margin-left: 6px;
-      animation: pulse 2s ease-in-out infinite;
+    .tile-icon {
+      font-size: 1.1rem;
+      opacity: 0.6;
+      margin-bottom: 10px;
+      display: block;
     }
-    @keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:0.45;} }
+    .tile-value {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 300;
+      font-size: 2.6rem;
+      color: var(--gold-lt);
+      line-height: 1;
+      margin-bottom: 8px;
+      letter-spacing: -0.01em;
+    }
+    .tile-unit {
+      font-size: 0.6rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+      font-weight: 500;
+    }
 
     /* ── Live row ── */
-    .live-row {
+    .live-grid {
       display: grid;
-      grid-template-columns: repeat(3,1fr);
-      gap: 14px;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
     }
-    .live-row .tile .value { font-size: 1.9rem; }
+    .live-grid .tile-value { font-size: 2.2rem; }
+
+    /* ── Live badge ── */
+    .live-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 0.58rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--gold);
+      font-weight: 600;
+    }
+    .live-dot {
+      width: 5px; height: 5px;
+      border-radius: 50%;
+      background: var(--gold);
+      animation: blink 1.4s ease-in-out infinite;
+    }
+    @keyframes blink { 0%,100%{opacity:1;} 50%{opacity:0.15;} }
 
     /* ── Show/hide results ── */
     .results-wrap { display: none; }
-    .results-wrap.visible { display: block; animation: fadeUp 0.45s ease both; }
+    .results-wrap.visible { display: block; animation: fadeUp 0.5s cubic-bezier(0.22,1,0.36,1) both; }
     @keyframes fadeUp {
-      from { opacity:0; transform:translateY(18px); }
-      to   { opacity:1; transform:translateY(0); }
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
     }
 
     /* ── Footer ── */
+    .footer-rule {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      margin: 48px 0 20px;
+    }
+    .footer-rule .rule-line { flex: 1; height: 1px; background: linear-gradient(90deg, transparent, var(--border), transparent); }
+
     footer {
       text-align: center;
-      margin-top: 40px;
-      font-size: 0.82rem;
-      color: rgba(255,248,231,0.3);
-      line-height: 1.7;
+      font-size: 0.76rem;
+      color: var(--muted);
+      letter-spacing: 0.06em;
+      line-height: 1.9;
     }
-    footer .heart { color: #e05; }
     footer a {
       color: var(--gold);
       text-decoration: none;
-      font-weight: 600;
+      font-weight: 500;
       transition: color 0.2s;
     }
-    footer a:hover { color: var(--gold-light); text-decoration: underline; }
+    footer a:hover { color: var(--gold-lt); }
+    .heart { color: #c97a7a; }
 
     /* ── Responsive ── */
-    @media (max-width: 540px) {
-      .card { padding: 26px 18px; }
+    @media (max-width: 580px) {
+      .card { padding: 30px 20px; }
+      .grid { grid-template-columns: repeat(2, 1fr); }
+      .live-grid { grid-template-columns: repeat(3, 1fr); }
+      .app-name { letter-spacing: 0.1em; }
+    }
+    @media (max-width: 400px) {
       .grid { grid-template-columns: repeat(2,1fr); }
-      .live-row { grid-template-columns: repeat(3,1fr); }
-      .app-name { font-size: 2.6rem; }
+      .live-grid .tile-value { font-size: 1.7rem; }
     }
   </style>
 </head>
 <body>
 
-<!-- Top gold border strip -->
-<div class="border-strip"></div>
+<!-- Gold dust -->
+<div class="dust" id="dust"></div>
 
-<!-- Mandala corners -->
-<svg class="mandala-corner tl" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <circle cx="100" cy="100" r="90" stroke="#D4A017" stroke-width="1.5"/>
-  <circle cx="100" cy="100" r="70" stroke="#D4A017" stroke-width="1"/>
-  <circle cx="100" cy="100" r="50" stroke="#D4A017" stroke-width="1"/>
-  <circle cx="100" cy="100" r="30" stroke="#D4A017" stroke-width="1"/>
-  <line x1="100" y1="10" x2="100" y2="190" stroke="#D4A017" stroke-width="0.8"/>
-  <line x1="10" y1="100" x2="190" y2="100" stroke="#D4A017" stroke-width="0.8"/>
-  <line x1="27" y1="27" x2="173" y2="173" stroke="#D4A017" stroke-width="0.8"/>
-  <line x1="173" y1="27" x2="27" y2="173" stroke="#D4A017" stroke-width="0.8"/>
-  <polygon points="100,20 108,95 100,105 92,95" fill="#D4A017" opacity="0.3"/>
-  <polygon points="100,180 108,105 100,95 92,105" fill="#D4A017" opacity="0.3"/>
-  <polygon points="20,100 95,108 105,100 95,92" fill="#D4A017" opacity="0.3"/>
-  <polygon points="180,100 105,108 95,100 105,92" fill="#D4A017" opacity="0.3"/>
-</svg>
-<svg class="mandala-corner br" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <circle cx="100" cy="100" r="90" stroke="#D4A017" stroke-width="1.5"/>
-  <circle cx="100" cy="100" r="70" stroke="#D4A017" stroke-width="1"/>
-  <circle cx="100" cy="100" r="50" stroke="#D4A017" stroke-width="1"/>
-  <circle cx="100" cy="100" r="30" stroke="#D4A017" stroke-width="1"/>
-  <line x1="100" y1="10" x2="100" y2="190" stroke="#D4A017" stroke-width="0.8"/>
-  <line x1="10" y1="100" x2="190" y2="100" stroke="#D4A017" stroke-width="0.8"/>
-  <line x1="27" y1="27" x2="173" y2="173" stroke="#D4A017" stroke-width="0.8"/>
-  <line x1="173" y1="27" x2="27" y2="173" stroke="#D4A017" stroke-width="0.8"/>
-</svg>
+<div class="page">
 
-<!-- Floating particles -->
-<div class="particles" id="particles"></div>
-
-<div class="container">
+  <!-- Top ornamental rule -->
+  <div class="top-rule">
+    <div class="rule-line"></div>
+    <div class="rule-center">
+      <div class="rule-diamond"></div>
+      <div class="rule-dots"><span></span><span></span><span></span></div>
+      <div class="rule-diamond"></div>
+    </div>
+    <div class="rule-line"></div>
+  </div>
 
   <!-- Header -->
   <header>
-    <div class="header-motif">
-      <div class="motif-line"></div>
-      <div class="motif-emoji">🪔</div>
-      <div class="motif-line right"></div>
-    </div>
+    <div class="crown">♛</div>
     <div class="app-name">HiThatDay</div>
-    <div class="app-tagline">Your Sacred Wedding Date, Beautifully Counted</div>
-    <div class="sub-tagline">Shubh Vivah · शुभ विवाह</div>
+    <div class="tagline-wrap">
+      <div class="t-line"></div>
+      <div class="tagline">Your Royal Wedding Date, Elegantly Measured</div>
+      <div class="t-line"></div>
+    </div>
+    <div class="subtitle">Wedding Date Calculator</div>
   </header>
 
-  <!-- Main card -->
+  <!-- Card -->
   <div class="card">
-    <!-- Card corner ornaments -->
-    <div class="card-corner tl">🌸</div>
-    <div class="card-corner tr">🌸</div>
-    <div class="card-corner bl">✦</div>
-    <div class="card-corner br">✦</div>
+    <div class="card-inner">
 
-    <!-- Mode toggle -->
-    <div class="toggle-group">
-      <button class="toggle-btn active" onclick="setMode('future',this)">🕌 Counting Down To</button>
-      <button class="toggle-btn" onclick="setMode('past',this)">🪷 Celebrating Since</button>
-    </div>
-
-    <!-- Inputs -->
-    <div class="input-section">
-      <div class="field">
-        <label for="weddingDate">🗓 Wedding Date &amp; Time</label>
-        <input type="datetime-local" id="weddingDate" />
-      </div>
-      <div class="field" style="max-width:230px;">
-        <label for="coupleName">🌹 Couple's Names <span style="font-size:.75em;text-transform:none;font-weight:400">(optional)</span></label>
-        <input type="text" id="coupleName" placeholder="e.g. Priya &amp; Arjun" />
-      </div>
-      <button class="calc-btn" onclick="calculate()">Calculate ✨</button>
-    </div>
-
-    <div class="error" id="errorMsg">⚠️ Please choose a valid wedding date and time.</div>
-
-    <!-- Results -->
-    <div class="results-wrap" id="resultsWrap">
-
-      <div class="result-label" id="resultLabel"></div>
-
-      <div class="grid">
-        <div class="tile">
-          <span class="icon">🌅</span>
-          <div class="value" id="valYears">0</div>
-          <div class="unit">Years</div>
-        </div>
-        <div class="tile">
-          <span class="icon">🌙</span>
-          <div class="value" id="valMonths">0</div>
-          <div class="unit">Months</div>
-        </div>
-        <div class="tile">
-          <span class="icon">📿</span>
-          <div class="value" id="valWeeks">0</div>
-          <div class="unit">Weeks</div>
-        </div>
-        <div class="tile">
-          <span class="icon">🪔</span>
-          <div class="value" id="valDays">0</div>
-          <div class="unit">Days</div>
-        </div>
+      <!-- Toggle -->
+      <div class="section-label">Select Mode</div>
+      <div class="toggle-group">
+        <button class="toggle-btn active" onclick="setMode('future',this)">Counting Down To</button>
+        <button class="toggle-btn" onclick="setMode('past',this)">Celebrating Since</button>
       </div>
 
-      <div class="divider">
-        live countdown <span class="live-badge">live</span>
+      <!-- Inputs -->
+      <div class="input-section">
+        <div class="field">
+          <label for="weddingDate">Wedding Date &amp; Time</label>
+          <input type="datetime-local" id="weddingDate" />
+        </div>
+        <div class="field" style="max-width:230px;">
+          <label for="coupleName">Couple's Names <span style="font-size:.8em; text-transform:none; opacity:0.5; letter-spacing:0;">(optional)</span></label>
+          <input type="text" id="coupleName" placeholder="e.g. Ananya &amp; Vikram" />
+        </div>
+        <button class="calc-btn" onclick="calculate()"><span>Calculate</span></button>
       </div>
 
-      <div class="live-row">
-        <div class="tile">
-          <span class="icon">⏰</span>
-          <div class="value" id="valHours">00</div>
-          <div class="unit">Hours</div>
-        </div>
-        <div class="tile">
-          <span class="icon">⌛</span>
-          <div class="value" id="valMinutes">00</div>
-          <div class="unit">Minutes</div>
-        </div>
-        <div class="tile">
-          <span class="icon">✨</span>
-          <div class="value" id="valSeconds">00</div>
-          <div class="unit">Seconds</div>
-        </div>
-      </div>
+      <div class="error" id="errorMsg">Please select a valid wedding date and time.</div>
 
+      <!-- Results -->
+      <div class="results-wrap" id="resultsWrap">
+
+        <div class="result-label" id="resultLabel"></div>
+
+        <!-- Static tiles -->
+        <div class="grid">
+          <div class="tile">
+            <span class="tile-icon">◈</span>
+            <div class="tile-value" id="valYears">0</div>
+            <div class="tile-unit">Years</div>
+          </div>
+          <div class="tile">
+            <span class="tile-icon">◈</span>
+            <div class="tile-value" id="valMonths">0</div>
+            <div class="tile-unit">Months</div>
+          </div>
+          <div class="tile">
+            <span class="tile-icon">◈</span>
+            <div class="tile-value" id="valWeeks">0</div>
+            <div class="tile-unit">Weeks</div>
+          </div>
+          <div class="tile">
+            <span class="tile-icon">◈</span>
+            <div class="tile-value" id="valDays">0</div>
+            <div class="tile-unit">Days</div>
+          </div>
+        </div>
+
+        <div class="section-divider">
+          <div class="sd-line"></div>
+          <div class="sd-diamond"></div>
+          <div class="sd-text">
+            Live &nbsp;
+            <span class="live-pill"><span class="live-dot"></span> Live</span>
+          </div>
+          <div class="sd-diamond"></div>
+          <div class="sd-line"></div>
+        </div>
+
+        <!-- Live tiles -->
+        <div class="live-grid">
+          <div class="tile">
+            <span class="tile-icon">◇</span>
+            <div class="tile-value" id="valHours">00</div>
+            <div class="tile-unit">Hours</div>
+          </div>
+          <div class="tile">
+            <span class="tile-icon">◇</span>
+            <div class="tile-value" id="valMinutes">00</div>
+            <div class="tile-unit">Minutes</div>
+          </div>
+          <div class="tile">
+            <span class="tile-icon">◇</span>
+            <div class="tile-value" id="valSeconds">00</div>
+            <div class="tile-unit">Seconds</div>
+          </div>
+        </div>
+
+      </div>
     </div>
   </div>
 
-  <!-- Footer -->
+  <!-- Footer rule -->
+  <div class="footer-rule">
+    <div class="rule-line"></div>
+    <div style="padding: 0 18px; opacity:0.3; font-size:0.7rem; color:var(--gold);">◆</div>
+    <div class="rule-line"></div>
+  </div>
+
   <footer>
-    <div>Designed with <span class="heart">❤️</span> by <a href="https://netwinglabs.com" target="_blank" rel="noopener">NetWing Labs</a></div>
-    <div style="margin-top:4px; font-size:0.72rem; opacity:0.5;">Every love story deserves to be celebrated</div>
+    Designed with <span class="heart">❤️</span> by
+    <a href="https://netwinglabs.com" target="_blank" rel="noopener">NetWing Labs</a>
   </footer>
 
 </div>
 
 <script>
-  /* ── Floating particles ── */
+  /* ── Gold dust ── */
   (function () {
-    const emojis = ['🌸','🌺','🪷','🌼','✨','🎊','💛','🌹','🎉','🪔'];
-    const c = document.getElementById('particles');
-    for (let i = 0; i < 55; i++) {
-      const p = document.createElement('div');
-      p.className = 'particle';
-      p.textContent = emojis[Math.floor(Math.random() * emojis.length)];
-      p.style.cssText = `
+    const c = document.getElementById('dust');
+    for (let i = 0; i < 40; i++) {
+      const m = document.createElement('div');
+      m.className = 'mote';
+      const sz = 1.5 + Math.random() * 2.5;
+      m.style.cssText = `
         left:${Math.random()*100}%;
-        top:${40 + Math.random()*60}%;
-        --sz:${0.8 + Math.random()*1.2}rem;
-        --dur:${5 + Math.random()*7}s;
-        --delay:-${Math.random()*10}s;
+        top:${30+Math.random()*70}%;
+        width:${sz}px; height:${sz}px;
+        --dur:${6+Math.random()*8}s;
+        --del:-${Math.random()*12}s;
+        opacity:0;
       `;
-      c.appendChild(p);
+      c.appendChild(m);
     }
   })();
 
@@ -571,7 +648,7 @@
     mode = m;
     document.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
-    if (targetDate) calculate(false);
+    if (targetDate) calculate();
   }
 
   /* Default: tomorrow noon */
@@ -583,20 +660,18 @@
   })();
 
   function toLocalISO(d) {
-    const p = n => String(n).padStart(2,'0');
+    const p = n => String(n).padStart(2, '0');
     return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())}T${p(d.getHours())}:${p(d.getMinutes())}`;
   }
 
   function calculate() {
-    const input = document.getElementById('weddingDate').value;
-    const error = document.getElementById('errorMsg');
-    const wrap  = document.getElementById('resultsWrap');
-
-    if (!input) { error.classList.add('visible'); return; }
-    error.classList.remove('visible');
-
-    targetDate = new Date(input);
-    if (isNaN(targetDate)) { error.classList.add('visible'); return; }
+    const val  = document.getElementById('weddingDate').value;
+    const err  = document.getElementById('errorMsg');
+    const wrap = document.getElementById('resultsWrap');
+    if (!val) { err.classList.add('visible'); return; }
+    err.classList.remove('visible');
+    targetDate = new Date(val);
+    if (isNaN(targetDate)) { err.classList.add('visible'); return; }
 
     wrap.classList.remove('visible');
     void wrap.offsetWidth;
@@ -610,50 +685,43 @@
   }
 
   function updateLabel() {
-    const name    = document.getElementById('coupleName').value.trim();
-    const lbl     = document.getElementById('resultLabel');
-    const dateStr = targetDate.toLocaleDateString('en-IN', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
-    let text = mode === 'future'
-      ? (name ? `<span>${name}</span>'s Shubh Vivah is on ${dateStr}` : `Your Shubh Vivah is on <span>${dateStr}</span>`)
-      : (name ? `<span>${name}</span> have been united since ${dateStr}` : `United in love since <span>${dateStr}</span>`);
-    lbl.innerHTML = text;
+    const name = document.getElementById('coupleName').value.trim();
+    const lbl  = document.getElementById('resultLabel');
+    const ds   = targetDate.toLocaleDateString('en-IN', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+    lbl.innerHTML = mode === 'future'
+      ? (name ? `<strong>${name}</strong>'s wedding is on ${ds}` : `Your wedding is on <strong>${ds}</strong>`)
+      : (name ? `<strong>${name}</strong> have been married since ${ds}` : `Married since <strong>${ds}</strong>`);
   }
 
   function diffComponents(from, to) {
-    let years  = to.getFullYear()  - from.getFullYear();
-    let months = to.getMonth()     - from.getMonth();
-    let days   = to.getDate()      - from.getDate();
-    if (days   < 0) { months--; days  += new Date(to.getFullYear(), to.getMonth(), 0).getDate(); }
-    if (months < 0) { years--;  months += 12; }
-    return { years, months, days };
+    let y = to.getFullYear() - from.getFullYear();
+    let mo = to.getMonth()   - from.getMonth();
+    let d  = to.getDate()    - from.getDate();
+    if (d  < 0) { mo--; d  += new Date(to.getFullYear(), to.getMonth(), 0).getDate(); }
+    if (mo < 0) { y--;  mo += 12; }
+    return { years: y, months: mo, days: d };
   }
 
   function updateStatic() {
-    const now  = new Date();
-    const absMs = Math.abs((mode === 'future' ? targetDate : now) - (mode === 'future' ? now : targetDate));
+    const now = new Date();
+    const absMs = Math.abs(targetDate - now);
     const totalDays = Math.floor(absMs / 86400000);
-    const weeks     = Math.floor(totalDays / 7);
     const comp = mode === 'future'
       ? diffComponents(now, targetDate)
       : diffComponents(targetDate, now);
-
     document.getElementById('valYears').textContent  = comp.years;
     document.getElementById('valMonths').textContent = comp.months;
-    document.getElementById('valWeeks').textContent  = weeks;
+    document.getElementById('valWeeks').textContent  = Math.floor(totalDays / 7);
     document.getElementById('valDays').textContent   = totalDays;
   }
 
   function updateLive() {
-    const now    = new Date();
-    const absDiff = Math.max(0, mode === 'future' ? targetDate - now : now - targetDate);
-    const totalSecs = Math.floor(absDiff / 1000);
-    const secs   = totalSecs % 60;
-    const mins   = Math.floor(totalSecs / 60) % 60;
-    const hours  = Math.floor(totalSecs / 3600) % 24;
-
-    document.getElementById('valHours').textContent   = String(hours).padStart(2,'0');
-    document.getElementById('valMinutes').textContent = String(mins).padStart(2,'0');
-    document.getElementById('valSeconds').textContent = String(secs).padStart(2,'0');
+    const now = new Date();
+    const abs = Math.max(0, mode === 'future' ? targetDate - now : now - targetDate);
+    const s   = Math.floor(abs / 1000);
+    document.getElementById('valHours').textContent   = String(Math.floor(s / 3600) % 24).padStart(2, '0');
+    document.getElementById('valMinutes').textContent = String(Math.floor(s / 60) % 60).padStart(2, '0');
+    document.getElementById('valSeconds').textContent = String(s % 60).padStart(2, '0');
   }
 
   document.addEventListener('keydown', e => { if (e.key === 'Enter') calculate(); });
