@@ -5,45 +5,42 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>HiThatDay – Wedding Date Calculator</title>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=Lora:ital,wght@0,400;1,400&family=Inter:wght@300;400;500&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,700;1,400;1,500&family=DM+Sans:wght@300;400;500;600&display=swap');
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --bg:       #F5E8D8;
-      --bg-card:  rgba(253,246,237,0.92);
-      --gold:     #B8963E;
-      --gold-lt:  #D4A852;
-      --brown:    #2C1810;
-      --brown-md: #6B4533;
-      --brown-lt: rgba(44,24,16,0.45);
-      --pink:     #C98088;
-      --pink-lt:  #EDBBBA;
-      --sage:     #5C7A52;
-      --sage-dk:  #3D5A35;
-      --cream:    #FDF6EE;
+      --bg:        #FAF7F4;
+      --white:     #FFFFFF;
+      --charcoal:  #1C1410;
+      --taupe:     #7A6A58;
+      --taupe-lt:  #B5A898;
+      --gold:      #B8893A;
+      --gold-lt:   #D4A852;
+      --rose:      #C8787E;
+      --blush:     #F5E6E2;
+      --blush-lt:  #FBF1EE;
+      --border:    rgba(28,20,16,0.1);
+      --shadow-sm: 0 2px 16px rgba(28,20,16,0.06);
+      --shadow-md: 0 8px 48px rgba(28,20,16,0.09);
     }
 
     html { scroll-behavior: smooth; }
 
     body {
       min-height: 100vh;
-      font-family: 'Inter', sans-serif;
-      color: var(--brown);
+      background: var(--bg);
+      font-family: 'DM Sans', sans-serif;
+      color: var(--charcoal);
       overflow-x: hidden;
-      background-color: var(--bg);
-      /* Mughal diamond jali lattice pattern */
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='52' height='52'%3E%3Cpath d='M26 2L50 26L26 50L2 26Z' fill='none' stroke='%23D4B896' stroke-width='0.7'/%3E%3Cpath d='M26 14L38 26L26 38L14 26Z' fill='none' stroke='%23D4B896' stroke-width='0.5'/%3E%3Ccircle cx='26' cy='2' r='1.8' fill='%23D4B896'/%3E%3Ccircle cx='50' cy='26' r='1.8' fill='%23D4B896'/%3E%3Ccircle cx='26' cy='50' r='1.8' fill='%23D4B896'/%3E%3Ccircle cx='2' cy='26' r='1.8' fill='%23D4B896'/%3E%3Ccircle cx='26' cy='26' r='1.2' fill='%23D4B896' opacity='0.5'/%3E%3C/svg%3E");
     }
 
-    /* ── Fixed botanical corner decorations ── */
-    .botanical { position: fixed; pointer-events: none; z-index: 0; }
-    .bot-tl { top: -10px; left: -10px; width: clamp(160px,22vw,260px); }
-    .bot-tr { top: -10px; right: -10px; width: clamp(160px,22vw,260px); transform: scaleX(-1); }
-    .bot-r  { top: 35%; right: -8px; width: clamp(80px,11vw,130px); }
-    .bot-l  { top: 42%; left: -8px; width: clamp(60px,9vw,110px); transform: scaleX(-1); }
+    /* ── Subtle corner florals ── */
+    .deco { position: fixed; pointer-events: none; z-index: 0; opacity: 0.13; }
+    .deco-tl { top: -20px; left: -20px; width: clamp(180px, 24vw, 300px); }
+    .deco-br { bottom: -20px; right: -20px; width: clamp(180px, 24vw, 300px); transform: rotate(180deg); }
 
-    /* ── Page layout ── */
+    /* ── Page ── */
     .page {
       position: relative;
       z-index: 1;
@@ -51,680 +48,481 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: 40px 16px 0;
+      padding: 60px 20px 80px;
     }
 
-    /* ── Gold double-border frame card ── */
-    .frame {
-      width: 100%;
-      max-width: 800px;
-      background: var(--bg-card);
-      backdrop-filter: blur(4px);
-      border: 1.5px solid var(--gold);
-      border-radius: 24px;
-      padding: 0;
-      position: relative;
-      box-shadow: 0 8px 60px rgba(44,24,16,0.12), 0 2px 12px rgba(184,150,62,0.1);
-    }
-    /* Inner border */
-    .frame::before {
-      content: '';
-      position: absolute;
-      inset: 7px;
-      border: 0.8px solid rgba(184,150,62,0.38);
-      border-radius: 18px;
-      pointer-events: none;
-      z-index: 0;
+    /* ── Hero header ── */
+    .hero {
+      text-align: center;
+      margin-bottom: 52px;
+      max-width: 640px;
     }
 
-    /* ── Corner accent squares ── */
-    .corner {
-      position: absolute;
-      width: 18px; height: 18px;
-      border-color: var(--gold);
-      border-style: solid;
-      z-index: 2;
-    }
-    .corner.tl { top: -1px; left: -1px; border-width: 2px 0 0 2px; }
-    .corner.tr { top: -1px; right: -1px; border-width: 2px 2px 0 0; }
-    .corner.bl { bottom: -1px; left: -1px; border-width: 0 0 2px 2px; }
-    .corner.br { bottom: -1px; right: -1px; border-width: 0 2px 2px 0; }
-
-    /* ── Frame inner content ── */
-    .frame-content {
-      position: relative;
-      z-index: 1;
-      padding: 46px 44px 50px;
-    }
-
-    /* ── Header ── */
-    header { text-align: center; margin-bottom: 36px; }
-
-    .app-name {
-      font-family: 'Cormorant Garamond', serif;
-      font-weight: 600;
-      font-size: clamp(2.6rem, 7vw, 4.2rem);
-      color: var(--brown);
-      letter-spacing: 0.12em;
-      line-height: 1;
-      margin-bottom: 6px;
-    }
-
-    .app-tagline {
-      font-family: 'Cormorant Garamond', serif;
-      font-style: italic;
-      font-weight: 300;
-      font-size: 1rem;
-      color: var(--brown-md);
-      letter-spacing: 0.08em;
-      margin-bottom: 14px;
-    }
-
-    /* Gold ornamental divider */
-    .ornament {
+    .eyebrow {
+      font-size: 0.68rem;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--gold);
+      font-weight: 500;
+      margin-bottom: 20px;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 10px;
-      margin: 12px auto;
+      gap: 12px;
     }
-    .orn-line { width: 60px; height: 1px; background: linear-gradient(90deg, transparent, var(--gold)); }
-    .orn-line.r { background: linear-gradient(90deg, var(--gold), transparent); }
-    .orn-motif {
-      display: flex; align-items: center; gap: 5px;
-    }
-    .orn-d { width: 5px; height: 5px; background: var(--gold); transform: rotate(45deg); flex-shrink:0; }
-    .orn-dot { width: 3px; height: 3px; border-radius: 50%; background: var(--gold-lt); flex-shrink:0; }
-
-    /* ── Toggle ── */
-    .section-label {
-      font-size: 0.6rem;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      color: var(--gold);
-      font-weight: 500;
-      margin-bottom: 10px;
+    .eyebrow::before, .eyebrow::after {
+      content: '';
+      width: 32px;
+      height: 1px;
+      background: var(--gold);
+      opacity: 0.6;
     }
 
-    .toggle-group {
+    .title {
+      font-family: 'Playfair Display', serif;
+      font-weight: 700;
+      font-size: clamp(3.2rem, 9vw, 6rem);
+      color: var(--charcoal);
+      line-height: 1.0;
+      letter-spacing: -0.01em;
+      margin-bottom: 18px;
+    }
+
+    .tagline {
+      font-family: 'Playfair Display', serif;
+      font-style: italic;
+      font-weight: 400;
+      font-size: clamp(1rem, 2.5vw, 1.2rem);
+      color: var(--taupe);
+      letter-spacing: 0.02em;
+      line-height: 1.6;
+    }
+
+    /* ── Input card ── */
+    .card {
+      width: 100%;
+      max-width: 680px;
+      background: var(--white);
+      border-radius: 24px;
+      padding: 40px 40px 36px;
+      box-shadow: var(--shadow-md);
+      margin-bottom: 32px;
+    }
+
+    /* Toggle */
+    .toggle-wrap {
       display: flex;
-      border: 1px solid rgba(184,150,62,0.4);
+      background: var(--bg);
       border-radius: 50px;
-      overflow: hidden;
-      margin-bottom: 30px;
+      padding: 4px;
+      gap: 4px;
+      margin-bottom: 32px;
     }
     .toggle-btn {
       flex: 1;
-      padding: 11px 8px;
+      padding: 10px 12px;
       border: none;
+      border-radius: 50px;
       background: transparent;
-      color: var(--brown-lt);
-      font-size: 0.75rem;
-      font-family: 'Inter', sans-serif;
+      color: var(--taupe);
+      font-size: 0.8rem;
+      font-family: 'DM Sans', sans-serif;
       font-weight: 500;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
+      letter-spacing: 0.06em;
       cursor: pointer;
-      transition: background 0.25s, color 0.25s;
+      transition: all 0.22s ease;
     }
-    .toggle-btn + .toggle-btn { border-left: 1px solid rgba(184,150,62,0.3); }
     .toggle-btn.active {
-      background: linear-gradient(135deg, rgba(184,150,62,0.15), rgba(184,150,62,0.08));
-      color: var(--brown);
-      font-weight: 600;
-      position: relative;
-    }
-    .toggle-btn.active::after {
-      content: '';
-      position: absolute;
-      bottom: 0; left: 0; right: 0;
-      height: 1.5px;
-      background: var(--gold);
+      background: var(--charcoal);
+      color: var(--white);
+      box-shadow: 0 2px 12px rgba(28,20,16,0.2);
     }
 
-    /* ── Inputs ── */
-    .input-section {
+    /* Fields */
+    .fields {
       display: flex;
       flex-wrap: wrap;
       gap: 16px;
-      align-items: flex-end;
-      margin-bottom: 30px;
+      margin-bottom: 24px;
     }
-    .field { flex: 1; min-width: 185px; }
+    .field { flex: 1; min-width: 180px; }
 
     label {
       display: block;
-      font-size: 0.62rem;
-      letter-spacing: 0.16em;
+      font-size: 0.68rem;
+      letter-spacing: 0.14em;
       text-transform: uppercase;
-      color: var(--gold);
-      margin-bottom: 7px;
-      font-weight: 500;
+      color: var(--taupe);
+      font-weight: 600;
+      margin-bottom: 8px;
     }
 
     input[type="date"],
     input[type="text"] {
       width: 100%;
-      padding: 11px 14px;
-      background: rgba(255,255,255,0.6);
-      border: 1px solid rgba(184,150,62,0.35);
+      padding: 13px 18px;
+      background: var(--bg);
+      border: 1.5px solid transparent;
       border-radius: 50px;
-      color: var(--brown);
-      font-size: 0.9rem;
-      font-family: 'Inter', sans-serif;
+      color: var(--charcoal);
+      font-size: 0.95rem;
+      font-family: 'DM Sans', sans-serif;
       font-weight: 400;
       outline: none;
       transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
-      appearance: none;
       -webkit-appearance: none;
+      appearance: none;
     }
     input[type="date"]::-webkit-calendar-picker-indicator {
       cursor: pointer;
-      opacity: 0.55;
-      filter: sepia(1) saturate(1.5) hue-rotate(-10deg);
-      margin-right: 4px;
+      opacity: 0.4;
     }
-    input::placeholder { color: var(--brown-lt); font-style: italic; }
+    input::placeholder { color: var(--taupe-lt); }
     input:focus {
       border-color: var(--gold);
-      background: rgba(255,255,255,0.85);
-      box-shadow: 0 0 0 3px rgba(184,150,62,0.1);
-      outline: none;
+      background: var(--white);
+      box-shadow: 0 0 0 4px rgba(184,137,58,0.08);
     }
 
-    /* Calculate button */
-    .calc-btn {
-      padding: 11px 28px;
-      background: var(--brown);
-      border: 1px solid var(--brown);
+    .btn {
+      width: 100%;
+      padding: 15px 24px;
+      background: var(--charcoal);
+      border: none;
       border-radius: 50px;
-      color: var(--bg);
-      font-size: 0.72rem;
-      font-family: 'Inter', sans-serif;
+      color: var(--white);
+      font-size: 0.82rem;
+      font-family: 'DM Sans', sans-serif;
       font-weight: 600;
-      letter-spacing: 0.18em;
+      letter-spacing: 0.14em;
       text-transform: uppercase;
       cursor: pointer;
-      transition: background 0.2s, color 0.2s, border-color 0.2s;
-      white-space: nowrap;
-      align-self: flex-end;
+      transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+      box-shadow: 0 4px 20px rgba(28,20,16,0.18);
     }
-    .calc-btn:hover {
+    .btn:hover {
       background: var(--gold);
-      border-color: var(--gold);
-      color: #fff;
+      transform: translateY(-1px);
+      box-shadow: 0 6px 24px rgba(184,137,58,0.3);
     }
+    .btn:active { transform: translateY(0); }
 
-    /* ── Error ── */
-    .error { color: #A05050; font-size: 0.8rem; margin-top: 6px; display: none; font-style: italic; }
+    .error {
+      font-size: 0.82rem;
+      color: var(--rose);
+      margin-top: 12px;
+      text-align: center;
+      display: none;
+      font-style: italic;
+    }
     .error.visible { display: block; }
 
-    /* ── Section divider ── */
-    .sec-divider {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin: 24px 0;
+    /* ── Results ── */
+    .results-wrap { display: none; width: 100%; max-width: 680px; }
+    .results-wrap.visible {
+      display: block;
+      animation: fadeUp 0.55s cubic-bezier(0.22,1,0.36,1) both;
     }
-    .sec-divider .sd-l { flex: 1; height: 1px; background: linear-gradient(90deg, transparent, rgba(184,150,62,0.4)); }
-    .sec-divider .sd-r { flex: 1; height: 1px; background: linear-gradient(90deg, rgba(184,150,62,0.4), transparent); }
-    .sec-divider .sd-txt {
-      font-size: 0.58rem;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      color: var(--gold);
-      font-weight: 500;
-      white-space: nowrap;
-      display: flex;
-      align-items: center;
-      gap: 8px;
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
     }
-    .live-dot {
-      width: 5px; height: 5px;
-      border-radius: 50%;
-      background: var(--pink);
-      animation: blink 1.4s ease-in-out infinite;
-      flex-shrink: 0;
-    }
-    @keyframes blink { 0%,100%{opacity:1;} 50%{opacity:0.15;} }
 
-    /* ── Result label ── */
-    .result-label {
+    .result-headline {
       text-align: center;
-      font-family: 'Cormorant Garamond', serif;
-      font-style: italic;
-      font-size: 1.05rem;
-      color: var(--brown-md);
-      margin-bottom: 24px;
-      min-height: 1.5em;
-      font-weight: 400;
+      margin-bottom: 28px;
     }
-    .result-label strong { color: var(--brown); font-style: normal; font-weight: 600; }
+    .result-headline p {
+      font-family: 'Playfair Display', serif;
+      font-style: italic;
+      font-size: clamp(1rem, 2.5vw, 1.18rem);
+      color: var(--taupe);
+      line-height: 1.6;
+    }
+    .result-headline strong {
+      font-style: normal;
+      color: var(--charcoal);
+      font-weight: 500;
+    }
 
-    /* ── Tile grid ── */
-    .grid {
+    /* Stat tiles */
+    .tiles-grid {
       display: grid;
-      grid-template-columns: repeat(4,1fr);
+      grid-template-columns: repeat(4, 1fr);
       gap: 12px;
-      margin-bottom: 0;
+      margin-bottom: 12px;
     }
 
     .tile {
-      background: rgba(255,255,255,0.55);
-      border: 1px solid rgba(184,150,62,0.28);
-      border-radius: 16px;
-      padding: 22px 8px 18px;
+      background: var(--white);
+      border: 1.5px solid var(--border);
+      border-radius: 20px;
+      padding: 28px 10px 22px;
       text-align: center;
-      transition: border-color 0.2s, background 0.2s, transform 0.2s;
-      position: relative;
-      overflow: hidden;
+      transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
+      box-shadow: var(--shadow-sm);
     }
-    .tile::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 0; right: 0;
-      height: 2px;
-      background: linear-gradient(90deg, transparent, var(--gold-lt), transparent);
-      opacity: 0;
-      transition: opacity 0.2s;
+    .tile:hover {
+      border-color: rgba(184,137,58,0.35);
+      transform: translateY(-4px);
+      box-shadow: 0 12px 32px rgba(28,20,16,0.09);
     }
-    .tile:hover { border-color: var(--gold); background: rgba(255,255,255,0.8); transform: translateY(-3px); }
-    .tile:hover::before { opacity: 1; }
 
-    .tile-val {
-      font-family: 'Cormorant Garamond', serif;
-      font-weight: 300;
-      font-size: clamp(2rem,4vw,2.8rem);
-      color: var(--brown);
+    .tile-num {
+      font-family: 'Playfair Display', serif;
+      font-weight: 700;
+      font-size: clamp(2.2rem, 4.5vw, 3rem);
+      color: var(--charcoal);
       line-height: 1;
       margin-bottom: 8px;
+      letter-spacing: -0.02em;
     }
-    .tile-unit {
-      font-size: 0.58rem;
-      letter-spacing: 0.18em;
+    .tile-lbl {
+      font-size: 0.62rem;
+      letter-spacing: 0.2em;
       text-transform: uppercase;
-      color: var(--gold);
-      font-weight: 500;
+      color: var(--taupe-lt);
+      font-weight: 600;
     }
 
-    /* Live row */
+    /* Live section */
+    .live-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin: 24px 0 14px;
+    }
+    .live-header .lh-line {
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+    .live-header .lh-label {
+      font-size: 0.62rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--taupe-lt);
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      white-space: nowrap;
+    }
+    .live-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--rose);
+      animation: pulse 1.5s ease-in-out infinite;
+      flex-shrink: 0;
+    }
+    @keyframes pulse { 0%,100%{opacity:1; transform:scale(1);} 50%{opacity:0.3; transform:scale(0.7);} }
+
     .live-grid {
       display: grid;
       grid-template-columns: repeat(3,1fr);
       gap: 12px;
     }
-    .live-grid .tile { background: rgba(44,24,16,0.04); }
-    .live-grid .tile-val { font-size: clamp(1.8rem,3.5vw,2.4rem); color: var(--brown); }
-
-    /* ── Results show/hide ── */
-    .results-wrap { display: none; }
-    .results-wrap.visible { display: block; animation: fadeUp 0.5s cubic-bezier(0.22,1,0.36,1) both; }
-    @keyframes fadeUp {
-      from { opacity:0; transform:translateY(16px); }
-      to   { opacity:1; transform:translateY(0); }
+    .live-grid .tile {
+      background: var(--blush-lt);
+      border-color: rgba(200,120,126,0.15);
     }
-
-    /* ── Gazebo scene (bottom of frame content) ── */
-    .gazebo-wrap {
-      text-align: center;
-      margin-top: 40px;
-      margin-bottom: -20px;
-      opacity: 0.85;
+    .live-grid .tile:hover {
+      border-color: rgba(200,120,126,0.35);
     }
-    .gazebo-wrap svg { width: clamp(220px,55%,340px); height: auto; display: inline-block; }
+    .live-grid .tile-num {
+      font-size: clamp(1.9rem, 4vw, 2.6rem);
+      color: var(--charcoal);
+    }
 
     /* ── Footer ── */
     footer {
-      width: 100%;
-      max-width: 800px;
+      margin-top: 52px;
       text-align: center;
-      padding: 20px 0 40px;
-      font-size: 0.76rem;
-      color: var(--brown-lt);
-      letter-spacing: 0.06em;
-      position: relative;
-      z-index: 1;
+      font-size: 0.78rem;
+      color: var(--taupe-lt);
+      letter-spacing: 0.04em;
     }
-    footer a { color: var(--gold); text-decoration: none; font-weight: 500; transition: color 0.2s; }
-    footer a:hover { color: var(--brown); }
-    .heart { color: var(--pink); }
+    footer a {
+      color: var(--gold);
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+    footer a:hover { color: var(--charcoal); }
+    .heart { color: var(--rose); }
 
     /* ── Responsive ── */
-    @media (max-width: 580px) {
-      .frame-content { padding: 30px 20px 36px; }
-      .grid { grid-template-columns: repeat(2,1fr); }
-      .bot-r, .bot-l { display: none; }
+    @media (max-width: 560px) {
+      .card { padding: 28px 20px 24px; }
+      .tiles-grid { grid-template-columns: repeat(2,1fr); }
+      .live-grid { grid-template-columns: repeat(3,1fr); }
     }
-    @media (max-width: 400px) {
-      .app-name { font-size: 2.4rem; }
-      .live-grid .tile-val { font-size: 1.6rem; }
+    @media (max-width: 360px) {
+      .live-grid .tile-num { font-size: 1.6rem; }
     }
   </style>
 </head>
 <body>
 
-<!-- ══ Botanical corner illustrations ══ -->
-
-<!-- Top-left botanical -->
-<svg class="botanical bot-tl" viewBox="0 0 260 320" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <!-- Main stem -->
-  <path d="M10,10 C30,60 80,90 100,160 C115,210 110,260 120,300" stroke="#7A9668" stroke-width="1.8" fill="none" stroke-linecap="round"/>
-  <!-- Branch left -->
-  <path d="M55,80 C35,65 15,70 5,55" stroke="#7A9668" stroke-width="1.4" fill="none" stroke-linecap="round"/>
-  <!-- Branch right -->
-  <path d="M85,130 C110,115 130,100 150,90" stroke="#7A9668" stroke-width="1.4" fill="none" stroke-linecap="round"/>
-  <!-- Branch upper -->
-  <path d="M30,45 C50,30 70,20 90,10" stroke="#7A9668" stroke-width="1.2" fill="none" stroke-linecap="round"/>
-  <!-- Branch lower -->
-  <path d="M110,200 C85,195 65,205 50,215" stroke="#7A9668" stroke-width="1.2" fill="none" stroke-linecap="round"/>
-
+<!-- Subtle corner florals (watermark) -->
+<svg class="deco deco-tl" viewBox="0 0 300 340" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M10,10 C40,70 110,100 130,200 C145,265 138,310 148,340" stroke="#C8787E" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+  <path d="M65,90 C40,72 16,78 4,60" stroke="#C8787E" stroke-width="2" fill="none" stroke-linecap="round"/>
+  <path d="M105,155 C135,138 162,120 188,108" stroke="#C8787E" stroke-width="2" fill="none" stroke-linecap="round"/>
+  <path d="M35,48 C60,32 88,18 116,8" stroke="#C8787E" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+  <path d="M136,258 C108,252 84,264 65,275" stroke="#C8787E" stroke-width="1.8" fill="none" stroke-linecap="round"/>
   <!-- Leaves -->
-  <ellipse cx="18" cy="30" rx="10" ry="18" fill="#6B8C5A" transform="rotate(-40 18 30)"/>
-  <ellipse cx="50" cy="18" rx="9" ry="16" fill="#5C7A52" transform="rotate(-10 50 18)"/>
-  <ellipse cx="85" cy="12" rx="8" ry="15" fill="#6B8C5A" transform="rotate(20 85 12)"/>
-  <ellipse cx="7" cy="60" rx="8" ry="14" fill="#5C7A52" transform="rotate(-55 7 60)"/>
-  <ellipse cx="135" cy="88" rx="9" ry="16" fill="#6B8C5A" transform="rotate(30 135 88)"/>
-  <ellipse cx="155" cy="96" rx="7" ry="13" fill="#5C7A52" transform="rotate(55 155 96)"/>
-  <ellipse cx="45" cy="218" rx="10" ry="17" fill="#6B8C5A" transform="rotate(-30 45 218)"/>
-  <ellipse cx="30" cy="230" rx="8" ry="14" fill="#7A9668" transform="rotate(-50 30 230)"/>
-  <ellipse cx="100" cy="168" rx="9" ry="15" fill="#5C7A52" transform="rotate(15 100 168)"/>
-  <ellipse cx="115" cy="185" rx="8" ry="14" fill="#6B8C5A" transform="rotate(-20 115 185)"/>
-
-  <!-- Flower 1 (full bloom, top area) -->
-  <g transform="translate(75,42) rotate(-20)">
-    <ellipse rx="7" ry="16" fill="#D4969A" transform="rotate(0)" opacity="0.9"/>
-    <ellipse rx="7" ry="16" fill="#C98088" transform="rotate(72)" opacity="0.85"/>
-    <ellipse rx="7" ry="16" fill="#D4969A" transform="rotate(144)" opacity="0.9"/>
-    <ellipse rx="7" ry="16" fill="#C98088" transform="rotate(216)" opacity="0.85"/>
-    <ellipse rx="7" ry="16" fill="#D4969A" transform="rotate(288)" opacity="0.9"/>
-    <circle r="6" fill="#F0C8C4"/>
-    <circle r="3" fill="#E8A8A4"/>
+  <ellipse cx="20" cy="34" rx="12" ry="22" fill="#C8787E" transform="rotate(-42 20 34)"/>
+  <ellipse cx="62" cy="20" rx="11" ry="20" fill="#A06060" transform="rotate(-12 62 20)"/>
+  <ellipse cx="108" cy="10" rx="10" ry="18" fill="#C8787E" transform="rotate(18 108 10)"/>
+  <ellipse cx="6" cy="72" rx="10" ry="17" fill="#A06060" transform="rotate(-58 6 72)"/>
+  <ellipse cx="170" cy="104" rx="11" ry="19" fill="#C8787E" transform="rotate(32 170 104)"/>
+  <ellipse cx="194" cy="115" rx="9" ry="16" fill="#A06060" transform="rotate(58 194 115)"/>
+  <ellipse cx="58" cy="278" rx="12" ry="20" fill="#C8787E" transform="rotate(-32 58 278)"/>
+  <ellipse cx="38" cy="292" rx="10" ry="17" fill="#A06060" transform="rotate(-55 38 292)"/>
+  <!-- Flowers -->
+  <g transform="translate(92,50) rotate(-22)">
+    <ellipse rx="8" ry="18" fill="#E8A8AC" transform="rotate(0)"/>
+    <ellipse rx="8" ry="18" fill="#D4888E" transform="rotate(72)"/>
+    <ellipse rx="8" ry="18" fill="#E8A8AC" transform="rotate(144)"/>
+    <ellipse rx="8" ry="18" fill="#D4888E" transform="rotate(216)"/>
+    <ellipse rx="8" ry="18" fill="#E8A8AC" transform="rotate(288)"/>
+    <circle r="7" fill="#F5CECE"/>
   </g>
-
-  <!-- Flower 2 (bloom, mid-left branch) -->
-  <g transform="translate(12,62) rotate(30)">
-    <ellipse rx="6" ry="14" fill="#EDBBBA" transform="rotate(0)" opacity="0.9"/>
-    <ellipse rx="6" ry="14" fill="#D4969A" transform="rotate(72)" opacity="0.85"/>
-    <ellipse rx="6" ry="14" fill="#EDBBBA" transform="rotate(144)" opacity="0.9"/>
-    <ellipse rx="6" ry="14" fill="#D4969A" transform="rotate(216)" opacity="0.85"/>
-    <ellipse rx="6" ry="14" fill="#EDBBBA" transform="rotate(288)" opacity="0.9"/>
-    <circle r="5" fill="#F5D0CC"/>
-    <circle r="2.5" fill="#E8A8A4"/>
+  <g transform="translate(14,72) rotate(28)">
+    <ellipse rx="7" ry="15" fill="#F0C0C4" transform="rotate(0)"/>
+    <ellipse rx="7" ry="15" fill="#E0A0A8" transform="rotate(72)"/>
+    <ellipse rx="7" ry="15" fill="#F0C0C4" transform="rotate(144)"/>
+    <ellipse rx="7" ry="15" fill="#E0A0A8" transform="rotate(216)"/>
+    <ellipse rx="7" ry="15" fill="#F0C0C4" transform="rotate(288)"/>
+    <circle r="6" fill="#FDE0E0"/>
   </g>
-
-  <!-- Flower 3 (bud, right branch) -->
-  <g transform="translate(148,86) rotate(60)">
-    <path d="M0,0 C-7,-8 -5,-22 0,-28 C5,-22 7,-8 0,0Z" fill="#D4969A"/>
-    <path d="M0,0 C7,-6 12,-18 8,-26 C3,-22 2,-10 0,0Z" fill="#EDBBBA"/>
-    <path d="M0,0 C-7,-6 -12,-18 -8,-26 C-3,-22 -2,-10 0,0Z" fill="#EDBBBA"/>
+  <g transform="translate(183,104) rotate(55)">
+    <path d="M0,0 C-8,-9 -6,-26 0,-34 C6,-26 8,-9 0,0Z" fill="#E8A8AC"/>
+    <path d="M0,0 C8,-7 14,-22 10,-31 C4,-26 2,-12 0,0Z" fill="#F0C0C4"/>
+    <path d="M0,0 C-8,-7 -14,-22 -10,-31 C-4,-26 -2,-12 0,0Z" fill="#F0C0C4"/>
   </g>
-
-  <!-- Flower 4 (bud, lower) -->
-  <g transform="translate(52,210) rotate(-15)">
-    <path d="M0,0 C-6,-7 -4,-20 0,-25 C4,-20 6,-7 0,0Z" fill="#C98088"/>
-    <path d="M0,0 C6,-5 10,-16 7,-23 C3,-19 1,-9 0,0Z" fill="#D4969A"/>
-    <path d="M0,0 C-6,-5 -10,-16 -7,-23 C-3,-19 -1,-9 0,0Z" fill="#D4969A"/>
-  </g>
-
-  <!-- Small buds -->
-  <g transform="translate(38,35) rotate(10)">
-    <path d="M0,0 C-4,-5 -3,-13 0,-17 C3,-13 4,-5 0,0Z" fill="#EDBBBA"/>
-  </g>
-  <g transform="translate(118,175) rotate(-30)">
-    <path d="M0,0 C-4,-5 -3,-13 0,-17 C3,-13 4,-5 0,0Z" fill="#D4969A"/>
+  <g transform="translate(65,268) rotate(-18)">
+    <path d="M0,0 C-7,-8 -5,-23 0,-30 C5,-23 7,-8 0,0Z" fill="#D4888E"/>
+    <path d="M0,0 C7,-6 12,-20 8,-28 C3,-23 1,-11 0,0Z" fill="#E8A8AC"/>
+    <path d="M0,0 C-7,-6 -12,-20 -8,-28 C-3,-23 -1,-11 0,0Z" fill="#E8A8AC"/>
   </g>
 </svg>
 
-<!-- Top-right botanical (mirrored from top-left via CSS scaleX(-1)) -->
-<svg class="botanical bot-tr" viewBox="0 0 260 320" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <path d="M10,10 C30,60 80,90 100,160 C115,210 110,260 120,300" stroke="#7A9668" stroke-width="1.8" fill="none" stroke-linecap="round"/>
-  <path d="M55,80 C35,65 15,70 5,55" stroke="#7A9668" stroke-width="1.4" fill="none" stroke-linecap="round"/>
-  <path d="M85,130 C110,115 130,100 150,90" stroke="#7A9668" stroke-width="1.4" fill="none" stroke-linecap="round"/>
-  <path d="M30,45 C50,30 70,20 90,10" stroke="#7A9668" stroke-width="1.2" fill="none" stroke-linecap="round"/>
-  <path d="M110,200 C85,195 65,205 50,215" stroke="#7A9668" stroke-width="1.2" fill="none" stroke-linecap="round"/>
-  <ellipse cx="18" cy="30" rx="10" ry="18" fill="#6B8C5A" transform="rotate(-40 18 30)"/>
-  <ellipse cx="50" cy="18" rx="9" ry="16" fill="#5C7A52" transform="rotate(-10 50 18)"/>
-  <ellipse cx="85" cy="12" rx="8" ry="15" fill="#6B8C5A" transform="rotate(20 85 12)"/>
-  <ellipse cx="7" cy="60" rx="8" ry="14" fill="#5C7A52" transform="rotate(-55 7 60)"/>
-  <ellipse cx="135" cy="88" rx="9" ry="16" fill="#6B8C5A" transform="rotate(30 135 88)"/>
-  <ellipse cx="155" cy="96" rx="7" ry="13" fill="#5C7A52" transform="rotate(55 155 96)"/>
-  <ellipse cx="45" cy="218" rx="10" ry="17" fill="#6B8C5A" transform="rotate(-30 45 218)"/>
-  <ellipse cx="30" cy="230" rx="8" ry="14" fill="#7A9668" transform="rotate(-50 30 230)"/>
-  <ellipse cx="100" cy="168" rx="9" ry="15" fill="#5C7A52" transform="rotate(15 100 168)"/>
-  <ellipse cx="115" cy="185" rx="8" ry="14" fill="#6B8C5A" transform="rotate(-20 115 185)"/>
-  <g transform="translate(75,42) rotate(-20)">
-    <ellipse rx="7" ry="16" fill="#D4969A" transform="rotate(0)" opacity="0.9"/>
-    <ellipse rx="7" ry="16" fill="#C98088" transform="rotate(72)" opacity="0.85"/>
-    <ellipse rx="7" ry="16" fill="#D4969A" transform="rotate(144)" opacity="0.9"/>
-    <ellipse rx="7" ry="16" fill="#C98088" transform="rotate(216)" opacity="0.85"/>
-    <ellipse rx="7" ry="16" fill="#D4969A" transform="rotate(288)" opacity="0.9"/>
-    <circle r="6" fill="#F0C8C4"/>
-    <circle r="3" fill="#E8A8A4"/>
+<svg class="deco deco-br" viewBox="0 0 300 340" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M10,10 C40,70 110,100 130,200 C145,265 138,310 148,340" stroke="#C8787E" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+  <path d="M65,90 C40,72 16,78 4,60" stroke="#C8787E" stroke-width="2" fill="none" stroke-linecap="round"/>
+  <path d="M105,155 C135,138 162,120 188,108" stroke="#C8787E" stroke-width="2" fill="none" stroke-linecap="round"/>
+  <path d="M35,48 C60,32 88,18 116,8" stroke="#C8787E" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+  <ellipse cx="20" cy="34" rx="12" ry="22" fill="#C8787E" transform="rotate(-42 20 34)"/>
+  <ellipse cx="62" cy="20" rx="11" ry="20" fill="#A06060" transform="rotate(-12 62 20)"/>
+  <ellipse cx="108" cy="10" rx="10" ry="18" fill="#C8787E" transform="rotate(18 108 10)"/>
+  <ellipse cx="6" cy="72" rx="10" ry="17" fill="#A06060" transform="rotate(-58 6 72)"/>
+  <ellipse cx="170" cy="104" rx="11" ry="19" fill="#C8787E" transform="rotate(32 170 104)"/>
+  <g transform="translate(92,50) rotate(-22)">
+    <ellipse rx="8" ry="18" fill="#E8A8AC" transform="rotate(0)"/>
+    <ellipse rx="8" ry="18" fill="#D4888E" transform="rotate(72)"/>
+    <ellipse rx="8" ry="18" fill="#E8A8AC" transform="rotate(144)"/>
+    <ellipse rx="8" ry="18" fill="#D4888E" transform="rotate(216)"/>
+    <ellipse rx="8" ry="18" fill="#E8A8AC" transform="rotate(288)"/>
+    <circle r="7" fill="#F5CECE"/>
   </g>
-  <g transform="translate(12,62) rotate(30)">
-    <ellipse rx="6" ry="14" fill="#EDBBBA" transform="rotate(0)" opacity="0.9"/>
-    <ellipse rx="6" ry="14" fill="#D4969A" transform="rotate(72)" opacity="0.85"/>
-    <ellipse rx="6" ry="14" fill="#EDBBBA" transform="rotate(144)" opacity="0.9"/>
-    <ellipse rx="6" ry="14" fill="#D4969A" transform="rotate(216)" opacity="0.85"/>
-    <ellipse rx="6" ry="14" fill="#EDBBBA" transform="rotate(288)" opacity="0.9"/>
-    <circle r="5" fill="#F5D0CC"/>
-    <circle r="2.5" fill="#E8A8A4"/>
-  </g>
-  <g transform="translate(148,86) rotate(60)">
-    <path d="M0,0 C-7,-8 -5,-22 0,-28 C5,-22 7,-8 0,0Z" fill="#D4969A"/>
-    <path d="M0,0 C7,-6 12,-18 8,-26 C3,-22 2,-10 0,0Z" fill="#EDBBBA"/>
-    <path d="M0,0 C-7,-6 -12,-18 -8,-26 C-3,-22 -2,-10 0,0Z" fill="#EDBBBA"/>
-  </g>
-  <g transform="translate(52,210) rotate(-15)">
-    <path d="M0,0 C-6,-7 -4,-20 0,-25 C4,-20 6,-7 0,0Z" fill="#C98088"/>
-    <path d="M0,0 C6,-5 10,-16 7,-23 C3,-19 1,-9 0,0Z" fill="#D4969A"/>
-    <path d="M0,0 C-6,-5 -10,-16 -7,-23 C-3,-19 -1,-9 0,0Z" fill="#D4969A"/>
-  </g>
-  <g transform="translate(38,35) rotate(10)">
-    <path d="M0,0 C-4,-5 -3,-13 0,-17 C3,-13 4,-5 0,0Z" fill="#EDBBBA"/>
+  <g transform="translate(14,72) rotate(28)">
+    <ellipse rx="7" ry="15" fill="#F0C0C4" transform="rotate(0)"/>
+    <ellipse rx="7" ry="15" fill="#E0A0A8" transform="rotate(72)"/>
+    <ellipse rx="7" ry="15" fill="#F0C0C4" transform="rotate(144)"/>
+    <ellipse rx="7" ry="15" fill="#E0A0A8" transform="rotate(216)"/>
+    <ellipse rx="7" ry="15" fill="#F0C0C4" transform="rotate(288)"/>
+    <circle r="6" fill="#FDE0E0"/>
   </g>
 </svg>
 
-<!-- Right-side trailing botanical -->
-<svg class="botanical bot-r" viewBox="0 0 120 200" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <path d="M100,10 C80,50 60,90 70,150 C75,175 80,185 90,200" stroke="#7A9668" stroke-width="1.5" fill="none" stroke-linecap="round"/>
-  <path d="M80,60 C100,55 115,48 120,38" stroke="#7A9668" stroke-width="1.2" fill="none" stroke-linecap="round"/>
-  <path d="M72,110 C90,100 108,105 118,95" stroke="#7A9668" stroke-width="1.2" fill="none" stroke-linecap="round"/>
-  <ellipse cx="110" cy="40" rx="7" ry="13" fill="#6B8C5A" transform="rotate(40 110 40)"/>
-  <ellipse cx="118" cy="98" rx="7" ry="12" fill="#5C7A52" transform="rotate(55 118 98)"/>
-  <ellipse cx="86" cy="52" rx="7" ry="13" fill="#6B8C5A" transform="rotate(-20 86 52)"/>
-  <ellipse cx="76" cy="125" rx="8" ry="14" fill="#7A9668" transform="rotate(-10 76 125)"/>
-  <g transform="translate(108,30) rotate(50)">
-    <ellipse rx="5" ry="12" fill="#D4969A" transform="rotate(0)" opacity="0.9"/>
-    <ellipse rx="5" ry="12" fill="#C98088" transform="rotate(72)" opacity="0.85"/>
-    <ellipse rx="5" ry="12" fill="#D4969A" transform="rotate(144)" opacity="0.9"/>
-    <ellipse rx="5" ry="12" fill="#C98088" transform="rotate(216)" opacity="0.85"/>
-    <ellipse rx="5" ry="12" fill="#D4969A" transform="rotate(288)" opacity="0.9"/>
-    <circle r="4.5" fill="#F0C8C4"/>
-  </g>
-  <g transform="translate(115,92) rotate(-20)">
-    <path d="M0,0 C-5,-6 -3,-18 0,-23 C3,-18 5,-6 0,0Z" fill="#EDBBBA"/>
-    <path d="M0,0 C5,-4 9,-15 6,-21 C2,-17 1,-8 0,0Z" fill="#D4969A"/>
-  </g>
-</svg>
-
-<!-- Left-side trailing botanical (mirrored) -->
-<svg class="botanical bot-l" viewBox="0 0 120 200" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <path d="M100,10 C80,50 60,90 70,150 C75,175 80,185 90,200" stroke="#7A9668" stroke-width="1.5" fill="none" stroke-linecap="round"/>
-  <path d="M80,60 C100,55 115,48 120,38" stroke="#7A9668" stroke-width="1.2" fill="none" stroke-linecap="round"/>
-  <ellipse cx="110" cy="40" rx="7" ry="13" fill="#6B8C5A" transform="rotate(40 110 40)"/>
-  <ellipse cx="86" cy="52" rx="7" ry="13" fill="#6B8C5A" transform="rotate(-20 86 52)"/>
-  <ellipse cx="76" cy="125" rx="8" ry="14" fill="#7A9668" transform="rotate(-10 76 125)"/>
-  <g transform="translate(108,30) rotate(50)">
-    <ellipse rx="5" ry="12" fill="#EDBBBA" transform="rotate(0)" opacity="0.9"/>
-    <ellipse rx="5" ry="12" fill="#D4969A" transform="rotate(72)" opacity="0.85"/>
-    <ellipse rx="5" ry="12" fill="#EDBBBA" transform="rotate(144)" opacity="0.9"/>
-    <ellipse rx="5" ry="12" fill="#D4969A" transform="rotate(216)" opacity="0.85"/>
-    <ellipse rx="5" ry="12" fill="#EDBBBA" transform="rotate(288)" opacity="0.9"/>
-    <circle r="4.5" fill="#F0C8C4"/>
-  </g>
-</svg>
-
-<!-- ══ Main page ══ -->
 <div class="page">
 
-  <!-- Gold-bordered invitation frame -->
-  <div class="frame">
-    <div class="corner tl"></div>
-    <div class="corner tr"></div>
-    <div class="corner bl"></div>
-    <div class="corner br"></div>
-
-    <div class="frame-content">
-
-      <!-- Header -->
-      <header>
-        <div class="app-name">HiThatDay</div>
-        <div class="app-tagline">Your Sacred Wedding Date, Beautifully Counted</div>
-        <div class="ornament">
-          <div class="orn-line"></div>
-          <div class="orn-motif">
-            <div class="orn-d"></div>
-            <div class="orn-dot"></div>
-            <div class="orn-d"></div>
-          </div>
-          <div class="orn-line r"></div>
-        </div>
-      </header>
-
-      <!-- Toggle -->
-      <div class="section-label">Select Mode</div>
-      <div class="toggle-group">
-        <button class="toggle-btn active" onclick="setMode('future',this)">Counting Down To</button>
-        <button class="toggle-btn" onclick="setMode('past',this)">Celebrating Since</button>
-      </div>
-
-      <!-- Inputs -->
-      <div class="input-section">
-        <div class="field">
-          <label for="weddingDate">Wedding Date</label>
-          <input type="date" id="weddingDate"/>
-        </div>
-        <div class="field" style="max-width:230px;">
-          <label for="coupleName">
-            Couple's Names
-            <span style="font-size:.85em;text-transform:none;letter-spacing:0;opacity:0.55;font-weight:400;">(optional)</span>
-          </label>
-          <input type="text" id="coupleName" placeholder="e.g. Ananya &amp; Vikram"/>
-        </div>
-        <button class="calc-btn" onclick="calculate()">Calculate</button>
-      </div>
-
-      <div class="error" id="errorMsg">Please select a valid wedding date and time.</div>
-
-      <!-- Results -->
-      <div class="results-wrap" id="resultsWrap">
-
-        <div class="result-label" id="resultLabel"></div>
-
-        <div class="grid">
-          <div class="tile">
-            <div class="tile-val" id="valYears">0</div>
-            <div class="tile-unit">Years</div>
-          </div>
-          <div class="tile">
-            <div class="tile-val" id="valMonths">0</div>
-            <div class="tile-unit">Months</div>
-          </div>
-          <div class="tile">
-            <div class="tile-val" id="valWeeks">0</div>
-            <div class="tile-unit">Weeks</div>
-          </div>
-          <div class="tile">
-            <div class="tile-val" id="valDays">0</div>
-            <div class="tile-unit">Days</div>
-          </div>
-        </div>
-
-        <div class="sec-divider">
-          <div class="sd-l"></div>
-          <div class="sd-txt"><span class="live-dot"></span> Live Countdown</div>
-          <div class="sd-r"></div>
-        </div>
-
-        <div class="live-grid">
-          <div class="tile">
-            <div class="tile-val" id="valHours">00</div>
-            <div class="tile-unit">Hours</div>
-          </div>
-          <div class="tile">
-            <div class="tile-val" id="valMinutes">00</div>
-            <div class="tile-unit">Minutes</div>
-          </div>
-          <div class="tile">
-            <div class="tile-val" id="valSeconds">00</div>
-            <div class="tile-unit">Seconds</div>
-          </div>
-        </div>
-
-      </div>
-
-      <!-- Gazebo scene at bottom of card -->
-      <div class="gazebo-wrap">
-        <svg viewBox="0 0 340 180" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <!-- Bushes / ground cover left -->
-          <ellipse cx="40" cy="160" rx="48" ry="28" fill="#7A9668" opacity="0.7"/>
-          <ellipse cx="25" cy="155" rx="32" ry="20" fill="#6B8C5A" opacity="0.8"/>
-          <ellipse cx="60" cy="158" rx="30" ry="18" fill="#5C7A52" opacity="0.7"/>
-          <!-- Bushes right -->
-          <ellipse cx="300" cy="160" rx="48" ry="28" fill="#7A9668" opacity="0.7"/>
-          <ellipse cx="320" cy="155" rx="32" ry="20" fill="#6B8C5A" opacity="0.8"/>
-          <ellipse cx="278" cy="158" rx="30" ry="18" fill="#5C7A52" opacity="0.7"/>
-          <!-- Urns/planters left -->
-          <path d="M52,140 C44,140 38,145 38,152 L42,168 L70,168 L74,152 C74,145 68,140 60,140 Z" fill="#C8A898" opacity="0.85"/>
-          <rect x="45" y="138" width="22" height="5" rx="2" fill="#D4B4A4" opacity="0.9"/>
-          <ellipse cx="56" cy="140" rx="11" ry="5" fill="#7A9668" opacity="0.9"/>
-          <ellipse cx="56" cy="137" rx="9" ry="9" fill="#6B8C5A" opacity="0.85"/>
-          <!-- Urns/planters right -->
-          <path d="M288,140 C280,140 274,145 274,152 L278,168 L306,168 L310,152 C310,145 304,140 296,140 Z" fill="#C8A898" opacity="0.85"/>
-          <rect x="281" y="138" width="22" height="5" rx="2" fill="#D4B4A4" opacity="0.9"/>
-          <ellipse cx="292" cy="140" rx="11" ry="5" fill="#7A9668" opacity="0.9"/>
-          <ellipse cx="292" cy="137" rx="9" ry="9" fill="#6B8C5A" opacity="0.85"/>
-          <!-- Gazebo columns -->
-          <rect x="144" y="90" width="6" height="78" rx="2" fill="#DCC8B8" opacity="0.9"/>
-          <rect x="190" y="90" width="6" height="78" rx="2" fill="#DCC8B8" opacity="0.9"/>
-          <rect x="158" y="95" width="5" height="73" rx="2" fill="#D4BCA8" opacity="0.75"/>
-          <rect x="177" y="95" width="5" height="73" rx="2" fill="#D4BCA8" opacity="0.75"/>
-          <!-- Gazebo arch -->
-          <path d="M140,115 Q170,85 200,115" stroke="#C8AA94" stroke-width="2.5" fill="none" stroke-linecap="round"/>
-          <!-- Gazebo dome -->
-          <path d="M136,90 Q170,28 204,90 Z" fill="#E0CCBC" opacity="0.92"/>
-          <path d="M142,90 Q170,38 198,90 Z" fill="#EDD8CC" opacity="0.9"/>
-          <!-- Dome top finial -->
-          <line x1="170" y1="28" x2="170" y2="16" stroke="#C8AA94" stroke-width="1.5"/>
-          <circle cx="170" cy="13" r="4" fill="#C8AA94" opacity="0.85"/>
-          <circle cx="170" cy="13" r="2" fill="#D4A852" opacity="0.8"/>
-          <!-- Dome ribs -->
-          <path d="M170,30 Q155,60 142,90" stroke="#D4BCA8" stroke-width="0.8" opacity="0.6"/>
-          <path d="M170,30 Q185,60 198,90" stroke="#D4BCA8" stroke-width="0.8" opacity="0.6"/>
-          <path d="M170,30 Q170,60 170,90" stroke="#D4BCA8" stroke-width="0.8" opacity="0.6"/>
-          <!-- Wisteria / flowers on gazebo -->
-          <circle cx="150" cy="108" r="4" fill="#B09AC8" opacity="0.7"/>
-          <circle cx="157" cy="112" r="3.5" fill="#C0AAD8" opacity="0.65"/>
-          <circle cx="163" cy="106" r="4" fill="#A888BC" opacity="0.7"/>
-          <circle cx="170" cy="112" r="3" fill="#B09AC8" opacity="0.6"/>
-          <circle cx="177" cy="106" r="4" fill="#C0AAD8" opacity="0.7"/>
-          <circle cx="183" cy="112" r="3.5" fill="#A888BC" opacity="0.65"/>
-          <circle cx="190" cy="108" r="4" fill="#B09AC8" opacity="0.7"/>
-          <!-- Step/base -->
-          <path d="M130,168 L210,168 L215,180 L125,180 Z" fill="#D4BCA8" opacity="0.7"/>
-          <path d="M135,162 L205,162 L210,168 L130,168 Z" fill="#DCC8B8" opacity="0.75"/>
-          <!-- Ground greenery around gazebo -->
-          <ellipse cx="170" cy="175" rx="55" ry="12" fill="#6B8C5A" opacity="0.5"/>
-          <ellipse cx="135" cy="168" rx="18" ry="10" fill="#7A9668" opacity="0.6"/>
-          <ellipse cx="205" cy="168" rx="18" ry="10" fill="#7A9668" opacity="0.6"/>
-        </svg>
-      </div>
-
-    </div>
+  <!-- Hero -->
+  <div class="hero">
+    <div class="eyebrow">Wedding Date Calculator</div>
+    <h1 class="title">HiThatDay</h1>
+    <p class="tagline">Enter your wedding date and discover exactly<br/>how long until — or since — your special day</p>
   </div>
 
-  <!-- Footer -->
+  <!-- Input card -->
+  <div class="card">
+
+    <div class="toggle-wrap">
+      <button class="toggle-btn active" onclick="setMode('future',this)">Counting Down To</button>
+      <button class="toggle-btn" onclick="setMode('past',this)">Celebrating Since</button>
+    </div>
+
+    <div class="fields">
+      <div class="field">
+        <label for="weddingDate">Wedding Date</label>
+        <input type="date" id="weddingDate"/>
+      </div>
+      <div class="field">
+        <label for="coupleName">
+          Names
+          <span style="font-size:.85em;text-transform:none;letter-spacing:0;opacity:0.6;font-weight:400;">(optional)</span>
+        </label>
+        <input type="text" id="coupleName" placeholder="e.g. Priya &amp; Arjun"/>
+      </div>
+    </div>
+
+    <button class="btn" onclick="calculate()">Calculate</button>
+    <div class="error" id="errorMsg">Please select a valid wedding date.</div>
+
+  </div>
+
+  <!-- Results -->
+  <div class="results-wrap" id="resultsWrap">
+
+    <div class="result-headline">
+      <p id="resultLabel"></p>
+    </div>
+
+    <div class="tiles-grid">
+      <div class="tile">
+        <div class="tile-num" id="valYears">0</div>
+        <div class="tile-lbl">Years</div>
+      </div>
+      <div class="tile">
+        <div class="tile-num" id="valMonths">0</div>
+        <div class="tile-lbl">Months</div>
+      </div>
+      <div class="tile">
+        <div class="tile-num" id="valWeeks">0</div>
+        <div class="tile-lbl">Weeks</div>
+      </div>
+      <div class="tile">
+        <div class="tile-num" id="valDays">0</div>
+        <div class="tile-lbl">Days</div>
+      </div>
+    </div>
+
+    <div class="live-header">
+      <div class="lh-line"></div>
+      <div class="lh-label"><span class="live-dot"></span>Live Countdown</div>
+      <div class="lh-line"></div>
+    </div>
+
+    <div class="live-grid">
+      <div class="tile">
+        <div class="tile-num" id="valHours">00</div>
+        <div class="tile-lbl">Hours</div>
+      </div>
+      <div class="tile">
+        <div class="tile-num" id="valMinutes">00</div>
+        <div class="tile-lbl">Minutes</div>
+      </div>
+      <div class="tile">
+        <div class="tile-num" id="valSeconds">00</div>
+        <div class="tile-lbl">Seconds</div>
+      </div>
+    </div>
+
+  </div>
+
   <footer>
     Designed with <span class="heart">❤️</span> by
     <a href="https://netwinglabs.com" target="_blank" rel="noopener">NetWing Labs</a>
@@ -737,6 +535,15 @@
   let targetDate = null;
   let ticker = null;
 
+  /* Default: tomorrow */
+  (function () {
+    const d = new Date();
+    d.setDate(d.getDate() + 1);
+    const p = n => String(n).padStart(2,'0');
+    document.getElementById('weddingDate').value =
+      `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())}`;
+  })();
+
   function setMode(m, btn) {
     mode = m;
     document.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
@@ -744,21 +551,12 @@
     if (targetDate) calculate();
   }
 
-  (function () {
-    const d = new Date();
-    d.setDate(d.getDate() + 1);
-    const p = n => String(n).padStart(2, '0');
-    document.getElementById('weddingDate').value =
-      `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())}`;
-  })();
-
   function calculate() {
     const val  = document.getElementById('weddingDate').value;
     const err  = document.getElementById('errorMsg');
     const wrap = document.getElementById('resultsWrap');
     if (!val) { err.classList.add('visible'); return; }
     err.classList.remove('visible');
-    // Use midnight (12:00 AM) as default time
     targetDate = new Date(val + 'T00:00:00');
     if (isNaN(targetDate)) { err.classList.add('visible'); return; }
     wrap.classList.remove('visible');
@@ -773,26 +571,34 @@
   function updateLabel() {
     const name = document.getElementById('coupleName').value.trim();
     const lbl  = document.getElementById('resultLabel');
-    const ds   = targetDate.toLocaleDateString('en-IN', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+    const ds   = targetDate.toLocaleDateString('en-IN', {
+      weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+    });
     lbl.innerHTML = mode === 'future'
-      ? (name ? `<strong>${name}</strong>'s wedding is on ${ds}` : `Your wedding is on <strong>${ds}</strong>`)
-      : (name ? `<strong>${name}</strong> have been married since ${ds}` : `Married since <strong>${ds}</strong>`);
+      ? (name
+          ? `<strong>${name}</strong>'s wedding is on ${ds}`
+          : `Your wedding is on <strong>${ds}</strong>`)
+      : (name
+          ? `<strong>${name}</strong> have been married since ${ds}`
+          : `Married since <strong>${ds}</strong>`);
   }
 
   function diffComponents(from, to) {
-    let y = to.getFullYear() - from.getFullYear();
-    let mo = to.getMonth() - from.getMonth();
-    let d  = to.getDate()  - from.getDate();
+    let y  = to.getFullYear() - from.getFullYear();
+    let mo = to.getMonth()    - from.getMonth();
+    let d  = to.getDate()     - from.getDate();
     if (d  < 0) { mo--; d  += new Date(to.getFullYear(), to.getMonth(), 0).getDate(); }
     if (mo < 0) { y--;  mo += 12; }
     return { years: y, months: mo };
   }
 
   function updateStatic() {
-    const now = new Date();
-    const absMs = Math.abs(targetDate - now);
+    const now     = new Date();
+    const absMs   = Math.abs(targetDate - now);
     const totalDays = Math.floor(absMs / 86400000);
-    const comp = mode === 'future' ? diffComponents(now, targetDate) : diffComponents(targetDate, now);
+    const comp    = mode === 'future'
+      ? diffComponents(now, targetDate)
+      : diffComponents(targetDate, now);
     document.getElementById('valYears').textContent  = comp.years;
     document.getElementById('valMonths').textContent = comp.months;
     document.getElementById('valWeeks').textContent  = Math.floor(totalDays / 7);
@@ -804,7 +610,7 @@
     const abs = Math.max(0, mode === 'future' ? targetDate - now : now - targetDate);
     const s   = Math.floor(abs / 1000);
     document.getElementById('valHours').textContent   = String(Math.floor(s / 3600) % 24).padStart(2,'0');
-    document.getElementById('valMinutes').textContent = String(Math.floor(s / 60)   % 60).padStart(2,'0');
+    document.getElementById('valMinutes').textContent = String(Math.floor(s / 60) % 60).padStart(2,'0');
     document.getElementById('valSeconds').textContent = String(s % 60).padStart(2,'0');
   }
 
