@@ -3,27 +3,55 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>HiThatDay – Wedding Date Calculator</title>
+  <title>Wish Nest – Wedding Date Calculator</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,700;1,400;1,500&family=DM+Sans:wght@300;400;500;600&family=Great+Vibes&display=swap');
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+    /* ── Light mode variables (default) ── */
     :root {
-      --bg:       #FDF8F5;
-      --white:    #FFFFFF;
-      --charcoal: #1C1410;
-      --taupe:    #7A6A58;
-      --taupe-lt: #B5A898;
-      --gold:     #B8893A;
-      --gold-lt:  #D4A852;
-      --rose:     #C8606A;
-      --rose-lt:  #E8909A;
-      --blush:    #F5E0E2;
-      --blush-lt: #FBF0F1;
-      --border:   rgba(28,20,16,0.09);
-      --sh-sm:    0 2px 20px rgba(200,96,106,0.07);
-      --sh-md:    0 12px 56px rgba(28,20,16,0.1);
+      --bg:         #FDF8F5;
+      --card-bg:    #FFFFFF;
+      --text:       #1C1410;
+      --taupe:      #7A6A58;
+      --taupe-lt:   #B5A898;
+      --gold:       #B8893A;
+      --gold-lt:    #D4A852;
+      --rose:       #C8606A;
+      --rose-lt:    #E8909A;
+      --blush:      #F5E0E2;
+      --blush-lt:   #FBF0F1;
+      --border:     rgba(28,20,16,0.09);
+      --input-bg:   #FDF8F5;
+      --sh-sm:      0 2px 20px rgba(200,96,106,0.07);
+      --sh-md:      0 12px 56px rgba(28,20,16,0.1);
+      --deco-op:    0.11;
+    }
+
+    /* ── Dark mode variables ── */
+    [data-theme="dark"] {
+      --bg:         #180E0C;
+      --card-bg:    #251812;
+      --text:       #F5E8DC;
+      --taupe:      #B09878;
+      --taupe-lt:   #8A7A68;
+      --gold:       #E8C070;
+      --gold-lt:    #F0D090;
+      --rose:       #E8909A;
+      --rose-lt:    #F0B0B8;
+      --blush:      #2E1A1C;
+      --blush-lt:   #2E1A1C;
+      --border:     rgba(232,144,154,0.15);
+      --input-bg:   #1E1410;
+      --sh-sm:      0 2px 20px rgba(232,144,154,0.1);
+      --sh-md:      0 12px 56px rgba(0,0,0,0.45);
+      --deco-op:    0.18;
+    }
+
+    /* ── Theme transition class ── */
+    body.theme-transitioning * {
+      transition: background-color 0.4s, color 0.4s, border-color 0.4s !important;
     }
 
     html { scroll-behavior: smooth; }
@@ -32,11 +60,48 @@
       min-height: 100vh;
       background: var(--bg);
       background-image:
-        radial-gradient(ellipse 70% 40% at 50% 0%, rgba(232,144,154,0.13) 0%, transparent 100%),
-        radial-gradient(ellipse 50% 30% at 20% 100%, rgba(184,137,58,0.07) 0%, transparent 100%);
+        radial-gradient(ellipse 70% 40% at 20% 0%, rgba(232,144,154,0.13) 0%, transparent 60%),
+        radial-gradient(ellipse 50% 30% at 80% 100%, rgba(184,137,58,0.07) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 50% at 50% 50%, rgba(200,96,106,0.04) 0%, transparent 80%);
+      background-size: 400% 400%;
+      animation: bgShift 20s ease-in-out infinite;
       font-family: 'DM Sans', sans-serif;
-      color: var(--charcoal);
+      color: var(--text);
       overflow-x: hidden;
+    }
+
+    @keyframes bgShift {
+      0%   { background-position: 0% 50%; }
+      25%  { background-position: 50% 0%; }
+      50%  { background-position: 100% 50%; }
+      75%  { background-position: 50% 100%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    /* ── Dark mode theme toggle button ── */
+    .theme-toggle {
+      position: fixed;
+      top: 16px;
+      right: 16px;
+      z-index: 100;
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      border: 1.5px solid var(--border);
+      background: var(--card-bg);
+      color: var(--text);
+      font-size: 1.15rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: var(--sh-sm);
+      transition: transform 0.2s, box-shadow 0.2s;
+      backdrop-filter: blur(10px);
+    }
+    .theme-toggle:hover {
+      transform: scale(1.1);
+      box-shadow: 0 4px 18px rgba(200,96,106,0.22);
     }
 
     /* ── Floating hearts ── */
@@ -53,10 +118,61 @@
       100% { opacity: 0; transform: translateY(-105vh) rotate(calc(var(--rot) + 20deg)); }
     }
 
+    /* ── Sparkle particles ── */
+    .sparkles-bg { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
+    .sparkle {
+      position: absolute;
+      animation: sparkleAnim var(--sp-dur) ease-in-out infinite var(--sp-del);
+      opacity: 0;
+    }
+    @keyframes sparkleAnim {
+      0%   { opacity: 0; transform: scale(0) rotate(0deg); }
+      30%  { opacity: var(--sp-op); transform: scale(1) rotate(180deg); }
+      70%  { opacity: var(--sp-op); transform: scale(0.8) rotate(270deg); }
+      100% { opacity: 0; transform: scale(0) rotate(360deg); }
+    }
+    [data-theme="dark"] .sparkle { --sp-op-mult: 1.8; }
+
+    /* ── Falling petals ── */
+    .petals-bg { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
+    .petal {
+      position: absolute;
+      top: -30px;
+      width: var(--pt-w);
+      height: var(--pt-h);
+      background: var(--pt-color);
+      border-radius: 60% 10% 60% 10%;
+      opacity: var(--pt-op);
+      animation: petalFall var(--pt-dur) linear infinite var(--pt-del);
+      transform-origin: center center;
+    }
+    @keyframes petalFall {
+      0%   { transform: translateY(0) translateX(0) rotate(0deg); opacity: var(--pt-op); }
+      20%  { transform: translateY(20vh) translateX(var(--pt-dx1)) rotate(45deg); }
+      50%  { transform: translateY(50vh) translateX(var(--pt-dx2)) rotate(120deg); }
+      80%  { transform: translateY(80vh) translateX(var(--pt-dx3)) rotate(220deg); opacity: calc(var(--pt-op) * 0.6); }
+      100% { transform: translateY(110vh) translateX(var(--pt-dx4)) rotate(360deg); opacity: 0; }
+    }
+
+    /* ── Bokeh orbs ── */
+    .bokeh-bg { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
+    .bokeh {
+      position: absolute;
+      border-radius: 50%;
+      opacity: var(--bk-op);
+      animation: bokehDrift var(--bk-dur) ease-in-out infinite alternate var(--bk-del);
+    }
+    @keyframes bokehDrift {
+      0%   { transform: translate(0, 0) scale(1); }
+      33%  { transform: translate(var(--bk-x1), var(--bk-y1)) scale(1.12); }
+      66%  { transform: translate(var(--bk-x2), var(--bk-y2)) scale(0.9); }
+      100% { transform: translate(var(--bk-x3), var(--bk-y3)) scale(1.08); }
+    }
+
     /* ── Corner florals ── */
     .deco { position: fixed; pointer-events: none; z-index: 0; }
-    .deco-tl { top: -16px; left: -16px; width: clamp(160px,21vw,270px); opacity: 0.11; }
-    .deco-br { bottom: -16px; right: -16px; width: clamp(160px,21vw,270px); opacity: 0.11; transform: rotate(180deg); }
+    .deco-tl { top: -16px; left: -16px; width: clamp(160px,21vw,270px); opacity: var(--deco-op); }
+    .deco-br { bottom: -16px; right: -16px; width: clamp(160px,21vw,270px); opacity: var(--deco-op); transform: rotate(180deg); }
 
     /* ── Top nav ── */
     .top-nav {
@@ -74,6 +190,11 @@
       gap: 4px;
       box-shadow: 0 4px 24px rgba(28,20,16,0.08);
     }
+    [data-theme="dark"] .nav-pill {
+      background: rgba(37,24,18,0.92);
+      border-color: rgba(232,144,154,0.18);
+      box-shadow: 0 4px 24px rgba(0,0,0,0.35);
+    }
     .nav-btn {
       padding: 10px 22px;
       border: none; border-radius: 50px;
@@ -86,8 +207,12 @@
     }
     .nav-btn.active {
       background: linear-gradient(135deg, var(--rose), #A84858);
-      color: var(--white);
+      color: #FFFFFF;
       box-shadow: 0 2px 14px rgba(200,96,106,0.35);
+    }
+    [data-theme="dark"] .nav-btn.active {
+      background: linear-gradient(135deg, var(--rose), #C06070);
+      box-shadow: 0 2px 14px rgba(232,144,154,0.4);
     }
 
     /* ── Views ── */
@@ -118,7 +243,7 @@
 
     .title {
       font-family: 'Playfair Display', serif; font-weight: 700;
-      font-size: clamp(3.4rem,9vw,6.2rem); color: var(--charcoal);
+      font-size: clamp(3.4rem,9vw,6.2rem); color: var(--text);
       line-height: 1; letter-spacing: -0.01em; margin-bottom: 10px;
     }
     .love-script {
@@ -134,9 +259,9 @@
     /* ── Cards ── */
     .card {
       width: 100%; max-width: 680px;
-      background: var(--white); border-radius: 28px;
+      background: var(--card-bg); border-radius: 28px;
       padding: 40px 40px 36px; box-shadow: var(--sh-md);
-      border: 1px solid rgba(200,96,106,0.08);
+      border: 1px solid var(--border);
       position: relative; overflow: hidden;
       margin-bottom: 28px;
     }
@@ -145,11 +270,43 @@
       font-size:120px; color:var(--rose); opacity:.03; pointer-events:none; line-height:1;
     }
 
+    /* Card shimmer on result reveal */
+    @keyframes shimmer {
+      0%   { background-position: -200% center; }
+      100% { background-position: 200% center; }
+    }
+    .tile.shimmer-once {
+      background-image: linear-gradient(
+        90deg,
+        transparent 0%,
+        rgba(255,255,255,0.18) 40%,
+        rgba(255,255,255,0.35) 50%,
+        rgba(255,255,255,0.18) 60%,
+        transparent 100%
+      );
+      background-size: 200% 100%;
+      animation: shimmer 0.9s ease forwards;
+    }
+    [data-theme="dark"] .tile.shimmer-once {
+      background-image: linear-gradient(
+        90deg,
+        transparent 0%,
+        rgba(232,192,112,0.08) 40%,
+        rgba(232,192,112,0.18) 50%,
+        rgba(232,192,112,0.08) 60%,
+        transparent 100%
+      );
+    }
+
     /* ── Toggle ── */
     .toggle-wrap {
       display: flex; background: var(--bg); border-radius: 50px;
       padding: 4px; gap: 4px; margin-bottom: 30px;
       border: 1px solid rgba(200,96,106,0.1);
+    }
+    [data-theme="dark"] .toggle-wrap {
+      background: var(--input-bg);
+      border-color: var(--border);
     }
     .toggle-btn {
       flex:1; padding:10px 12px; border:none; border-radius:50px;
@@ -159,7 +316,10 @@
     }
     .toggle-btn.active {
       background:linear-gradient(135deg,var(--rose),#A84858);
-      color:var(--white); box-shadow:0 2px 16px rgba(200,96,106,.35);
+      color:#FFFFFF; box-shadow:0 2px 16px rgba(200,96,106,.35);
+    }
+    [data-theme="dark"] .toggle-btn.active {
+      background:linear-gradient(135deg,var(--rose),#C06070);
     }
 
     /* ── Inputs ── */
@@ -171,20 +331,27 @@
     }
     input[type="date"], input[type="text"] {
       width:100%; padding:13px 18px;
-      background:var(--bg); border:1.5px solid transparent; border-radius:50px;
-      color:var(--charcoal); font-size:0.95rem; font-family:'DM Sans',sans-serif;
+      background:var(--input-bg); border:1.5px solid transparent; border-radius:50px;
+      color:var(--text); font-size:0.95rem; font-family:'DM Sans',sans-serif;
       font-weight:400; outline:none;
       transition:border-color .2s,background .2s,box-shadow .2s;
       -webkit-appearance:none; appearance:none;
     }
-    input[type="date"]::-webkit-calendar-picker-indicator { cursor:pointer; opacity:.4; }
+    input[type="date"]::-webkit-calendar-picker-indicator {
+      cursor:pointer; opacity:.4;
+      filter: var(--cal-filter, none);
+    }
+    [data-theme="dark"] input[type="date"]::-webkit-calendar-picker-indicator {
+      filter: invert(0.8);
+    }
     input::placeholder { color:var(--taupe-lt); }
-    input:focus { border-color:var(--rose-lt); background:var(--white); box-shadow:0 0 0 4px rgba(200,96,106,.08); }
+    input:focus { border-color:var(--rose-lt); background:var(--card-bg); box-shadow:0 0 0 4px rgba(200,96,106,.08); }
+    [data-theme="dark"] input:focus { box-shadow:0 0 0 4px rgba(232,144,154,.12); }
 
     .btn {
       width:100%; padding:15px 24px;
       background:linear-gradient(135deg,var(--rose) 0%,#A84858 100%);
-      border:none; border-radius:50px; color:var(--white);
+      border:none; border-radius:50px; color:#FFFFFF;
       font-size:0.82rem; font-family:'DM Sans',sans-serif; font-weight:600;
       letter-spacing:.14em; text-transform:uppercase; cursor:pointer;
       transition:transform .15s,box-shadow .2s,filter .2s;
@@ -202,21 +369,22 @@
       box-shadow: none;
     }
     .btn-outline:hover { background: var(--blush-lt); box-shadow: none; filter: none; }
+    [data-theme="dark"] .btn-outline:hover { background: rgba(232,144,154,0.12); }
 
     .error { font-size:.82rem; color:var(--rose); margin-top:12px; text-align:center; display:none; font-style:italic; }
     .error.visible { display:block; }
 
     /* ── Calculator results ── */
-    .results-wrap { display:none; width:100%; max-width:680px; }
+    .results-wrap { display:none; width:100%; max-width:680px; scroll-margin-top: 80px; }
     .results-wrap.visible { display:block; animation:fadeUp .55s cubic-bezier(.22,1,.36,1) both; }
 
     .result-headline { text-align:center; margin-bottom:24px; }
     .result-headline p { font-family:'Playfair Display',serif; font-style:italic; font-size:clamp(1rem,2.5vw,1.18rem); color:var(--taupe); line-height:1.6; }
-    .result-headline strong { font-style:normal; color:var(--charcoal); font-weight:500; }
+    .result-headline strong { font-style:normal; color:var(--text); font-weight:500; }
 
     .tiles-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; }
     .tile {
-      background:var(--white); border:1.5px solid var(--border); border-radius:22px;
+      background:var(--card-bg); border:1.5px solid var(--border); border-radius:22px;
       padding:26px 10px 20px; text-align:center;
       transition:border-color .22s,transform .22s,box-shadow .22s;
       box-shadow:var(--sh-sm); position:relative; overflow:hidden;
@@ -224,7 +392,7 @@
     .tile::after { content:'♥'; position:absolute; bottom:6px; right:8px; font-size:.55rem; color:var(--rose); opacity:0; transition:opacity .22s; }
     .tile:hover { border-color:rgba(200,96,106,.3); transform:translateY(-5px); box-shadow:0 16px 36px rgba(200,96,106,.12); }
     .tile:hover::after { opacity:.5; }
-    .tile-num { font-family:'Playfair Display',serif; font-weight:700; font-size:clamp(2.2rem,4.5vw,3rem); color:var(--charcoal); line-height:1; margin-bottom:8px; letter-spacing:-.02em; }
+    .tile-num { font-family:'Playfair Display',serif; font-weight:700; font-size:clamp(2.2rem,4.5vw,3rem); color:var(--text); line-height:1; margin-bottom:8px; letter-spacing:-.02em; }
     .tile-lbl { font-size:.6rem; letter-spacing:.2em; text-transform:uppercase; color:var(--taupe-lt); font-weight:600; }
 
     .heart-divider { display:flex; align-items:center; gap:14px; margin:26px 0 16px; }
@@ -236,11 +404,11 @@
     @keyframes pulseDot { 0%,100%{opacity:1;transform:scale(1);} 50%{opacity:.3;transform:scale(.65);} }
 
     .live-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; }
-    .live-grid .tile { background:linear-gradient(160deg,var(--blush-lt),#FFF6F7); border-color:rgba(200,96,106,.12); }
+    .live-grid .tile { background:linear-gradient(160deg,var(--blush-lt),var(--blush)); border-color:rgba(200,96,106,.12); }
     .live-grid .tile:hover { border-color:rgba(200,96,106,.3); }
     .live-grid .tile-num { color:var(--rose); }
 
-    .milestone { margin-top:18px; background:linear-gradient(135deg,#FFF0F1,#FDF8F5); border:1px solid rgba(200,96,106,.12); border-radius:50px; padding:13px 22px; text-align:center; display:none; }
+    .milestone { margin-top:18px; background:linear-gradient(135deg,var(--blush-lt),var(--bg)); border:1px solid rgba(200,96,106,.12); border-radius:50px; padding:13px 22px; text-align:center; display:none; }
     .milestone.visible { display:block; animation:fadeUp .4s ease both; }
     .milestone p { font-family:'Playfair Display',serif; font-style:italic; font-size:.88rem; color:var(--taupe); }
     .milestone strong { color:var(--rose); font-style:normal; }
@@ -257,7 +425,7 @@
     }
     .wish-section-hero h2 {
       font-family:'Playfair Display',serif; font-weight:700;
-      font-size:clamp(2rem,5vw,3.2rem); color:var(--charcoal); margin-bottom:10px; line-height:1.1;
+      font-size:clamp(2rem,5vw,3.2rem); color:var(--text); margin-bottom:10px; line-height:1.1;
     }
     .wish-section-hero p { font-family:'Playfair Display',serif; font-style:italic; font-size:1rem; color:var(--taupe); line-height:1.6; }
 
@@ -268,17 +436,21 @@
       flex-direction: column;
       align-items: center;
       justify-content: flex-start;
-      padding: 0 20px 60px;
+      padding: 48px 20px 60px;
       position: relative; z-index: 1;
     }
     #wishDisplayView.active { display: flex; }
 
     .wish-card {
       width: 100%; max-width: 680px;
-      background: var(--white); border-radius: 32px;
+      background: var(--card-bg); border-radius: 32px;
       box-shadow: 0 24px 80px rgba(200,96,106,.18);
       border: 1px solid rgba(200,96,106,.12);
-      overflow: hidden; margin-top: 32px;
+      overflow: hidden; margin-top: 0;
+    }
+    [data-theme="dark"] .wish-card {
+      box-shadow: 0 24px 80px rgba(0,0,0,0.5);
+      border-color: rgba(232,144,154,0.15);
     }
 
     /* Card top floral banner */
@@ -289,6 +461,10 @@
       border-bottom: 1px solid rgba(200,96,106,.12);
       position: relative;
       overflow: hidden;
+    }
+    [data-theme="dark"] .wish-card-top {
+      background: linear-gradient(160deg, #2E1A1C, #381A20);
+      border-bottom-color: rgba(232,144,154,0.12);
     }
     .wish-card-top::before, .wish-card-top::after {
       content: '✿';
@@ -306,7 +482,7 @@
     .wish-from-name {
       font-family: 'Playfair Display', serif;
       font-weight: 700; font-size: clamp(1.4rem,4vw,2rem);
-      color: var(--charcoal); margin-bottom: 8px;
+      color: var(--text); margin-bottom: 8px;
     }
     .wish-congrats {
       font-family: 'Playfair Display', serif; font-style: italic;
@@ -332,7 +508,7 @@
     .wish-date-label { font-size:.62rem; letter-spacing:.2em; text-transform:uppercase; color:var(--taupe-lt); font-weight:600; margin-bottom:6px; }
     .wish-date-value {
       font-family:'Playfair Display',serif; font-weight:500;
-      font-size:clamp(1.1rem,3vw,1.5rem); color:var(--charcoal); margin-bottom:24px;
+      font-size:clamp(1.1rem,3vw,1.5rem); color:var(--text); margin-bottom:24px;
     }
 
     .wish-message-divider { display:flex; align-items:center; gap:12px; margin:0 auto 22px; max-width:360px; }
@@ -358,15 +534,62 @@
     .wish-actions { display:flex; gap:12px; flex-wrap:wrap; justify-content:center; }
     .wish-actions .btn { flex:1; min-width:180px; max-width:240px; }
 
+    /* Wish display footer */
+    .wish-display-footer {
+      margin-top: 28px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
+    }
+    .wish-nav-pills {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .wish-nav-pill {
+      padding: 10px 22px;
+      border-radius: 50px;
+      border: 1.5px solid var(--rose);
+      background: transparent;
+      color: var(--rose);
+      font-size: 0.82rem;
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .wish-nav-pill:hover {
+      background: var(--blush-lt);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 14px rgba(200,96,106,0.2);
+    }
+    [data-theme="dark"] .wish-nav-pill:hover {
+      background: rgba(232,144,154,0.12);
+    }
+    .wish-nav-pill.primary {
+      background: linear-gradient(135deg, var(--rose), #A84858);
+      color: #FFFFFF;
+      border-color: transparent;
+      box-shadow: 0 4px 16px rgba(200,96,106,0.35);
+    }
+    .wish-nav-pill.primary:hover {
+      background: linear-gradient(135deg, var(--rose), #C06070);
+      box-shadow: 0 6px 22px rgba(200,96,106,0.5);
+    }
+
     .wish-brand {
-      margin-top: 28px; font-size: .75rem; color: var(--taupe-lt); letter-spacing: .04em;
+      font-size: 0.68rem; color: var(--taupe-lt); letter-spacing: .04em;
     }
     .wish-brand a { color: var(--gold); text-decoration: none; font-weight: 500; }
+    .wish-brand a:hover { color: var(--gold-lt); }
 
     /* Copied toast */
     .toast {
       position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(80px);
-      background: var(--charcoal); color: var(--white);
+      background: var(--text); color: var(--card-bg);
       padding: 12px 24px; border-radius: 50px; font-size: .82rem; font-weight: 500;
       box-shadow: 0 8px 28px rgba(0,0,0,.25); z-index: 999;
       transition: transform .3s cubic-bezier(.22,1,.36,1), opacity .3s;
@@ -379,9 +602,9 @@
     .love-quote p { font-family:'Great Vibes',cursive; font-size:clamp(1.3rem,3.5vw,1.8rem); color:var(--rose); opacity:.7; line-height:1.5; }
 
     /* ── Footer ── */
-    footer { margin-top:48px; text-align:center; font-size:.78rem; color:var(--taupe-lt); letter-spacing:.04em; }
+    footer { margin-top:48px; text-align:center; font-size:0.68rem; color:var(--taupe-lt); letter-spacing:.04em; }
     footer a { color:var(--gold); text-decoration:none; font-weight:500; }
-    footer a:hover { color:var(--charcoal); }
+    footer a:hover { color:var(--gold-lt); }
     .heart { color:var(--rose); }
 
     /* ── Animations ── */
@@ -398,8 +621,20 @@
 </head>
 <body>
 
+<!-- Dark / Light mode toggle -->
+<button class="theme-toggle" id="themeToggle" title="Toggle dark / light mode" onclick="toggleTheme()">🌙</button>
+
 <!-- Floating hearts -->
 <div class="hearts-bg" id="heartsContainer"></div>
+
+<!-- Sparkle particles -->
+<div class="sparkles-bg" id="sparklesContainer"></div>
+
+<!-- Falling petals -->
+<div class="petals-bg" id="petalsContainer"></div>
+
+<!-- Bokeh orbs -->
+<div class="bokeh-bg" id="bokehContainer"></div>
 
 <!-- Corner florals -->
 <svg class="deco deco-tl" viewBox="0 0 280 330" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -483,7 +718,7 @@
 
     <div class="hero">
       <div class="eyebrow"><span class="eb-heart">♥</span>Wedding Date Calculator<span class="eb-heart">♥</span></div>
-      <h1 class="title">HiThatDay</h1>
+      <h1 class="title">Wish Nest</h1>
       <span class="love-script">love, always &amp; forever</span>
       <p class="tagline">Enter your wedding date and discover exactly<br/>how long until — or since — your special day</p>
     </div>
@@ -512,10 +747,10 @@
     <div class="results-wrap" id="resultsWrap">
       <div class="result-headline"><p id="resultLabel"></p></div>
       <div class="tiles-grid">
-        <div class="tile"><div class="tile-num" id="valYears">0</div><div class="tile-lbl">Years</div></div>
-        <div class="tile"><div class="tile-num" id="valMonths">0</div><div class="tile-lbl">Months</div></div>
-        <div class="tile"><div class="tile-num" id="valWeeks">0</div><div class="tile-lbl">Weeks</div></div>
-        <div class="tile"><div class="tile-num" id="valDays">0</div><div class="tile-lbl">Days</div></div>
+        <div class="tile" id="tileYears"><div class="tile-num" id="valYears">0</div><div class="tile-lbl">Years</div></div>
+        <div class="tile" id="tileMonths"><div class="tile-num" id="valMonths">0</div><div class="tile-lbl">Months</div></div>
+        <div class="tile" id="tileWeeks"><div class="tile-num" id="valWeeks">0</div><div class="tile-lbl">Weeks</div></div>
+        <div class="tile" id="tileDays"><div class="tile-num" id="valDays">0</div><div class="tile-lbl">Days</div></div>
       </div>
       <div class="heart-divider">
         <div class="hd-line"></div>
@@ -591,13 +826,6 @@
 ════════════════════════════════════════════ -->
 <div id="wishDisplayView">
 
-  <nav class="top-nav" style="width:100%;">
-    <div class="nav-pill">
-      <button class="nav-btn" onclick="backFromWish()">← Back</button>
-      <button class="nav-btn active">💌 Wedding Wish</button>
-    </div>
-  </nav>
-
   <div class="wish-card">
     <!-- Top floral banner -->
     <div class="wish-card-top">
@@ -636,50 +864,197 @@
         <button class="btn" onclick="shareWish()">
           <span>🔗</span> Share this Wish
         </button>
-        <button class="btn btn-outline" onclick="backFromWish()">
-          ← Back
-        </button>
-      </div>
-
-      <div class="wish-brand">
-        Created with ♥ on <a href="#" onclick="switchTab('calc'); return false;">HiThatDay</a>
-        &nbsp;·&nbsp;
-        <a href="https://netwinglabs.com" target="_blank" rel="noopener">NetWing Labs</a>
       </div>
     </div>
   </div>
+
+  <!-- Wish display page footer -->
+  <div class="wish-display-footer">
+    <div class="wish-nav-pills">
+      <button class="wish-nav-pill primary" onclick="switchTab('wish')">💌 Create a Wish</button>
+      <button class="wish-nav-pill" onclick="switchTab('calc')">💍 Calculator</button>
+    </div>
+    <div class="wish-brand">
+      Created with ♥ on <a href="#" onclick="switchTab('calc'); return false;">Wish Nest</a>
+      &nbsp;·&nbsp;
+      <a href="https://netwinglabs.com" target="_blank" rel="noopener">NetWing Labs</a>
+    </div>
+  </div>
+
 </div>
 
 <!-- Toast -->
 <div class="toast" id="toast">✓ Link copied to clipboard!</div>
 
 <script>
-  /* ── Floating hearts ── */
+  /* ══════════════════════════════════════════
+     THEME TOGGLE
+  ════════════════════════════════════════════ */
+  const html = document.documentElement;
+  const themeBtn = document.getElementById('themeToggle');
+
+  function applyTheme(dark) {
+    if (dark) {
+      html.setAttribute('data-theme', 'dark');
+      themeBtn.textContent = '☀️';
+      themeBtn.title = 'Switch to light mode';
+    } else {
+      html.removeAttribute('data-theme');
+      themeBtn.textContent = '🌙';
+      themeBtn.title = 'Switch to dark mode';
+    }
+  }
+
+  function toggleTheme() {
+    const isDark = html.getAttribute('data-theme') === 'dark';
+    document.body.classList.add('theme-transitioning');
+    setTimeout(() => document.body.classList.remove('theme-transitioning'), 500);
+    const newDark = !isDark;
+    applyTheme(newDark);
+    try { localStorage.setItem('wishnest-theme', newDark ? 'dark' : 'light'); } catch(e) {}
+  }
+
+  // Restore saved theme
+  (function () {
+    try {
+      const saved = localStorage.getItem('wishnest-theme');
+      if (saved === 'dark') applyTheme(true);
+    } catch(e) {}
+  })();
+
+  /* ══════════════════════════════════════════
+     FLOATING HEARTS (35)
+  ════════════════════════════════════════════ */
   (function () {
     const c = document.getElementById('heartsContainer');
     const syms = ['♥','♡','❤'];
-    for (let i = 0; i < 28; i++) {
+    for (let i = 0; i < 35; i++) {
       const h = document.createElement('span');
       h.className = 'fheart';
       h.textContent = syms[Math.floor(Math.random() * syms.length)];
       const sz = 8 + Math.random() * 14;
-      h.style.cssText = `left:${Math.random()*100}%;--sz:${sz}px;--op:${(0.05+Math.random()*0.1).toFixed(2)};--dur:${12+Math.random()*16}s;--del:-${(Math.random()*20).toFixed(1)}s;--rot:${(-15+Math.random()*30).toFixed(1)}deg;`;
+      h.style.cssText = `left:${Math.random()*100}%;--sz:${sz}px;--op:${(0.06+Math.random()*0.14).toFixed(2)};--dur:${10+Math.random()*14}s;--del:-${(Math.random()*22).toFixed(1)}s;--rot:${(-15+Math.random()*30).toFixed(1)}deg;`;
       c.appendChild(h);
     }
   })();
 
-  /* ── Tab switching ── */
+  /* ══════════════════════════════════════════
+     SPARKLE PARTICLES (30)
+  ════════════════════════════════════════════ */
+  (function () {
+    const c = document.getElementById('sparklesContainer');
+    const syms = ['✦','✧','⋆','✦','✧'];
+    const colors = ['#B8893A','#D4A852','#E8909A','#C8606A','#E8C070','#F0D090'];
+    for (let i = 0; i < 30; i++) {
+      const s = document.createElement('span');
+      s.className = 'sparkle';
+      s.textContent = syms[Math.floor(Math.random() * syms.length)];
+      const sz = 6 + Math.random() * 8;
+      const op = (0.25 + Math.random() * 0.5).toFixed(2);
+      const dur = (2 + Math.random() * 3).toFixed(1);
+      const del = -(Math.random() * 5).toFixed(1);
+      const color = colors[Math.floor(Math.random() * colors.length)];
+      s.style.cssText = `
+        left:${(Math.random()*98).toFixed(1)}%;
+        top:${(Math.random()*98).toFixed(1)}%;
+        font-size:${sz}px;
+        color:${color};
+        --sp-dur:${dur}s;
+        --sp-del:${del}s;
+        --sp-op:${op};
+      `;
+      c.appendChild(s);
+    }
+  })();
+
+  /* ══════════════════════════════════════════
+     FALLING PETALS (18)
+  ════════════════════════════════════════════ */
+  (function () {
+    const c = document.getElementById('petalsContainer');
+    const petalColors = [
+      'rgba(232,144,154,0.55)',
+      'rgba(200,96,106,0.45)',
+      'rgba(245,200,210,0.5)',
+      'rgba(240,180,190,0.4)',
+      'rgba(232,160,170,0.48)',
+    ];
+    for (let i = 0; i < 18; i++) {
+      const p = document.createElement('div');
+      p.className = 'petal';
+      const w = 8 + Math.random() * 10;
+      const h = w * (1.3 + Math.random() * 0.5);
+      const op = (0.15 + Math.random() * 0.18).toFixed(2);
+      const dur = (8 + Math.random() * 8).toFixed(1);
+      const del = -(Math.random() * 16).toFixed(1);
+      const color = petalColors[Math.floor(Math.random() * petalColors.length)];
+      const dx1 = ((-20) + Math.random() * 40).toFixed(0) + 'px';
+      const dx2 = ((-30) + Math.random() * 60).toFixed(0) + 'px';
+      const dx3 = ((-25) + Math.random() * 50).toFixed(0) + 'px';
+      const dx4 = ((-35) + Math.random() * 70).toFixed(0) + 'px';
+      p.style.cssText = `
+        left:${(Math.random()*100).toFixed(1)}%;
+        --pt-w:${w.toFixed(0)}px;
+        --pt-h:${h.toFixed(0)}px;
+        --pt-op:${op};
+        --pt-dur:${dur}s;
+        --pt-del:${del}s;
+        --pt-color:${color};
+        --pt-dx1:${dx1};
+        --pt-dx2:${dx2};
+        --pt-dx3:${dx3};
+        --pt-dx4:${dx4};
+      `;
+      c.appendChild(p);
+    }
+  })();
+
+  /* ══════════════════════════════════════════
+     BOKEH ORBS (4)
+  ════════════════════════════════════════════ */
+  (function () {
+    const c = document.getElementById('bokehContainer');
+    const orbs = [
+      { size: 320, left: '5%',  top: '10%', grad: 'radial-gradient(circle, rgba(200,96,106,0.55) 0%, transparent 70%)',  op: 0.06, dur: 18, del: 0,    x1:'30px', y1:'-20px', x2:'-15px', y2:'40px', x3:'20px', y3:'15px' },
+      { size: 260, left: '75%', top: '20%', grad: 'radial-gradient(circle, rgba(184,137,58,0.6) 0%, transparent 70%)',   op: 0.07, dur: 22, del: -6,   x1:'-25px', y1:'30px', x2:'20px', y2:'-15px', x3:'-10px', y3:'25px' },
+      { size: 400, left: '40%', top: '60%', grad: 'radial-gradient(circle, rgba(232,144,154,0.5) 0%, transparent 70%)', op: 0.05, dur: 26, del: -12,  x1:'20px', y1:'20px', x2:'-30px', y2:'-10px', x3:'15px', y3:'-25px' },
+      { size: 200, left: '85%', top: '70%', grad: 'radial-gradient(circle, rgba(212,168,82,0.6) 0%, transparent 70%)',  op: 0.07, dur: 15, del: -4,   x1:'-20px', y1:'-30px', x2:'15px', y2:'20px', x3:'-10px', y3:'-10px' },
+    ];
+    orbs.forEach(o => {
+      const d = document.createElement('div');
+      d.className = 'bokeh';
+      d.style.cssText = `
+        width:${o.size}px; height:${o.size}px;
+        left:${o.left}; top:${o.top};
+        background:${o.grad};
+        --bk-op:${o.op};
+        --bk-dur:${o.dur}s;
+        --bk-del:${o.del}s;
+        --bk-x1:${o.x1}; --bk-y1:${o.y1};
+        --bk-x2:${o.x2}; --bk-y2:${o.y2};
+        --bk-x3:${o.x3}; --bk-y3:${o.y3};
+      `;
+      c.appendChild(d);
+    });
+  })();
+
+  /* ══════════════════════════════════════════
+     TAB SWITCHING
+  ════════════════════════════════════════════ */
   function switchTab(tab) {
     document.getElementById('calcView').classList.toggle('active', tab === 'calc');
     document.getElementById('wishView').classList.toggle('active', tab === 'wish');
     document.getElementById('wishDisplayView').classList.remove('active');
     document.getElementById('navCalc').classList.toggle('active', tab === 'calc');
     document.getElementById('navWish').classList.toggle('active', tab === 'wish');
+    document.querySelector('.top-nav').style.display = '';
     window.scrollTo({ top: 0, behavior: 'smooth' });
     if (tab !== 'wish-display') history.replaceState(null, '', window.location.pathname);
   }
 
-  /* ── Calculator logic ── */
+  /* ══════════════════════════════════════════
+     CALCULATOR LOGIC
+  ════════════════════════════════════════════ */
   let calcMode = 'future', targetDate = null, ticker = null;
 
   (function () {
@@ -693,6 +1068,18 @@
     document.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
     if (targetDate) calculate();
+  }
+
+  function shimmerTiles() {
+    const tiles = document.querySelectorAll('#resultsWrap .tiles-grid .tile');
+    tiles.forEach((t, i) => {
+      t.classList.remove('shimmer-once');
+      void t.offsetWidth;
+      setTimeout(() => {
+        t.classList.add('shimmer-once');
+        t.addEventListener('animationend', () => t.classList.remove('shimmer-once'), { once: true });
+      }, i * 80);
+    });
   }
 
   function calculate() {
@@ -710,7 +1097,11 @@
     if (ticker) clearInterval(ticker);
     ticker = setInterval(updateLive, 1000);
     updateLive();
-    wrap.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    shimmerTiles();
+    // Smooth scroll with a small delay so the element is rendered
+    setTimeout(() => {
+      wrap.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 60);
   }
 
   function updateLabel() {
@@ -759,7 +1150,9 @@
     document.getElementById('valSeconds').textContent = String(s % 60).padStart(2,'0');
   }
 
-  /* ── Wish creator logic ── */
+  /* ══════════════════════════════════════════
+     WISH CREATOR LOGIC
+  ════════════════════════════════════════════ */
   const wishMessages = [
     "May your love story be as beautiful as your wedding day, and may every chapter ahead be better than the last.",
     "Here's to forever — may your days together be filled with laughter, love, and every happiness life can bring.",
@@ -789,6 +1182,7 @@
   function showWishDisplay(wisher, couple, date, custom) {
     document.getElementById('calcView').classList.remove('active');
     document.getElementById('wishView').classList.remove('active');
+    document.querySelector('.top-nav').style.display = 'none';
     const dv = document.getElementById('wishDisplayView');
     dv.classList.add('active');
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -829,12 +1223,6 @@
     document.getElementById('wdCounterText').textContent = counterText;
   }
 
-  function backFromWish() {
-    history.replaceState(null, '', window.location.pathname);
-    document.getElementById('wishDisplayView').classList.remove('active');
-    switchTab('wish');
-  }
-
   function shareWish() {
     const url = window.location.href;
     if (navigator.share) {
@@ -855,7 +1243,9 @@
     setTimeout(() => t.classList.remove('show'), 3000);
   }
 
-  /* ── URL routing on load ── */
+  /* ══════════════════════════════════════════
+     URL ROUTING ON LOAD
+  ════════════════════════════════════════════ */
   (function () {
     const hash = window.location.hash;
     if (hash.startsWith('#wish?')) {
@@ -865,7 +1255,7 @@
     }
   })();
 
-  /* Default wish date */
+  /* Default wish date (+3 months) */
   (function () {
     const d = new Date(); d.setMonth(d.getMonth() + 3);
     const p = n => String(n).padStart(2,'0');
