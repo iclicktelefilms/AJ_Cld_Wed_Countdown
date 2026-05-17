@@ -196,15 +196,17 @@
       box-shadow: 0 4px 24px rgba(0,0,0,0.35);
     }
     .nav-btn {
-      padding: 10px 22px;
+      padding: 7px 15px;
       border: none; border-radius: 50px;
       background: transparent;
       color: var(--taupe);
-      font-size: 0.8rem; font-family: 'DM Sans', sans-serif;
-      font-weight: 500; letter-spacing: 0.05em;
+      font-size: 0.72rem; font-family: 'DM Sans', sans-serif;
+      font-weight: 500; letter-spacing: 0.04em;
       cursor: pointer; transition: all 0.22s ease;
       white-space: nowrap;
+      display: inline-flex; align-items: center; gap: 6px;
     }
+    .nav-btn svg { width: 13px; height: 13px; flex-shrink: 0; }
     .nav-btn.active {
       background: linear-gradient(135deg, var(--rose), #A84858);
       color: #FFFFFF;
@@ -221,7 +223,7 @@
 
     /* ── Shared page shell ── */
     .page {
-      position: relative; z-index: 1;
+      position: relative; z-index: 2;
       display: flex; flex-direction: column; align-items: center;
       padding: 44px 20px 80px;
     }
@@ -259,11 +261,16 @@
     /* ── Cards ── */
     .card {
       width: 100%; max-width: 680px;
-      background: var(--card-bg); border-radius: 28px;
+      background: rgba(255,255,255,0.76); border-radius: 28px;
       padding: 40px 40px 36px; box-shadow: var(--sh-md);
       border: 1px solid var(--border);
       position: relative; overflow: hidden;
       margin-bottom: 28px;
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+    }
+    [data-theme="dark"] .card {
+      background: rgba(37,24,18,0.76);
     }
     .card::before {
       content:'♥'; position:absolute; right:-18px; bottom:-24px;
@@ -309,11 +316,13 @@
       border-color: var(--border);
     }
     .toggle-btn {
-      flex:1; padding:10px 12px; border:none; border-radius:50px;
+      flex:1; padding:8px 10px; border:none; border-radius:50px;
       background:transparent; color:var(--taupe);
-      font-size:0.8rem; font-family:'DM Sans',sans-serif; font-weight:500;
-      letter-spacing:0.05em; cursor:pointer; transition:all .22s ease;
+      font-size:0.72rem; font-family:'DM Sans',sans-serif; font-weight:500;
+      letter-spacing:0.04em; cursor:pointer; transition:all .22s ease;
+      display:flex; align-items:center; justify-content:center; gap:5px;
     }
+    .toggle-btn svg { width:12px; height:12px; flex-shrink:0; }
     .toggle-btn.active {
       background:linear-gradient(135deg,var(--rose),#A84858);
       color:#FFFFFF; box-shadow:0 2px 16px rgba(200,96,106,.35);
@@ -437,25 +446,28 @@
       align-items: center;
       justify-content: flex-start;
       padding: 48px 20px 60px;
-      position: relative; z-index: 1;
+      position: relative; z-index: 2;
     }
     #wishDisplayView.active { display: flex; }
 
     .wish-card {
       width: 100%; max-width: 680px;
-      background: var(--card-bg); border-radius: 32px;
+      background: rgba(255,255,255,0.78); border-radius: 32px;
       box-shadow: 0 24px 80px rgba(200,96,106,.18);
       border: 1px solid rgba(200,96,106,.12);
       overflow: hidden; margin-top: 0;
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
     }
     [data-theme="dark"] .wish-card {
+      background: rgba(37,24,18,0.78);
       box-shadow: 0 24px 80px rgba(0,0,0,0.5);
       border-color: rgba(232,144,154,0.15);
     }
 
     /* Card top floral banner */
     .wish-card-top {
-      background: linear-gradient(160deg, #FDEEF0, #FBE4E7);
+      background: rgba(253,238,240,0.88);
       padding: 36px 40px 28px;
       text-align: center;
       border-bottom: 1px solid rgba(200,96,106,.12);
@@ -463,7 +475,7 @@
       overflow: hidden;
     }
     [data-theme="dark"] .wish-card-top {
-      background: linear-gradient(160deg, #2E1A1C, #381A20);
+      background: rgba(56,26,32,0.88);
       border-bottom-color: rgba(232,144,154,0.12);
     }
     .wish-card-top::before, .wish-card-top::after {
@@ -549,18 +561,20 @@
       justify-content: center;
     }
     .wish-nav-pill {
-      padding: 10px 22px;
+      padding: 8px 18px;
       border-radius: 50px;
       border: 1.5px solid var(--rose);
       background: transparent;
       color: var(--rose);
-      font-size: 0.82rem;
+      font-size: 0.74rem;
       font-family: 'DM Sans', sans-serif;
       font-weight: 600;
-      letter-spacing: 0.06em;
+      letter-spacing: 0.05em;
       cursor: pointer;
       transition: all 0.2s ease;
+      display: inline-flex; align-items: center; gap: 6px;
     }
+    .wish-nav-pill svg { width: 13px; height: 13px; flex-shrink: 0; }
     .wish-nav-pill:hover {
       background: var(--blush-lt);
       transform: translateY(-2px);
@@ -614,36 +628,43 @@
        SKY TRANSITION OVERLAY
     ════════════════════════════════════════════ */
     #skyOverlay {
-      position: fixed; inset: 0; z-index: 9999;
-      display: none; flex-direction: column; overflow: hidden;
+      position: fixed; inset: 0; z-index: 1;
+      display: flex; flex-direction: column; overflow: hidden;
       pointer-events: none;
+      opacity: 0.44;
+      transition: opacity 0.7s ease;
     }
-    #skyOverlay.active { display: flex; }
+    #skyOverlay.transitioning { opacity: 1; }
 
-    /* Sky gradient – changes class drives bg transition */
+    /* Sky gradient – changing class drives the background transition */
     #skyGradient {
       position: absolute; inset: 0;
       transition: background 1.4s ease;
     }
+    /* Day: soft blush-lavender → warm cream matching the light theme palette */
     #skyGradient.phase-day {
-      background: linear-gradient(180deg,#87CEEB 0%,#B0D9F0 35%,#E8D8C8 70%,#8BAA78 100%);
+      background: linear-gradient(180deg,#EFE0FF 0%,#FDEEF5 28%,#FDF5E8 62%,#F5EDE0 100%);
     }
+    /* Sunset: deep rose → gold → dark purple matching --rose/--gold */
     #skyGradient.phase-sunset {
-      background: linear-gradient(180deg,#FF6B35 0%,#F7935C 22%,#FFBE6A 44%,#D4608A 65%,#5A2080 85%,#1A0830 100%);
+      background: linear-gradient(180deg,#C8606A 0%,#D4A852 22%,#E8903A 40%,#A84858 62%,#4A1848 82%,#180E0C 100%);
     }
+    /* Night: deep indigo-black matching the dark theme --bg */
     #skyGradient.phase-night {
-      background: linear-gradient(180deg,#060318 0%,#0D0828 30%,#1A0C38 60%,#100820 100%);
+      background: linear-gradient(180deg,#060318 0%,#0D0828 30%,#180E0C 62%,#251812 100%);
     }
+    /* Sunrise: warm rose-gold → blush → cream matching --gold / --rose / --bg */
     #skyGradient.phase-sunrise {
-      background: linear-gradient(180deg,#FF8C42 0%,#FF6B6B 25%,#FFC3A0 50%,#87CEEB 80%,#A0D8EF 100%);
+      background: linear-gradient(180deg,#B8603A 0%,#D4A850 24%,#E8C070 48%,#FDEEF5 78%,#FDF8F5 100%);
     }
 
-    /* Sun */
+    /* Sun – gold palette match */
     #skySun {
       position: absolute; left: 50%; transform: translateX(-50%);
       width: 68px; height: 68px; border-radius: 50%;
-      background: radial-gradient(circle, #FFF176 20%, #FFD740 55%, #FF8F00 85%, transparent 100%);
-      box-shadow: 0 0 60px 28px rgba(255,200,60,0.55), 0 0 120px 60px rgba(255,160,30,0.2);
+      bottom: -90px; opacity: 0;
+      background: radial-gradient(circle, #FFF8DC 18%, #E8C070 50%, #B8893A 80%, transparent 100%);
+      box-shadow: 0 0 60px 28px rgba(184,137,58,0.55), 0 0 120px 60px rgba(184,137,58,0.2);
       transition: bottom 1.4s cubic-bezier(0.4,0,0.2,1), opacity 0.6s;
     }
     /* Sun rays */
@@ -660,8 +681,9 @@
     #skyMoon {
       position: absolute; left: 60%; transform: translateX(-50%);
       width: 52px; height: 52px; border-radius: 50%;
+      bottom: -90px; opacity: 0;
       background: #FDF6E3;
-      box-shadow: -12px -4px 0 4px #0D0828, 0 0 30px 12px rgba(240,220,150,0.3);
+      box-shadow: -12px -4px 0 4px #0D0828, 0 0 30px 12px rgba(240,220,150,0.35);
       transition: bottom 1.4s cubic-bezier(0.4,0,0.2,1), opacity 0.6s;
     }
 
@@ -700,9 +722,8 @@
       background: linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.18) 100%);
     }
 
-    /* Overlay fade in/out */
-    #skyOverlay { opacity: 1; transition: opacity 0.45s ease; }
-    #skyOverlay.fade-out { opacity: 0; }
+    /* Stars are hidden until night transition */
+    #skyStarField { opacity: 0; transition: opacity 0.8s; }
 
     /* WhatsApp share buttons */
     .share-btn-group { display:flex; gap:12px; flex-wrap:wrap; justify-content:center; margin-bottom:0; }
@@ -840,8 +861,14 @@
 <!-- Top navigation -->
 <nav class="top-nav">
   <div class="nav-pill">
-    <button class="nav-btn active" id="navCalc" onclick="switchTab('calc')">💍 Wedding Calculator</button>
-    <button class="nav-btn" id="navWish" onclick="switchTab('wish')">💌 Create your own wish</button>
+    <button class="nav-btn active" id="navCalc" onclick="switchTab('calc')">
+      <svg viewBox="0 0 28 14" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="7" r="5.5" stroke="currentColor" stroke-width="1.8"/><circle cx="20" cy="7" r="5.5" stroke="currentColor" stroke-width="1.8"/></svg>
+      Calculator
+    </button>
+    <button class="nav-btn" id="navWish" onclick="switchTab('wish')">
+      <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+      Create a Wish
+    </button>
   </div>
 </nav>
 
@@ -870,8 +897,14 @@
 
     <div class="card">
       <div class="toggle-wrap">
-        <button class="toggle-btn active" onclick="setMode('future',this)">💍 Counting Down To</button>
-        <button class="toggle-btn" onclick="setMode('past',this)">🥂 Celebrating Since</button>
+        <button class="toggle-btn active" onclick="setMode('future',this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          Counting Down To
+        </button>
+        <button class="toggle-btn" onclick="setMode('past',this)">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z"/></svg>
+          Celebrating Since
+        </button>
       </div>
       <div class="fields">
         <div class="field">
@@ -925,7 +958,10 @@
 <div id="wishView" class="view">
   <div class="page">
     <div class="wish-section-hero">
-      <div class="section-badge">💌 Personalized Wedding Wish</div>
+      <div class="section-badge">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+        Personalized Wedding Wish
+      </div>
       <h2>Create a Wedding Wish</h2>
       <p>Fill in the details below to create a beautiful personalized wish page you can share with the happy couple</p>
     </div>
@@ -1028,8 +1064,14 @@
   <!-- Wish display page footer -->
   <div class="wish-display-footer">
     <div class="wish-nav-pills">
-      <button class="wish-nav-pill primary" onclick="switchTab('wish')">💌 Create your own wish</button>
-      <button class="wish-nav-pill" onclick="switchTab('calc')">💍 Wedding Calculator</button>
+      <button class="wish-nav-pill primary" onclick="switchTab('wish')">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+        Create your own wish
+      </button>
+      <button class="wish-nav-pill" onclick="switchTab('calc')">
+        <svg viewBox="0 0 28 14" fill="none"><circle cx="8" cy="7" r="5.5" stroke="currentColor" stroke-width="1.8"/><circle cx="20" cy="7" r="5.5" stroke="currentColor" stroke-width="1.8"/></svg>
+        Wedding Calculator
+      </button>
     </div>
     <div class="wish-brand">
       Designed with <span class="heart">❤️</span> by
@@ -1064,12 +1106,13 @@
   function toggleTheme() {
     const isDark = html.getAttribute('data-theme') === 'dark';
     const newDark = !isDark;
-    animateSkyTransition(newDark, function () {
-      document.body.classList.add('theme-transitioning');
-      setTimeout(() => document.body.classList.remove('theme-transitioning'), 500);
-      applyTheme(newDark);
-      try { localStorage.setItem('wishnest-theme', newDark ? 'dark' : 'light'); } catch(e) {}
-    });
+    // Apply theme immediately so UI responds at once
+    document.body.classList.add('theme-transitioning');
+    setTimeout(() => document.body.classList.remove('theme-transitioning'), 500);
+    applyTheme(newDark);
+    try { localStorage.setItem('wishnest-theme', newDark ? 'dark' : 'light'); } catch(e) {}
+    // Sky animation plays in the background behind the content
+    animateSkyTransition(newDark);
   }
 
   function generateStars(container) {
@@ -1085,79 +1128,104 @@
     }
   }
 
-  function animateSkyTransition(toNight, onComplete) {
-    const overlay    = document.getElementById('skyOverlay');
-    const gradient   = document.getElementById('skyGradient');
-    const sun        = document.getElementById('skySun');
-    const moon       = document.getElementById('skyMoon');
-    const starField  = document.getElementById('skyStarField');
-    const clouds     = document.querySelectorAll('.sky-cloud');
+  function animateSkyTransition(toNight) {
+    const overlay   = document.getElementById('skyOverlay');
+    const gradient  = document.getElementById('skyGradient');
+    const sun       = document.getElementById('skySun');
+    const moon      = document.getElementById('skyMoon');
+    const starField = document.getElementById('skyStarField');
+    const clouds    = document.querySelectorAll('.sky-cloud');
 
     if (!starField.hasChildNodes()) generateStars(starField);
 
-    overlay.classList.remove('fade-out');
-    overlay.classList.add('active');
+    // Bring sky to full opacity for the cinematic transition
+    overlay.classList.add('transitioning');
+
+    // Snap starting positions instantly (no CSS transition flicker)
+    function snap(el, css) {
+      el.style.transition = 'none';
+      Object.assign(el.style, css);
+      void el.offsetWidth; // force reflow
+      el.style.transition = '';
+    }
 
     if (toNight) {
-      // Day → sunset → night
+      // Day → Sunset → Night
+      snap(sun,  { bottom: '22%', opacity: '1' });
+      snap(moon, { bottom: '-90px', opacity: '0' });
       gradient.className = 'phase-day';
-      sun.style.cssText  = 'bottom:22%;opacity:1;';
-      moon.style.cssText = 'bottom:-90px;opacity:0;';
       starField.style.opacity = '0';
       clouds.forEach(c => { c.style.opacity = '1'; });
 
       setTimeout(() => {
         gradient.className = 'phase-sunset';
-        sun.style.bottom = '-90px';
+        sun.style.bottom = '-90px';        // sun sets
       }, 120);
-
       setTimeout(() => {
         gradient.className = 'phase-night';
-        moon.style.bottom  = '28%';
-        moon.style.opacity = '1';
+        moon.style.bottom = '28%'; moon.style.opacity = '1';  // moon rises
         starField.style.opacity = '1';
         clouds.forEach(c => { c.style.opacity = '0'; });
       }, 1500);
-
-      setTimeout(() => { overlay.classList.add('fade-out'); }, 3200);
-      setTimeout(() => { overlay.classList.remove('active','fade-out'); onComplete(); }, 3700);
+      // Ease back to subtle opacity — night state stays (moon + stars remain)
+      setTimeout(() => { overlay.classList.remove('transitioning'); }, 3000);
 
     } else {
-      // Night → sunrise → day
+      // Night → Sunrise → Day
+      snap(moon, { bottom: '28%', opacity: '1' });
+      snap(sun,  { bottom: '-90px', opacity: '1' });
       gradient.className = 'phase-night';
-      moon.style.cssText = 'bottom:28%;opacity:1;';
-      sun.style.cssText  = 'bottom:-90px;opacity:1;';
       starField.style.opacity = '1';
       clouds.forEach(c => { c.style.opacity = '0'; });
 
       setTimeout(() => {
-        moon.style.bottom  = '-90px';
-        moon.style.opacity = '0';
+        moon.style.bottom = '-90px'; moon.style.opacity = '0'; // moon sets
         starField.style.opacity = '0';
       }, 120);
-
       setTimeout(() => {
         gradient.className = 'phase-sunrise';
-        clouds.forEach(c => { c.style.opacity = '0.6'; });
+        clouds.forEach(c => { c.style.opacity = '0.5'; });
       }, 800);
-
       setTimeout(() => {
         gradient.className = 'phase-day';
-        sun.style.bottom = '22%';
+        sun.style.bottom = '22%';          // sun rises
         clouds.forEach(c => { c.style.opacity = '1'; });
       }, 1700);
-
-      setTimeout(() => { overlay.classList.add('fade-out'); }, 3200);
-      setTimeout(() => { overlay.classList.remove('active','fade-out'); onComplete(); }, 3700);
+      // Ease back to subtle opacity — day state stays (sun + clouds remain)
+      setTimeout(() => { overlay.classList.remove('transitioning'); }, 3000);
     }
   }
 
-  // Restore saved theme
+  // Restore saved theme + initialise sky to matching phase
   (function () {
+    const grad      = document.getElementById('skyGradient');
+    const starField = document.getElementById('skyStarField');
+    const sun       = document.getElementById('skySun');
+    const moon      = document.getElementById('skyMoon');
+    const clouds    = document.querySelectorAll('.sky-cloud');
+    generateStars(starField);
+
+    let isDark = false;
     try {
       const saved = localStorage.getItem('wishnest-theme');
-      if (saved === 'dark') applyTheme(true);
+      if (saved === 'dark') { applyTheme(true); isDark = true; }
     } catch(e) {}
+
+    if (isDark) {
+      // Night initial state — moon faintly visible through the subtle overlay
+      grad.className = 'phase-night';
+      sun.style.bottom  = '-90px'; sun.style.opacity  = '0';
+      moon.style.bottom = '28%';   moon.style.opacity = '1';
+      starField.style.opacity = '1';
+      clouds.forEach(c => { c.style.opacity = '0'; });
+    } else {
+      // Day initial state — sun faintly visible
+      grad.className = 'phase-day';
+      sun.style.bottom  = '22%';   sun.style.opacity  = '1';
+      moon.style.bottom = '-90px'; moon.style.opacity = '0';
+      starField.style.opacity = '0';
+      clouds.forEach(c => { c.style.opacity = '1'; });
+    }
   })();
 
   /* ══════════════════════════════════════════
