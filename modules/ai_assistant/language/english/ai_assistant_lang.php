@@ -50,3 +50,15 @@ $lang['ai_settings_saved']                     = 'Settings saved successfully.';
 $lang['ai_test_connection']                    = 'Test API Connection';
 $lang['ai_connection_ok']                      = 'API connection successful.';
 $lang['ai_connection_failed']                  = 'API connection failed: ';
+
+// Quick action labels
+$lang['ai_quick_overdue_invoices']             = 'Overdue invoices';
+$lang['ai_quick_open_tickets']                 = 'Open tickets';
+$lang['ai_quick_my_tasks']                     = 'My pending tasks';
+$lang['ai_quick_revenue']                      = 'Revenue this month';
+
+// Suggestion chip labels
+$lang['ai_chip_unpaid_invoices']               = 'Unpaid invoices';
+$lang['ai_chip_my_tasks']                      = 'My tasks';
+$lang['ai_chip_revenue']                       = 'Revenue this month';
+$lang['ai_chip_tickets']                       = 'Open tickets';
