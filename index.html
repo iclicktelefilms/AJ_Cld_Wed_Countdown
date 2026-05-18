@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Wish Nest – Wedding Date Calculator</title>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,700;1,400;1,500&family=DM+Sans:wght@300;400;500;600&family=Great+Vibes&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,700;1,400;1,500&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=Dancing+Script:wght@600;700&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,400;1,500&display=swap');
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -249,8 +249,9 @@
       line-height: 1; letter-spacing: -0.01em; margin-bottom: 10px;
     }
     .love-script {
-      font-family: 'Great Vibes', cursive;
-      font-size: clamp(1.5rem,4vw,2.2rem);
+      font-family: 'Dancing Script', cursive;
+      font-weight: 700;
+      font-size: clamp(1.6rem,4vw,2.4rem);
       color: var(--rose); margin-bottom: 14px; display: block; opacity: 0.85;
     }
     .tagline {
@@ -487,18 +488,19 @@
     .wish-card-top::after  { right: 16px; }
 
     .wish-from {
-      font-family: 'Great Vibes', cursive;
-      font-size: clamp(1.3rem,4vw,2rem);
+      font-family: 'Dancing Script', cursive;
+      font-weight: 700;
+      font-size: clamp(1.4rem,4vw,2.1rem);
       color: var(--taupe); margin-bottom: 4px;
     }
     .wish-from-name {
       font-family: 'Playfair Display', serif;
-      font-weight: 700; font-size: clamp(1.4rem,4vw,2rem);
+      font-weight: 700; font-size: clamp(1.15rem,3vw,1.55rem);
       color: var(--text); margin-bottom: 8px;
     }
     .wish-congrats {
-      font-family: 'Playfair Display', serif; font-style: italic;
-      font-size: .95rem; color: var(--taupe); margin-bottom: 16px;
+      font-family: 'Cormorant Garamond', serif; font-style: italic;
+      font-weight: 400; font-size: 1.1rem; color: var(--taupe); margin-bottom: 16px;
     }
 
     /* Couple name */
@@ -794,21 +796,113 @@
     }
 
     /* ── Wish display – couple photo ── */
-    .wd-photo-wrap { display: flex; justify-content: center; margin-bottom: 16px; }
+    .wd-photo-wrap { display: flex; justify-content: center; margin-bottom: 20px; }
     .wd-photo {
-      width: 104px; height: 104px; border-radius: 50%;
+      width: 140px; height: 140px; border-radius: 50%;
       object-fit: cover;
-      border: 3px solid rgba(200,96,106,0.45);
-      box-shadow: 0 6px 24px rgba(200,96,106,0.2);
+      border: 4px solid rgba(200,96,106,0.45);
+      box-shadow: 0 8px 32px rgba(200,96,106,0.28);
+    }
+    .wd-caricature {
+      width: 140px; height: 140px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--blush-lt), var(--blush));
+      border: 3px solid rgba(200,96,106,0.2);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 4rem; line-height: 1;
+      box-shadow: 0 6px 24px rgba(200,96,106,0.15);
     }
 
-    /* ── Story share button ── */
-    .share-btn-story {
-      background: linear-gradient(135deg, #833AB4 0%, #C8606A 55%, #E8903A 100%);
-      color: #fff;
-      box-shadow: 0 5px 20px rgba(131,58,180,0.32);
+    /* ── Three-button action row ── */
+    .wish-actions-row {
+      display: flex; gap: 10px; justify-content: center; flex-wrap: nowrap;
     }
-    .share-btn-story:disabled { opacity: 0.65; cursor: not-allowed; transform: none !important; }
+    .action-btn {
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 5px; padding: 12px 14px; border-radius: 18px; border: none;
+      cursor: pointer; transition: transform 0.15s, box-shadow 0.2s;
+      font-size: 0.65rem; font-family: 'DM Sans', sans-serif;
+      font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase;
+      min-width: 72px; color: #fff;
+    }
+    .action-btn svg { width: 22px; height: 22px; flex-shrink: 0; }
+    .action-btn:hover { transform: translateY(-3px); }
+    .action-btn:active { transform: translateY(0); }
+    .action-btn:disabled { opacity: 0.65; cursor: not-allowed; transform: none !important; }
+    .action-insta { background: linear-gradient(135deg, #833AB4, #C8606A, #E8903A); box-shadow: 0 4px 16px rgba(131,58,180,0.35); }
+    .action-wa    { background: linear-gradient(135deg, #25D366, #128C7E); box-shadow: 0 4px 16px rgba(37,211,102,0.35); }
+    .action-copy  { background: linear-gradient(135deg, var(--rose), #A84858); box-shadow: 0 4px 16px rgba(200,96,106,0.3); }
+
+    /* ── Create Your Own button (below wish card) ── */
+    .create-own-btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 12px 26px; border-radius: 50px;
+      background: var(--card-bg); color: var(--text);
+      border: 1.5px solid var(--border);
+      font-size: 0.8rem; font-family: 'DM Sans', sans-serif;
+      font-weight: 600; cursor: pointer;
+      transition: all 0.2s; letter-spacing: 0.04em;
+      box-shadow: var(--sh-sm);
+      backdrop-filter: blur(10px);
+    }
+    .create-own-btn:hover { border-color: var(--rose); color: var(--rose); transform: translateY(-2px); }
+    .create-own-btn svg { width: 15px; height: 15px; color: var(--rose); flex-shrink: 0; }
+
+    /* ── Multi-tool home page ── */
+    #homeView { display: none; }
+    #homeView.active { display: block; }
+    .home-page {
+      position: relative; z-index: 2;
+      display: flex; flex-direction: column; align-items: center;
+      min-height: 100vh; padding: 44px 20px 80px;
+    }
+    .home-hero { text-align: center; margin-bottom: 44px; max-width: 640px; }
+    .tools-grid {
+      display: grid; grid-template-columns: repeat(2, 1fr);
+      gap: 14px; width: 100%; max-width: 680px;
+    }
+    .tool-card {
+      background: rgba(255,255,255,0.76); border-radius: 22px;
+      padding: 24px 18px 20px; border: 1px solid var(--border);
+      cursor: pointer; transition: transform 0.2s, box-shadow 0.2s;
+      text-align: center; backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      box-shadow: var(--sh-sm);
+    }
+    [data-theme="dark"] .tool-card { background: rgba(37,24,18,0.78); }
+    .tool-card:hover { transform: translateY(-4px); box-shadow: var(--sh-md); }
+    .tool-card-featured {
+      grid-column: 1 / -1; padding: 28px 24px 24px;
+      background: linear-gradient(135deg,rgba(200,96,106,0.1),rgba(184,137,58,0.07));
+      border-color: rgba(200,96,106,0.22);
+    }
+    [data-theme="dark"] .tool-card-featured { background: linear-gradient(135deg,rgba(200,96,106,0.12),rgba(184,137,58,0.08)); }
+    .tool-card-soon { cursor: default; opacity: 0.6; }
+    .tool-card-soon:hover { transform: none; box-shadow: var(--sh-sm); }
+    .tool-icon { font-size: 2rem; margin-bottom: 10px; display: block; }
+    .tool-card-featured .tool-icon { font-size: 2.4rem; }
+    .tool-name { font-family:'Playfair Display',serif; font-weight:700; font-size:0.95rem; color:var(--text); margin-bottom:5px; }
+    .tool-card-featured .tool-name { font-size:1.15rem; }
+    .tool-desc { font-size:0.72rem; color:var(--taupe); line-height:1.5; }
+    .tool-badge { display:inline-block; padding:3px 10px; border-radius:50px; font-size:0.58rem; letter-spacing:.1em; text-transform:uppercase; font-weight:700; margin-top:9px; }
+    .badge-soon { background:var(--blush); color:var(--taupe); }
+    .badge-new  { background:linear-gradient(135deg,var(--rose),#A84858); color:#fff; }
+
+    /* ── Back button (tool pages) ── */
+    .tool-topbar {
+      position: relative; z-index: 10;
+      display: flex; align-items: center; padding: 16px 20px 0;
+    }
+    .back-btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 7px 16px; border-radius: 50px;
+      background: var(--card-bg); color: var(--taupe);
+      border: 1px solid var(--border); font-size: 0.72rem;
+      font-family: 'DM Sans', sans-serif; font-weight: 500;
+      cursor: pointer; transition: all 0.2s;
+      box-shadow: var(--sh-sm); backdrop-filter: blur(10px);
+    }
+    .back-btn:hover { color: var(--rose); border-color: rgba(200,96,106,0.3); }
+    .back-btn svg { width: 13px; height: 13px; }
 
     /* ── Responsive ── */
     @media (max-width:560px) {
@@ -913,24 +1007,60 @@
   </g>
 </svg>
 
-<!-- Top navigation -->
-<nav class="top-nav">
-  <div class="nav-pill">
-    <button class="nav-btn active" id="navWish" onclick="switchTab('wish')">
-      <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
-      Create a Wish
-    </button>
-    <button class="nav-btn" id="navCalc" onclick="switchTab('calc')">
-      <svg viewBox="0 0 28 14" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="7" r="5.5" stroke="currentColor" stroke-width="1.8"/><circle cx="20" cy="7" r="5.5" stroke="currentColor" stroke-width="1.8"/></svg>
-      Calculator
-    </button>
+<!-- ══════════════════════════════════════════
+     HOME VIEW: Multi-tool hub
+════════════════════════════════════════════ -->
+<div id="homeView" class="view active">
+  <div class="page home-page">
+    <div class="home-hero">
+      <div class="eyebrow"><span class="eb-heart">♥</span>Wedding Tools<span class="eb-heart">♥</span></div>
+      <h1 class="title">Wish Nest</h1>
+      <span class="love-script">celebrate love, every moment</span>
+      <p class="tagline">Beautiful digital tools for your most special day — and every anniversary after</p>
+    </div>
+    <div class="tools-grid">
+      <div class="tool-card tool-card-featured" onclick="switchView('wish')">
+        <span class="tool-icon">💌</span>
+        <div class="tool-name">Wedding Wish</div>
+        <div class="tool-desc">Create a beautiful personalized wish page to share with the happy couple</div>
+        <span class="tool-badge badge-new">Popular</span>
+      </div>
+      <div class="tool-card" onclick="switchView('calc')">
+        <span class="tool-icon">💍</span>
+        <div class="tool-name">Date Calculator</div>
+        <div class="tool-desc">Count down to — or celebrate since — the big day</div>
+      </div>
+      <div class="tool-card tool-card-soon">
+        <span class="tool-icon">🎊</span>
+        <div class="tool-name">Anniversary Wish</div>
+        <div class="tool-desc">Send love and celebration on every anniversary milestone</div>
+        <span class="tool-badge badge-soon">Coming Soon</span>
+      </div>
+      <div class="tool-card tool-card-soon">
+        <span class="tool-icon">💐</span>
+        <div class="tool-name">Invitation Card</div>
+        <div class="tool-desc">Design elegant digital invitations for your wedding day</div>
+        <span class="tool-badge badge-soon">Coming Soon</span>
+      </div>
+    </div>
+    <div class="love-quote"><p>"Every love story is beautiful, but yours is my favourite"</p></div>
+    <footer>
+      Designed with <span class="heart">❤️</span> by
+      <a href="https://netwinglabs.com" target="_blank" rel="noopener">NetWing Labs</a>
+    </footer>
   </div>
-</nav>
+</div>
 
 <!-- ══════════════════════════════════════════
      TAB 1: CALCULATOR
 ════════════════════════════════════════════ -->
 <div id="calcView" class="view">
+  <div class="tool-topbar">
+    <button class="back-btn" onclick="switchView('home')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+      Home
+    </button>
+  </div>
   <div class="page">
     <div class="rings-icon">
       <svg viewBox="0 0 72 36" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -1010,7 +1140,13 @@
 <!-- ══════════════════════════════════════════
      TAB 2: WISH CREATOR FORM
 ════════════════════════════════════════════ -->
-<div id="wishView" class="view active">
+<div id="wishView" class="view">
+  <div class="tool-topbar">
+    <button class="back-btn" onclick="switchView('home')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+      Home
+    </button>
+  </div>
   <div class="page">
     <div class="wish-section-hero">
       <div class="section-badge">
@@ -1090,6 +1226,7 @@
       <div class="wd-photo-wrap" id="wdPhotoWrap" style="display:none">
         <img class="wd-photo" id="wdPhoto" alt="Couple photo"/>
       </div>
+      <div class="wd-caricature" id="wdCaricature" style="display:none">💑</div>
       <div class="wish-from" id="wdFrom">With heartfelt wishes from</div>
       <div class="wish-from-name" id="wdWisher">Your Name</div>
       <div class="wish-congrats">warmly congratulates</div>
@@ -1122,23 +1259,18 @@
       </div>
 
       <div class="wish-actions">
-        <div class="share-btn-group">
-          <button class="share-btn share-btn-story" id="storyBtn" onclick="shareAsStory(this)">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-            Story Image
+        <div class="wish-actions-row">
+          <button class="action-btn action-insta" id="storyBtn" onclick="shareAsStory(this)">
+            <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+            Story
           </button>
-          <button class="share-btn share-btn-wa" onclick="shareWhatsApp()">
-            <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-              <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
-            </svg>
-            Share on WhatsApp
+          <button class="action-btn action-wa" onclick="shareWhatsApp()">
+            <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+            Share
           </button>
-          <button class="share-btn share-btn-copy" onclick="copyWishLink()">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg">
-              <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-            </svg>
-            Copy Link
+          <button class="action-btn action-copy" onclick="copyWishLink()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+            Link
           </button>
         </div>
       </div>
@@ -1147,16 +1279,10 @@
 
   <!-- Wish display page footer -->
   <div class="wish-display-footer">
-    <div class="wish-nav-pills">
-      <button class="wish-nav-pill primary" onclick="switchTab('wish')">
-        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
-        Create your own wish
-      </button>
-      <button class="wish-nav-pill" onclick="switchTab('calc')">
-        <svg viewBox="0 0 28 14" fill="none"><circle cx="8" cy="7" r="5.5" stroke="currentColor" stroke-width="1.8"/><circle cx="20" cy="7" r="5.5" stroke="currentColor" stroke-width="1.8"/></svg>
-        Wedding Calculator
-      </button>
-    </div>
+    <button class="create-own-btn" onclick="switchView('home')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      Create Your Own
+    </button>
     <div class="wish-brand">
       Designed with <span class="heart">❤️</span> by
       <a href="https://netwinglabs.com" target="_blank" rel="noopener">NetWing Labs</a>
@@ -1429,17 +1555,16 @@
   })();
 
   /* ══════════════════════════════════════════
-     TAB SWITCHING
+     VIEW SWITCHING
   ════════════════════════════════════════════ */
-  function switchTab(tab) {
-    document.getElementById('calcView').classList.toggle('active', tab === 'calc');
-    document.getElementById('wishView').classList.toggle('active', tab === 'wish');
-    document.getElementById('wishDisplayView').classList.remove('active');
-    document.getElementById('navCalc').classList.toggle('active', tab === 'calc');
-    document.getElementById('navWish').classList.toggle('active', tab === 'wish');
-    document.querySelector('.top-nav').style.display = '';
+  function switchView(name) {
+    ['homeView','calcView','wishView','wishDisplayView'].forEach(id => {
+      document.getElementById(id).classList.remove('active');
+    });
+    const map = { home:'homeView', calc:'calcView', wish:'wishView', wishDisplay:'wishDisplayView' };
+    document.getElementById(map[name] || 'homeView').classList.add('active');
     window.scrollTo({ top: 0, behavior: 'smooth' });
-    if (tab !== 'wish-display') history.replaceState(null, '', window.location.pathname);
+    if (name !== 'wishDisplay') history.replaceState(null, '', window.location.pathname);
   }
 
   /* ══════════════════════════════════════════
@@ -1562,32 +1687,34 @@
     err.classList.remove('visible');
 
     const params = new URLSearchParams({ w: wisher, c: couple, d: date });
-    if (custom) params.set('m', custom);
     const hash = '#wish?' + params.toString();
     history.replaceState(null, '', window.location.pathname + hash);
 
     showWishDisplay(wisher, couple, date, custom);
   }
 
+  const caricatureEmojis = ['💑', '👫', '💏', '💑'];
+
   function showWishDisplay(wisher, couple, date, custom) {
-    document.getElementById('calcView').classList.remove('active');
-    document.getElementById('wishView').classList.remove('active');
-    document.querySelector('.top-nav').style.display = 'none';
-    const dv = document.getElementById('wishDisplayView');
-    dv.classList.add('active');
+    ['homeView','calcView','wishView'].forEach(id => document.getElementById(id).classList.remove('active'));
+    document.getElementById('wishDisplayView').classList.add('active');
     window.scrollTo({ top: 0, behavior: 'smooth' });
 
     document.getElementById('wdWisher').textContent = wisher;
     document.getElementById('wdCouple').textContent = couple;
 
-    // Couple photo
-    const photoWrap = document.getElementById('wdPhotoWrap');
-    const photoEl   = document.getElementById('wdPhoto');
+    // Couple photo or caricature fallback
+    const photoWrap  = document.getElementById('wdPhotoWrap');
+    const photoEl    = document.getElementById('wdPhoto');
+    const caricature = document.getElementById('wdCaricature');
     if (couplePhotoDataURL) {
       photoEl.src = couplePhotoDataURL;
       photoWrap.style.display = 'flex';
+      caricature.style.display = 'none';
     } else {
       photoWrap.style.display = 'none';
+      caricature.textContent = caricatureEmojis[Math.floor(Math.random() * caricatureEmojis.length)];
+      caricature.style.display = 'flex';
     }
 
     const d = new Date(date + 'T00:00:00');
@@ -1658,7 +1785,7 @@
   async function shareAsStory(btn) {
     const origHTML = btn.innerHTML;
     btn.disabled = true;
-    btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:16px;height:16px;animation:spin 0.9s linear infinite"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-.08-8.36L23 10"/></svg>&nbsp;Generating…';
+    btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:18px;height:18px;animation:spin 0.9s linear infinite"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-.08-8.36L23 10"/></svg>';
     try {
       await Promise.allSettled([
         document.fonts.load('bold 96px "Playfair Display"'),
@@ -1671,121 +1798,196 @@
       canvas.width = W; canvas.height = H;
       const ctx = canvas.getContext('2d');
 
-      // Background gradient
-      const bg = ctx.createLinearGradient(0, 0, W * 0.6, H);
-      bg.addColorStop(0, '#FDEEF5'); bg.addColorStop(0.42, '#FDF8F5'); bg.addColorStop(1, '#F5EDE0');
+      // ── Background ──
+      const bg = ctx.createLinearGradient(0, 0, W * 0.5, H);
+      bg.addColorStop(0, '#FDEEF5'); bg.addColorStop(0.35, '#FDF8F5');
+      bg.addColorStop(0.7, '#FDF5EC'); bg.addColorStop(1, '#F5EDE0');
       ctx.fillStyle = bg; ctx.fillRect(0, 0, W, H);
 
+      // Dot grid overlay
+      ctx.fillStyle = 'rgba(200,96,106,0.055)';
+      for (let gx = 48; gx < W; gx += 64) {
+        for (let gy = 48; gy < H; gy += 64) {
+          ctx.beginPath(); ctx.arc(gx, gy, 2.2, 0, Math.PI*2); ctx.fill();
+        }
+      }
+
       // Bokeh blobs
-      [[0.10*W,0.06*H,240,'rgba(200,96,106,0.07)'],[0.90*W,0.14*H,190,'rgba(184,137,58,0.06)'],
-       [0.05*W,0.50*H,220,'rgba(232,144,154,0.05)'],[0.93*W,0.70*H,180,'rgba(212,168,82,0.06)'],
-       [0.50*W,0.93*H,280,'rgba(200,96,106,0.05)']].forEach(([x,y,r,c]) => {
+      [[0.12*W,0.07*H,300,'rgba(200,96,106,0.09)'],[0.88*W,0.17*H,250,'rgba(184,137,58,0.08)'],
+       [0.04*W,0.46*H,260,'rgba(232,144,154,0.07)'],[0.94*W,0.63*H,220,'rgba(212,168,82,0.08)'],
+       [0.52*W,0.91*H,330,'rgba(200,96,106,0.07)'],[0.22*W,0.73*H,180,'rgba(232,144,154,0.05)'],
+       [0.82*W,0.36*H,190,'rgba(184,137,58,0.06)'],[0.14*W,0.27*H,150,'rgba(200,96,106,0.05)']
+      ].forEach(([x,y,r,c]) => {
         const g = ctx.createRadialGradient(x,y,0,x,y,r);
         g.addColorStop(0,c); g.addColorStop(1,'rgba(0,0,0,0)');
         ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x,y,r,0,Math.PI*2); ctx.fill();
       });
 
-      // Decorative border
-      ctx.strokeStyle = 'rgba(200,96,106,0.12)'; ctx.lineWidth = 2;
-      ctx.strokeRect(28, 28, W-56, H-56);
-      ctx.strokeStyle = 'rgba(200,96,106,0.42)'; ctx.lineWidth = 3.5;
-      const cc = 55;
-      [[28,28,28+cc,28],[28,28,28,28+cc],[W-28-cc,28,W-28,28],[W-28,28,W-28,28+cc],
-       [28,H-28,28+cc,H-28],[28,H-28-cc,28,H-28],[W-28-cc,H-28,W-28,H-28],[W-28,H-28-cc,W-28,H-28]]
-        .forEach(([x1,y1,x2,y2]) => { ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke(); });
+      // Thin outer border
+      ctx.strokeStyle = 'rgba(200,96,106,0.10)'; ctx.lineWidth = 2;
+      ctx.strokeRect(24, 24, W-48, H-48);
 
-      let y = 72;
+      // Corner L-marks with accent dots
+      const cc = 72;
+      ctx.strokeStyle = 'rgba(200,96,106,0.52)'; ctx.lineWidth = 4; ctx.lineCap = 'round';
+      [[30,30,30+cc,30,30,30+cc],[W-30,30,W-30-cc,30,W-30,30+cc],
+       [30,H-30,30+cc,H-30,30,H-30-cc],[W-30,H-30,W-30-cc,H-30,W-30,H-30-cc]]
+        .forEach(([x1,y1,x2,y2,x3,y3]) => {
+          ctx.beginPath(); ctx.moveTo(x2,y2); ctx.lineTo(x1,y1); ctx.lineTo(x3,y3); ctx.stroke();
+        });
+      ctx.fillStyle = 'rgba(200,96,106,0.48)';
+      [[30,30],[W-30,30],[30,H-30],[W-30,H-30]].forEach(([x,y]) => {
+        ctx.beginPath(); ctx.arc(x,y,5,0,Math.PI*2); ctx.fill();
+      });
+      ctx.lineCap = 'butt';
+
+      let y = 80;
       ctx.textAlign = 'center';
 
-      // App name
-      ctx.fillStyle = 'rgba(200,96,106,0.55)';
+      // App branding
+      ctx.fillStyle = 'rgba(200,96,106,0.58)';
       ctx.font = '500 30px "DM Sans", Arial, sans-serif';
-      ctx.fillText('✦  W I S H   N E S T  ✦', W/2, y + 28);
-      y += 78;
+      ctx.fillText('✶  W I S H   N E S T  ✶', W/2, y + 34);
+      y += 96;
 
-      // Couple photo circle
+      // ── Photo / Caricature circle ──
+      const PR = 220;
+      const photoY = y + PR;
+
+      // Outer decorative dotted ring
+      ctx.strokeStyle = 'rgba(200,96,106,0.14)'; ctx.lineWidth = 1.5;
+      ctx.setLineDash([10, 12]);
+      ctx.beginPath(); ctx.arc(W/2, photoY, PR+38, 0, Math.PI*2); ctx.stroke();
+      ctx.setLineDash([]);
+
+      // 8 petal dots at 45° intervals
+      ctx.fillStyle = 'rgba(200,96,106,0.32)';
+      for (let i = 0; i < 8; i++) {
+        const angle = i * Math.PI / 4;
+        const dx = W/2 + (PR+38) * Math.cos(angle);
+        const dy = photoY + (PR+38) * Math.sin(angle);
+        ctx.beginPath(); ctx.arc(dx, dy, 7, 0, Math.PI*2); ctx.fill();
+      }
+
       if (couplePhotoDataURL) {
-        const PR = 210;
         const img = new Image();
         await new Promise(r => { img.onload = r; img.onerror = r; img.src = couplePhotoDataURL; });
         ctx.save();
-        ctx.beginPath(); ctx.arc(W/2, y+PR, PR, 0, Math.PI*2); ctx.clip();
+        ctx.beginPath(); ctx.arc(W/2, photoY, PR, 0, Math.PI*2); ctx.clip();
         const sc = Math.max(PR*2/img.width, PR*2/img.height);
-        ctx.drawImage(img, W/2 - img.width*sc/2, y+PR - img.height*sc/2, img.width*sc, img.height*sc);
+        ctx.drawImage(img, W/2 - img.width*sc/2, photoY - img.height*sc/2, img.width*sc, img.height*sc);
         ctx.restore();
-        const rg = ctx.createLinearGradient(W/2-PR, y, W/2+PR, y+PR*2);
-        rg.addColorStop(0, 'rgba(200,96,106,0.75)'); rg.addColorStop(1, 'rgba(184,137,58,0.75)');
-        ctx.strokeStyle = rg; ctx.lineWidth = 5;
-        ctx.beginPath(); ctx.arc(W/2, y+PR, PR+3, 0, Math.PI*2); ctx.stroke();
-        ctx.strokeStyle = 'rgba(200,96,106,0.18)'; ctx.lineWidth = 2;
-        ctx.beginPath(); ctx.arc(W/2, y+PR, PR+20, 0, Math.PI*2); ctx.stroke();
-        y += PR*2 + 56;
+        const rg = ctx.createLinearGradient(W/2-PR, photoY-PR, W/2+PR, photoY+PR);
+        rg.addColorStop(0,'rgba(200,96,106,0.82)'); rg.addColorStop(1,'rgba(184,137,58,0.82)');
+        ctx.strokeStyle = rg; ctx.lineWidth = 7;
+        ctx.beginPath(); ctx.arc(W/2, photoY, PR+4, 0, Math.PI*2); ctx.stroke();
       } else {
-        ctx.fillStyle = 'rgba(200,96,106,0.07)'; ctx.font = '220px serif';
-        ctx.fillText('♥', W/2, y + 190);
-        ctx.fillStyle = 'rgba(200,96,106,0.16)'; ctx.font = '110px serif';
-        ctx.fillText('♥', W/2 - 135, y + 85);
-        ctx.fillText('♥', W/2 + 135, y + 85);
-        y += 245;
+        // Caricature: blush circle + emoji
+        const cg = ctx.createRadialGradient(W/2, photoY-PR*0.2, 0, W/2, photoY, PR);
+        cg.addColorStop(0,'rgba(251,240,241,1)'); cg.addColorStop(1,'rgba(245,224,226,0.9)');
+        ctx.fillStyle = cg;
+        ctx.beginPath(); ctx.arc(W/2, photoY, PR, 0, Math.PI*2); ctx.fill();
+        const rg = ctx.createLinearGradient(W/2-PR, photoY-PR, W/2+PR, photoY+PR);
+        rg.addColorStop(0,'rgba(200,96,106,0.65)'); rg.addColorStop(1,'rgba(184,137,58,0.65)');
+        ctx.strokeStyle = rg; ctx.lineWidth = 6;
+        ctx.beginPath(); ctx.arc(W/2, photoY, PR+4, 0, Math.PI*2); ctx.stroke();
+        ctx.font = Math.round(PR * 0.88) + 'px serif';
+        ctx.fillStyle = 'rgba(0,0,0,0.88)';
+        ctx.fillText('💑', W/2, photoY + Math.round(PR * 0.3));
+        ctx.font = '52px serif';
+        ctx.fillText('💗', W/2 - PR*0.62, photoY - PR*0.56);
+        ctx.fillText('💗', W/2 + PR*0.58, photoY - PR*0.60);
+      }
+      y += PR*2 + 68;
+
+      // ── Gradient divider helper ──
+      function gradDiv(cy) {
+        const lg = ctx.createLinearGradient(W*0.1,cy,W*0.9,cy);
+        lg.addColorStop(0,'rgba(200,96,106,0)'); lg.addColorStop(0.25,'rgba(200,96,106,0.3)');
+        lg.addColorStop(0.5,'rgba(200,96,106,0.5)'); lg.addColorStop(0.75,'rgba(200,96,106,0.3)');
+        lg.addColorStop(1,'rgba(200,96,106,0)');
+        ctx.strokeStyle = lg; ctx.lineWidth = 1.5;
+        ctx.beginPath(); ctx.moveTo(W*0.1,cy); ctx.lineTo(W*0.9,cy); ctx.stroke();
+        ctx.fillStyle = '#C8606A'; ctx.font = '34px serif';
+        ctx.fillText('♥', W/2, cy + 13);
       }
 
-      storyDiv(ctx, W/2, y, 320); y += 58;
+      gradDiv(y); y += 70;
 
       // From line
-      ctx.fillStyle = 'rgba(122,106,88,0.72)';
-      ctx.font = 'italic 40px "Playfair Display", Georgia, serif';
-      ctx.fillText('With heartfelt wishes from', W/2, y); y += 64;
+      ctx.fillStyle = 'rgba(122,106,88,0.65)';
+      ctx.font = 'italic 42px "Playfair Display", Georgia, serif';
+      ctx.fillText('With heartfelt wishes from', W/2, y); y += 68;
 
       // Wisher name
       ctx.fillStyle = '#1C1410';
-      ctx.font = 'bold 76px "Playfair Display", Georgia, serif';
-      ctx.fillText(document.getElementById('wdWisher').textContent, W/2, y); y += 56;
+      ctx.font = 'bold 72px "Playfair Display", Georgia, serif';
+      y = storyWrap(ctx, document.getElementById('wdWisher').textContent, W/2, y, W-200, 82) + 52;
 
       // Warmly congratulates
-      ctx.fillStyle = 'rgba(122,106,88,0.68)';
-      ctx.font = 'italic 40px "Playfair Display", Georgia, serif';
-      ctx.fillText('warmly congratulates', W/2, y); y += 72;
+      ctx.fillStyle = 'rgba(122,106,88,0.55)';
+      ctx.font = '500 35px "DM Sans", Arial, sans-serif';
+      ctx.fillText('warmly congratulates', W/2, y); y += 68;
 
-      storyDiv(ctx, W/2, y, 220); y += 60;
+      gradDiv(y); y += 74;
 
-      // Couple names
+      // Couple name
       const coupleTxt = document.getElementById('wdCouple').textContent;
-      const cSz = coupleTxt.length > 22 ? 68 : coupleTxt.length > 14 ? 84 : 100;
+      const cSz = coupleTxt.length > 22 ? 66 : coupleTxt.length > 14 ? 82 : 96;
       ctx.fillStyle = '#C8606A';
       ctx.font = `bold ${cSz}px "Playfair Display", Georgia, serif`;
-      y = storyWrap(ctx, coupleTxt, W/2, y, W - 160, cSz * 1.28) + 44;
+      y = storyWrap(ctx, coupleTxt, W/2, y, W-160, cSz*1.28) + 52;
 
-      // Date label + value
-      ctx.fillStyle = 'rgba(122,106,88,0.62)';
-      ctx.font = '500 36px "DM Sans", Arial, sans-serif';
+      // Date
+      ctx.fillStyle = 'rgba(122,106,88,0.55)';
+      ctx.font = '500 34px "DM Sans", Arial, sans-serif';
       ctx.fillText('on their wedding day', W/2, y); y += 52;
       ctx.fillStyle = '#1C1410';
-      ctx.font = 'bold 48px "Playfair Display", Georgia, serif';
-      ctx.fillText(document.getElementById('wdDate').textContent, W/2, y); y += 72;
+      ctx.font = 'bold 46px "Playfair Display", Georgia, serif';
+      y = storyWrap(ctx, document.getElementById('wdDate').textContent, W/2, y, W-160, 56) + 66;
 
-      storyDiv(ctx, W/2, y, 200); y += 64;
+      gradDiv(y); y += 74;
 
-      // Message
-      ctx.fillStyle = 'rgba(122,106,88,0.82)';
-      ctx.font = 'italic 40px "Playfair Display", Georgia, serif';
-      y = storyWrap(ctx, document.getElementById('wdMessage').textContent, W/2, y, W - 200, 56) + 60;
+      // Message in rounded box
+      const msgTxt = document.getElementById('wdMessage').textContent;
+      ctx.font = 'italic 38px "Playfair Display", Georgia, serif';
+      const msgLines = storyLines(ctx, msgTxt, W-200);
+      const msgLineH = 54, boxPad = 42;
+      const boxH = msgLines.length * msgLineH + boxPad * 2;
+      const bx = 80, bw = W-160;
+      // Box fill + border
+      ctx.fillStyle = 'rgba(200,96,106,0.055)';
+      storyPill(ctx, bx, y, bw, boxH, 26, true);
+      ctx.strokeStyle = 'rgba(200,96,106,0.2)'; ctx.lineWidth = 1.5;
+      storyPill(ctx, bx, y, bw, boxH, 26, false);
+      y += boxPad;
+      ctx.fillStyle = 'rgba(122,106,88,0.85)';
+      msgLines.forEach(line => { ctx.fillText(line, W/2, y); y += msgLineH; });
+      y += boxPad - 10 + 52;
 
       // Counter pill
-      const cTxt = '✦  ' + document.getElementById('wdCounterText').textContent + '  ✦';
-      ctx.font = '600 36px "DM Sans", Arial, sans-serif';
-      const pW = Math.min(ctx.measureText(cTxt).width + 80, W - 80);
-      const pX = (W - pW) / 2;
-      ctx.fillStyle = 'rgba(200,96,106,0.1)';
-      storyPill(ctx, pX, y - 40, pW, 60, 30, true);
-      ctx.strokeStyle = 'rgba(200,96,106,0.28)'; ctx.lineWidth = 1.5;
-      storyPill(ctx, pX, y - 40, pW, 60, 30, false);
-      ctx.fillStyle = 'rgba(200,96,106,0.9)'; ctx.fillText(cTxt, W/2, y); y += 72;
+      const cTxt = '✶  ' + document.getElementById('wdCounterText').textContent + '  ✶';
+      ctx.font = '600 34px "DM Sans", Arial, sans-serif';
+      const pW = Math.min(ctx.measureText(cTxt).width + 90, W-80);
+      const pX = (W-pW)/2, pillH = 66;
+      const pg = ctx.createLinearGradient(pX,y,pX+pW,y+pillH);
+      pg.addColorStop(0,'rgba(200,96,106,0.13)'); pg.addColorStop(1,'rgba(184,137,58,0.09)');
+      ctx.fillStyle = pg;
+      storyPill(ctx, pX, y, pW, pillH, 33, true);
+      ctx.strokeStyle = 'rgba(200,96,106,0.3)'; ctx.lineWidth = 1.5;
+      storyPill(ctx, pX, y, pW, pillH, 33, false);
+      ctx.fillStyle = 'rgba(200,96,106,0.92)';
+      ctx.fillText(cTxt, W/2, y + pillH*0.67); y += pillH + 56;
 
-      // Branding
-      storyDiv(ctx, W/2, H - 100, 180);
-      ctx.fillStyle = 'rgba(122,106,88,0.45)';
-      ctx.font = '400 26px "DM Sans", Arial, sans-serif';
-      ctx.fillText('Created with ♥ on Wish Nest · NetWing Labs', W/2, H - 58);
+      // Hearts row
+      ctx.font = '50px serif';
+      ctx.fillText('💗  💍  💗', W/2, y); y += 16;
+
+      // Bottom branding
+      gradDiv(H - 92);
+      ctx.fillStyle = 'rgba(122,106,88,0.4)';
+      ctx.font = '400 25px "DM Sans", Arial, sans-serif';
+      ctx.fillText('Created with ♥ on Wish Nest · NetWing Labs', W/2, H - 52);
 
       // Export / share
       canvas.toBlob(async blob => {
@@ -1810,25 +2012,22 @@
     }
   }
 
-  function storyDiv(ctx, cx, y, hl) {
-    ctx.strokeStyle = 'rgba(200,96,106,0.3)'; ctx.lineWidth = 1.5;
-    ctx.beginPath(); ctx.moveTo(cx - hl, y); ctx.lineTo(cx - 26, y); ctx.stroke();
-    ctx.beginPath(); ctx.moveTo(cx + 26, y); ctx.lineTo(cx + hl, y); ctx.stroke();
-    ctx.fillStyle = '#C8606A'; ctx.font = '32px serif'; ctx.textAlign = 'center';
-    ctx.fillText('♥', cx, y + 11);
+  function storyLines(ctx, text, maxW) {
+    const words = text.split(' ');
+    const lines = []; let line = '';
+    words.forEach((w, i) => {
+      const test = line + w + ' ';
+      if (ctx.measureText(test).width > maxW && i > 0) { lines.push(line.trim()); line = w + ' '; }
+      else { line = test; }
+    });
+    if (line.trim()) lines.push(line.trim());
+    return lines;
   }
 
   function storyWrap(ctx, text, cx, y, maxW, lineH) {
-    const words = text.split(' ');
-    let line = '', curY = y;
-    words.forEach((w, i) => {
-      const test = line + w + ' ';
-      if (ctx.measureText(test).width > maxW && i > 0) {
-        ctx.fillText(line.trim(), cx, curY); line = w + ' '; curY += lineH;
-      } else { line = test; }
-    });
-    ctx.fillText(line.trim(), cx, curY);
-    return curY;
+    const lines = storyLines(ctx, text, maxW);
+    lines.forEach((l, i) => ctx.fillText(l, cx, y + i * lineH));
+    return y + (lines.length - 1) * lineH;
   }
 
   function storyPill(ctx, x, y, w, h, r, fill) {
@@ -1872,9 +2071,10 @@
     const hash = window.location.hash;
     if (hash.startsWith('#wish?')) {
       const params = new URLSearchParams(hash.slice(6));
-      const w = params.get('w'), c = params.get('c'), d = params.get('d'), m = params.get('m') || '';
-      if (w && c && d) showWishDisplay(w, c, d, m);
+      const w = params.get('w'), c = params.get('c'), d = params.get('d');
+      if (w && c && d) showWishDisplay(w, c, d, '');
     }
+    // homeView is already active by default in HTML
   })();
 
   /* Default wish date (+3 months) */
