@@ -25,11 +25,12 @@ register_language_files(AI_ASSISTANT_MODULE_NAME, [AI_ASSISTANT_MODULE_NAME]);
 hooks()->add_action('app_admin_head', 'ai_assistant_inject_assets');
 hooks()->add_action('app_admin_footer', 'ai_assistant_inject_widget');
 hooks()->add_action('admin_init', 'ai_assistant_init');
+hooks()->add_action('admin_init', 'ai_assistant_check_db');
 
 /**
  * Inject CSS and JS assets into admin head
  */
-function ai_assistant_inject_assets(): void
+function ai_assistant_inject_assets()
 {
     $assets_url = AI_ASSISTANT_ASSETS_URL;
     echo '<link rel="stylesheet" href="' . $assets_url . 'css/ai_assistant.css?v=' . AI_ASSISTANT_VERSION . '">';
@@ -40,7 +41,7 @@ function ai_assistant_inject_assets(): void
 /**
  * Inject floating chat widget HTML into admin footer
  */
-function ai_assistant_inject_widget(): void
+function ai_assistant_inject_widget()
 {
     if (!is_staff_logged_in()) {
         return;
@@ -69,7 +70,7 @@ function ai_assistant_inject_widget(): void
 /**
  * Run any init-time setup tasks
  */
-function ai_assistant_init(): void
+function ai_assistant_init()
 {
     // Check and run pending migrations
     $CI = &get_instance();
@@ -79,9 +80,20 @@ function ai_assistant_init(): void
 }
 
 /**
+ * Check DB tables exist and run install if needed (called on admin_init)
+ */
+function ai_assistant_check_db()
+{
+    $CI = &get_instance();
+    if (!$CI->db->table_exists('ai_sessions')) {
+        include_once(module_dir_path(AI_ASSISTANT_MODULE_NAME, 'install.php'));
+    }
+}
+
+/**
  * Hook: module activated
  */
-function ai_assistant_module_activated(): void
+function ai_assistant_module_activated()
 {
     // Ensure tables created on activation
     include_once(module_dir_path(AI_ASSISTANT_MODULE_NAME, 'install.php'));
@@ -90,7 +102,7 @@ function ai_assistant_module_activated(): void
 /**
  * Hook: module deactivated
  */
-function ai_assistant_module_deactivated(): void
+function ai_assistant_module_deactivated()
 {
     // Intentionally left empty — data retained on deactivation
 }
@@ -103,12 +115,6 @@ function ai_assistant_module_deactivated(): void
  */
 function ai_assistant_get_settings(): array
 {
-    static $settings = null;
-
-    if ($settings !== null) {
-        return $settings;
-    }
-
     $active_provider = get_option('ai_assistant_active_provider') ?: 'gemini';
 
     // Derive the active API key (used by the widget to decide if AI is configured)

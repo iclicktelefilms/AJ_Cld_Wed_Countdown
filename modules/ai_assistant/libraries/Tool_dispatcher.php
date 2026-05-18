@@ -225,11 +225,11 @@ class Tool_dispatcher
     {
         $id_field = null;
 
-        if (str_contains($tool_name, 'lead') && isset($params['lead_id'])) {
+        if (strpos($tool_name, 'lead') !== false && isset($params['lead_id'])) {
             $id_field = ['table' => 'leads', 'id' => $params['lead_id']];
-        } elseif (str_contains($tool_name, 'task') && isset($params['task_id'])) {
+        } elseif (strpos($tool_name, 'task') !== false && isset($params['task_id'])) {
             $id_field = ['table' => 'tasks', 'id' => $params['task_id']];
-        } elseif (str_contains($tool_name, 'ticket') && isset($params['ticket_id'])) {
+        } elseif (strpos($tool_name, 'ticket') !== false && isset($params['ticket_id'])) {
             $id_field = ['table' => 'tickets', 'id' => $params['ticket_id']];
         }
 

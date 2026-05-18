@@ -60,11 +60,13 @@ class GeminiProvider extends BaseProvider
     {
         $url = "{$this->base_url}/models/gemini-2.5-flash:generateContent?key=" . urlencode($this->api_key);
 
-        $instruction = match($language_hint) {
-            'hi'    => 'Transcribe the following audio exactly. The speaker may use Hindi or Hinglish. Provide the exact transcript in the original language.',
-            'en'    => 'Transcribe the following audio in English.',
-            default => 'Transcribe the following audio exactly. The speaker may use Hindi, English, or a mix (Hinglish). Provide the exact transcript.',
-        };
+        if ($language_hint === 'hi') {
+            $instruction = 'Transcribe the following audio exactly. The speaker may use Hindi or Hinglish. Provide the exact transcript in the original language.';
+        } elseif ($language_hint === 'en') {
+            $instruction = 'Transcribe the following audio in English.';
+        } else {
+            $instruction = 'Transcribe the following audio exactly. The speaker may use Hindi, English, or a mix (Hinglish). Provide the exact transcript.';
+        }
 
         $body = [
             'contents' => [[
@@ -85,7 +87,7 @@ class GeminiProvider extends BaseProvider
     public function text_to_speech(string $text, string $language = 'en-US'): array
     {
         $url        = "{$this->base_url}/models/gemini-2.5-flash-preview-tts:generateContent?key=" . urlencode($this->api_key);
-        $voice_name = str_starts_with($language, 'hi') ? 'hi-IN-Standard-A' : 'en-US-Standard-C';
+        $voice_name = (strpos($language, 'hi') === 0) ? 'hi-IN-Standard-A' : 'en-US-Standard-C';
         $speak_text = mb_substr(strip_tags($text), 0, 500);
 
         $body = [

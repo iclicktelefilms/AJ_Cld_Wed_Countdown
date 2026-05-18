@@ -98,12 +98,15 @@ class Admin extends AdminController
 
             if (!empty($spec['allowed']) && !in_array($value, $spec['allowed'], true)) continue;
 
-            $sanitized = match($spec['type']) {
-                'float'  => (string)(float)$value,
-                'int'    => (string)(int)$value,
-                'bool'   => $value ? '1' : '0',
-                default  => htmlspecialchars(strip_tags((string)$value), ENT_QUOTES),
-            };
+            if ($spec['type'] === 'float') {
+                $sanitized = (string)(float)$value;
+            } elseif ($spec['type'] === 'int') {
+                $sanitized = (string)(int)$value;
+            } elseif ($spec['type'] === 'bool') {
+                $sanitized = $value ? '1' : '0';
+            } else {
+                $sanitized = htmlspecialchars(strip_tags((string)$value), ENT_QUOTES);
+            }
 
             update_option($option_key, $sanitized);
         }
@@ -111,7 +114,7 @@ class Admin extends AdminController
         // ── Per-provider API keys (write-only, never read back to frontend) ───
         foreach ($valid_providers as $provider) {
             $api_key = $this->input->post("{$provider}_api_key");
-            if (!empty($api_key) && !str_starts_with($api_key, '***')) {
+            if (!empty($api_key) && strpos($api_key, '***') !== 0) {
                 update_option("ai_assistant_{$provider}_api_key", trim($api_key));
             }
 

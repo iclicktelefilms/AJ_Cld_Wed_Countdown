@@ -47,7 +47,7 @@ class OllamaProvider extends OpenAIProvider
     {
         // Ensure base_url ends with /v1 for OpenAI-compatible endpoint
         $original_url = $this->base_url;
-        if (!str_ends_with($this->base_url, '/v1')) {
+        if (substr($this->base_url, -3) !== '/v1') {
             $this->base_url = rtrim($this->base_url, '/') . '/v1';
         }
 
@@ -63,7 +63,7 @@ class OllamaProvider extends OpenAIProvider
         // Test if Ollama is running by checking /api/tags
         $start  = microtime(true);
         $base   = rtrim($this->base_url, '/');
-        if (str_ends_with($base, '/v1')) {
+        if (substr($base, -3) === '/v1') {
             $base = substr($base, 0, -3);
         }
 

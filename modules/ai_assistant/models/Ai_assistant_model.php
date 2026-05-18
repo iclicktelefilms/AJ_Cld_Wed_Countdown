@@ -224,13 +224,19 @@ class Ai_assistant_model extends CI_Model
 
     private function period_to_date(string $period): string
     {
-        return match($period) {
-            'today'   => date('Y-m-d 00:00:00'),
-            'week'    => date('Y-m-d 00:00:00', strtotime('monday this week')),
-            'month'   => date('Y-m-01 00:00:00'),
-            'quarter' => date('Y-m-d 00:00:00', strtotime('first day of -3 month')),
-            'year'    => date('Y-01-01 00:00:00'),
-            default   => date('Y-m-01 00:00:00'),
-        };
+        switch ($period) {
+            case 'today':
+                return date('Y-m-d 00:00:00');
+            case 'week':
+                return date('Y-m-d 00:00:00', strtotime('monday this week'));
+            case 'month':
+                return date('Y-m-01 00:00:00');
+            case 'quarter':
+                return date('Y-m-d 00:00:00', strtotime('first day of -3 month'));
+            case 'year':
+                return date('Y-01-01 00:00:00');
+            default:
+                return date('Y-m-01 00:00:00');
+        }
     }
 }

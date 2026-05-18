@@ -28,21 +28,33 @@ class Response_formatter
             return "**Error:** " . $result['error'];
         }
 
-        return match(true) {
-            str_contains($tool_name, 'leads')        => $this->format_leads($result),
-            str_contains($tool_name, 'lead')         => $this->format_lead_detail($result),
-            str_contains($tool_name, 'clients')      => $this->format_clients($result),
-            str_contains($tool_name, 'client_details') => $this->format_client_details($result),
-            str_contains($tool_name, 'invoice')      => $this->format_invoices($result),
-            str_contains($tool_name, 'revenue')      => $this->format_revenue_report($result),
-            str_contains($tool_name, 'tasks')        => $this->format_tasks($result),
-            str_contains($tool_name, 'projects')     => $this->format_projects($result),
-            str_contains($tool_name, 'ticket')       => $this->format_tickets($result),
-            str_contains($tool_name, 'expense')      => $this->format_expenses($result),
-            str_contains($tool_name, 'contracts')    => $this->format_contracts($result),
-            str_contains($tool_name, 'staff')        => $this->format_staff($result),
-            default                                  => $this->format_action_result($result),
-        };
+        if (strpos($tool_name, 'leads') !== false) {
+            return $this->format_leads($result);
+        } elseif (strpos($tool_name, 'client_details') !== false) {
+            return $this->format_client_details($result);
+        } elseif (strpos($tool_name, 'clients') !== false) {
+            return $this->format_clients($result);
+        } elseif (strpos($tool_name, 'lead') !== false) {
+            return $this->format_lead_detail($result);
+        } elseif (strpos($tool_name, 'invoice') !== false) {
+            return $this->format_invoices($result);
+        } elseif (strpos($tool_name, 'revenue') !== false) {
+            return $this->format_revenue_report($result);
+        } elseif (strpos($tool_name, 'tasks') !== false) {
+            return $this->format_tasks($result);
+        } elseif (strpos($tool_name, 'projects') !== false) {
+            return $this->format_projects($result);
+        } elseif (strpos($tool_name, 'ticket') !== false) {
+            return $this->format_tickets($result);
+        } elseif (strpos($tool_name, 'expense') !== false) {
+            return $this->format_expenses($result);
+        } elseif (strpos($tool_name, 'contracts') !== false) {
+            return $this->format_contracts($result);
+        } elseif (strpos($tool_name, 'staff') !== false) {
+            return $this->format_staff($result);
+        } else {
+            return $this->format_action_result($result);
+        }
     }
 
     // ── Formatters ───────────────────────────────────────────────────────────

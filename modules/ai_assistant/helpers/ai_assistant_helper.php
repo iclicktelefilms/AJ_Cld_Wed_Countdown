@@ -189,7 +189,7 @@ function ai_build_markdown_table(array $rows, array $columns = []): string
         $body_lines[] = '| ' . implode(' | ', $cells) . ' |';
     }
 
-    return implode("\n", [$header, $separator, ...$body_lines]);
+    return implode("\n", array_merge([$header, $separator], $body_lines));
 }
 
 /**
@@ -304,4 +304,50 @@ function ai_validate_tool_params(array $params, array $schema): array
         'errors'    => $errors,
         'sanitized' => $sanitized,
     ];
+}
+
+/**
+ * PHP 7.4 compatible str_starts_with
+ *
+ * @param  string $haystack
+ * @param  string $needle
+ * @return bool
+ */
+function ai_compat_str_starts_with(string $haystack, string $needle): bool
+{
+    if ($needle === '') {
+        return true;
+    }
+    return strpos($haystack, $needle) === 0;
+}
+
+/**
+ * PHP 7.4 compatible str_contains
+ *
+ * @param  string $haystack
+ * @param  string $needle
+ * @return bool
+ */
+function ai_compat_str_contains(string $haystack, string $needle): bool
+{
+    if ($needle === '') {
+        return true;
+    }
+    return strpos($haystack, $needle) !== false;
+}
+
+/**
+ * PHP 7.4 compatible str_ends_with
+ *
+ * @param  string $haystack
+ * @param  string $suffix
+ * @return bool
+ */
+function ai_compat_str_ends_with(string $haystack, string $suffix): bool
+{
+    if ($suffix === '') {
+        return true;
+    }
+    $len = strlen($suffix);
+    return substr($haystack, -$len) === $suffix;
 }

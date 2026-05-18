@@ -106,7 +106,7 @@ class OpenAIProvider extends BaseProvider
     {
         $url        = "{$this->base_url}/audio/speech";
         $speak_text = mb_substr(strip_tags($text), 0, 4096);
-        $voice      = str_starts_with($language, 'hi') ? 'onyx' : 'alloy';
+        $voice      = (strpos($language, 'hi') === 0) ? 'onyx' : 'alloy';
 
         $body = [
             'model' => 'tts-1',
@@ -255,15 +255,13 @@ class OpenAIProvider extends BaseProvider
 
     private function mime_to_ext(string $mime): string
     {
-        return match($mime) {
-            'audio/webm'       => 'webm',
-            'audio/mp4'        => 'mp4',
-            'audio/mpeg'       => 'mp3',
-            'audio/ogg'        => 'ogg',
-            'audio/wav'        => 'wav',
-            'audio/x-m4a'      => 'm4a',
-            default            => 'webm',
-        };
+        if ($mime === 'audio/webm') return 'webm';
+        if ($mime === 'audio/mp4')  return 'mp4';
+        if ($mime === 'audio/mpeg') return 'mp3';
+        if ($mime === 'audio/ogg')  return 'ogg';
+        if ($mime === 'audio/wav')  return 'wav';
+        if ($mime === 'audio/x-m4a') return 'm4a';
+        return 'webm';
     }
 
     private function is_json(string $str): bool

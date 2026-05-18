@@ -585,14 +585,20 @@ class Crm_reader_service
 
     private function period_start(string $period): string
     {
-        return match($period) {
-            'today'   => date('Y-m-d'),
-            'week'    => date('Y-m-d', strtotime('monday this week')),
-            'month'   => date('Y-m-01'),
-            'quarter' => date('Y-m-d', strtotime('first day of -3 month')),
-            'year'    => date('Y-01-01'),
-            default   => date('Y-m-01'),
-        };
+        switch ($period) {
+            case 'today':
+                return date('Y-m-d');
+            case 'week':
+                return date('Y-m-d', strtotime('monday this week'));
+            case 'month':
+                return date('Y-m-01');
+            case 'quarter':
+                return date('Y-m-d', strtotime('first day of -3 month'));
+            case 'year':
+                return date('Y-01-01');
+            default:
+                return date('Y-m-01');
+        }
     }
 
     private function build_leads_summary(array $rows): string

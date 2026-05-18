@@ -122,11 +122,13 @@ class Gemini_client
     {
         $endpoint = self::API_BASE . "/models/gemini-2.5-flash:generateContent?key=" . urlencode($this->api_key);
 
-        $lang_instruction = match($language_hint) {
-            'hi'    => 'Transcribe the following audio. The speaker may use Hindi, Hinglish, or English. Provide exact transcript in the original language.',
-            'en'    => 'Transcribe the following audio in English.',
-            default => 'Transcribe the following audio. The speaker may use Hindi, English, or a mix. Provide exact transcript.',
-        };
+        if ($language_hint === 'hi') {
+            $lang_instruction = 'Transcribe the following audio. The speaker may use Hindi, Hinglish, or English. Provide exact transcript in the original language.';
+        } elseif ($language_hint === 'en') {
+            $lang_instruction = 'Transcribe the following audio in English.';
+        } else {
+            $lang_instruction = 'Transcribe the following audio. The speaker may use Hindi, English, or a mix. Provide exact transcript.';
+        }
 
         $body = [
             'contents' => [[
